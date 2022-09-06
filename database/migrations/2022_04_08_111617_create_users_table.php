@@ -30,7 +30,7 @@ return new class extends Migration
             $table->unsignedBigInteger('state_id')->nullable();
             $table->foreign('state_id')->references('id')->on('states');
             $table->unsignedBigInteger('city_id')->nullable();
-            $table->foreign('city_id')->references('id')->on('city');
+            $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('zipcode_id')->nullable();
             $table->foreign('zipcode_id')->references('id')->on('zipcode');
             $table->string('password')->nullable();

@@ -587,6 +587,8 @@ class ComposerStaticInit6a5d6b3616af506698b893983ed9e07c
         'App\\Models\\adminpanel\\Patients' => __DIR__ . '/../..' . '/app/Models/adminpanel/Patients.php',
         'App\\Models\\adminpanel\\Users' => __DIR__ . '/../..' . '/app/Models/adminpanel/Users.php',
         'App\\Models\\adminpanel\\Venue_groups' => __DIR__ . '/../..' . '/app/Models/adminpanel/Venue_groups.php',
+        'App\\Models\\adminpanel\\states' => __DIR__ . '/../..' . '/app/Models/adminpanel/states.php',
+        'App\\Models\\adminpanel\\venue_users' => __DIR__ . '/../..' . '/app/Models/adminpanel/venue_users.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',

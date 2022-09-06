@@ -27,7 +27,7 @@ if(!function_exists('getLeadWithVenuebyID')){
     function getLeadWithVenuebyID($id=NULL){
             if($id>0){
                 $leadsData=App\Models\adminpanel\Users::with('getVenueGroup')
-                ->where('group_id', '=', config('constants.groups.subscriber'))
+                //->where('group_id', '=', config('constants.groups.subscriber'))
                 ->where('id', '=', $id)->get();
                 
                 
@@ -113,7 +113,42 @@ if(!function_exists('getVenueGrpupById')){
         return array();
     }
 }
-
+// Add City in cities table if already city not exist 
+if(!function_exists('getOtherCity')){
+    function getOtherCity($name){
+        $nameSlug=phpslug($name);
+        $cityData = App\Models\adminpanel\cities::where('slug',$nameSlug)->get();
+        $cityData=$cityData->toArray();
+        if(!empty($cityData)){
+            return $cityData[0]['id'];
+        }
+        $cityId = DB::table('cities')->insertGetId(array('name'=>strtolower($name),'slug'=>phpslug($name),'is_active'=>1),'id');
+        return $cityId;
+        
+    }
+}
+// Add zipcode in zipcode table if already zipcode not exist 
+if(!function_exists('getOtherZipCode')){
+    function getOtherZipCode($code){
+        
+        $zipcodeData = App\Models\adminpanel\zipcode::where('code',phpslug($code))->get();
+        $zipcodeData=$zipcodeData->toArray();
+        if(!empty($zipcodeData)){
+            return $zipcodeData[0]['id'];
+        }
+        $zipcodeId = DB::table('zipcode')->insertGetId(array('code'=>strtolower(phpslug($code)),'is_active'=>1),'id');
+        return $zipcodeId;
+        
+    }
+}
+if(!function_exists('log_activity')){
+    function log_activity($data){
+        
+        $activityID = DB::table('activities_log')->insertGetId($data,'id');
+        return $activityID;
+        
+    }
+}
 if(!function_exists('getAllTestsByOrg')){
     function getAllTestsByOrg($org_id){
         $allTestData = App\Models\adminpanel\LabTests::with('getParams')->where('organization_id',$org_id)->orderBy('created_at', 'desc')->get();
@@ -145,15 +180,58 @@ if(!function_exists('getAdvisedTestsNames')){
 //         return array();
 //     }
 // }
-// Get Test Report by Test ID
-if(!function_exists('getReportByTestId')){
-    function getReportByTestId($id){
-        //return array($id);
-        $testReport = App\Models\adminpanel\PatientReports::where('patient_test_id',$id)->orderBy('id', 'desc')->get();
-        if($testReport)
-        return $testReport->toArray();
-        
-        return array();
+// Get Options of States
+if(!function_exists('getStatesOptions')){
+    function getStatesOptions($selectID=NULL){
+    
+        $statesData = App\Models\adminpanel\states::where('is_active',1)->orderBy('id', 'desc')->get();
+        if($statesData)
+         $statesData=$statesData->toArray();
+         $options='';
+         
+        foreach($statesData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        $options .='<option  value="other">Other</option>';
+     return $options;   
+    }
+}
+// Get Options of Cities
+if(!function_exists('getCitiesOptions')){
+    function getCitiesOptions($selectID=NULL){
+    
+        $cityData = App\Models\adminpanel\cities::where('is_active',1)->orderBy('id', 'asc')->get();
+        if($cityData)
+         $cityData=$cityData->toArray();
+         $options='';
+         
+        foreach($cityData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        $options .='<option  value="other">Other</option>';
+     return $options;   
+    }
+}
+// Get Options of Cities
+if(!function_exists('getZipCodeOptions')){
+    function getZipCodeOptions($selectID=NULL){
+    
+        $zipcodeData = App\Models\adminpanel\zipcode::where('is_active',1)->orderBy('id', 'asc')->get();
+        if($zipcodeData)
+         $zipcodeData=$zipcodeData->toArray();
+         $options='';
+         
+        foreach($zipcodeData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['code'].'</option>';
+        }
+        $options .='<option  value="other">Other</option>';
+     return $options;   
     }
 }
 if(!function_exists('getReportByIDs')){

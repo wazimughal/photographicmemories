@@ -47,6 +47,8 @@ return array(
     'App\\Models\\adminpanel\\Patients' => $baseDir . '/app/Models/adminpanel/Patients.php',
     'App\\Models\\adminpanel\\Users' => $baseDir . '/app/Models/adminpanel/Users.php',
     'App\\Models\\adminpanel\\Venue_groups' => $baseDir . '/app/Models/adminpanel/Venue_groups.php',
+    'App\\Models\\adminpanel\\states' => $baseDir . '/app/Models/adminpanel/states.php',
+    'App\\Models\\adminpanel\\venue_users' => $baseDir . '/app/Models/adminpanel/venue_users.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',

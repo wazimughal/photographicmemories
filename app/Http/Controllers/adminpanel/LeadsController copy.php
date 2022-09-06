@@ -37,59 +37,7 @@ class LeadsController extends Controller
 
         return view('adminpanel/add_leads',compact('user','VenueGroupData','leadsTypes'));
     }
-    public function SaveUsersData(Request $request){
-       
-        $validator=$request->validate([
-            'firstname'=>'required',
-            'lastname'=>'required',
-            'email'=>'required|email|distinct|unique:users|min:5',
-            'mobileno'=>'required|distinct|unique:users|min:5',
-            'phone'=>'required',
-            'venue_group_id'=>'required',
-            'lead_type'=>'required',
-        ]);
-        
-        
-        $this->users->name=$request['firstname'].' '.$request['lastname'];
-        $this->users->firstname=$request['firstname'];
-        $this->users->lead_type=$request['lead_type'];
-        $this->users->lastname=$request['lastname'];
-        $this->users->email=$request['email'];
-        $this->users->mobileno=$request['mobileno'];
-        $this->users->phone=$request['phone'];
-        $this->users->is_active=1;
-        $this->users->password=Hash::make('12345678');
 
-        $this->users->created_at=time();
-        $this->users->group_id=config('constants.groups.subscriber');
-        
-      
-  
-        $request->session()->flash('alert-success', 'Lead Added! Please Check in Pending Leads Tab');
-        $this->users->save();
-       
-        $this->venue_users->user_id=$this->users->id;
-        $this->venue_users->venue_group_id=$request['venue_group_id'];
-        $this->venue_users->save();
-
-        $this->users->where('id', $this->users->id)
-                    ->update(array('venue_users_id'=>$this->venue_users->id));
-        
-                    // Activity Log
-                    $activityComment='Mr.'.get_session_value('name').' Added new Lead '.$this->users->name;
-                    $activityData=array(
-                        'user_id'=>get_session_value('id'),
-                        'action_taken_on_id'=>$this->users->id,
-                        'action_slug'=>'new_lead_added',
-                        'comments'=>$activityComment,
-                        'others'=>'users',
-                        'created_at'=>date('Y-m-d H:I:s',time()),
-                    );
-                    $activityID=log_activity($activityData);
-
-        return redirect()->back();
-        
-    }
     
 
     // List All the Leads 
@@ -129,6 +77,17 @@ class LeadsController extends Controller
 
       
  
+        // $leadsData=$this->users->with('getVenueGroup')
+        // ->where('group_id', '=', config('constants.groups.subscriber'))
+        // ->where('is_active', '=', 1)
+        // ->orderBy('created_at', 'desc')->get();
+    
+        // p($leadsData);
+        // die;
+        //$TestsDatawithPatient=$this->Patient_Tests->where('org_id',$user->org_id)->with('patient')->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+
+
+        //$leadsData=$leadsData->toArray();
         
         return view('adminpanel/leads',compact('leadsData','user'));
     }

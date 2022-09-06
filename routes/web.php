@@ -80,32 +80,45 @@ Route::post('admin/organizations/add',[OrganizationsController::class,'SaveOrgDa
 Route::get('admin/organizations/update/{id}',[OrganizationsController::class,'UpdateOrgData'])->name('admin/organizations/update/{id}');
 
 // Lead Management 
-// Route::get('/admin/dashboard/{id?}', [DashboardController::class,'index'])->name('admin/dashboard/{id?}');
-Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/users');
-Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/users');
-Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('/admin/users/add');
-Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('admin/users/add');
-Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('admin/users/changestatus/{id}');
+
+Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/leads');
+Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/leads');
+Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('/admin/leads/add');
+Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('admin/leads/add');
+Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('admin/leads/changestatus/{id}');
+
+// Customers Management 
+
+Route::get('/admin/customers',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
+//Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
+Route::get('/admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'addcustomers'])->name('/admin/customers/add');
+Route::post('admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'SaveCustomersData'])->name('admin/customers/add');
+Route::any('admin/customers/ajaxcall/{id}',[App\Http\Controllers\adminpanel\CustomersController::class,'ajaxcall'])->name('admin/customers/changestatus/{id}');
+
+// PhotoGrapher Management 
+Route::get('/admin/photographers',[App\Http\Controllers\adminpanel\PhotographerController::class,'photographers'])->name('/admin/photographers');
+Route::get('/admin/photographers/add',[App\Http\Controllers\adminpanel\PhotographerController::class,'addphotographers'])->name('/admin/photographers/add');
+Route::post('admin/photographers/add',[App\Http\Controllers\adminpanel\PhotographerController::class,'SavephotographersData'])->name('admin/photographers/add');
+Route::any('admin/photographers/ajaxcall/{id}',[App\Http\Controllers\adminpanel\PhotographerController::class,'ajaxcall'])->name('admin/photographers/changestatus/{id}');
+
+// Venue Group Management 
+Route::get('/admin/venuegroups',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'venuegroups'])->name('/admin/venuegroups');
+Route::get('/admin/venuegroups/add',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'addvenuegroups'])->name('/admin/venuegroups/add');
+Route::post('admin/venuegroups/add',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'SavevenuegroupsData'])->name('admin/venuegroups/add');
+Route::any('admin/venuegroups/ajaxcall/{id}',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'ajaxcall'])->name('admin/venuegroups/changestatus/{id}');
 
 //echo 'echo'. config('constants.groups.staff');
 //echo '<br>echasdo'. config('constants.groups.subscriber'); die;
 // Users Management
-Route::get('/admin/users',[AdminController::class,'users'])->name('/admin/users');
-Route::get('/admin/users/add',[AdminController::class,'addUser'])->name('/admin/users/add');
-Route::post('admin/users/add',[AdminController::class,'SaveUsersData'])->name('admin/users/add');
-Route::any('admin/users/update/{id}',[AdminController::class,'UpdateUsersData'])->name('admin/users/update/{id}');
-Route::any('admin/users/delete/{id}',[AdminController::class,'DeleteUsersData'])->name('admin/users/delete/{id}');
-Route::any('admin/users/changestatus/{id}',[AdminController::class,'changeStatus'])->name('admin/users/changestatus/{id}');
+Route::get('/admin/users',[App\Http\Controllers\adminpanel\AdminController::class,'users'])->name('/admin/users');
+Route::get('/admin/users/add',[App\Http\Controllers\adminpanel\AdminController::class,'addUser'])->name('/admin/users/add');
+Route::post('admin/users/add',[App\Http\Controllers\adminpanel\AdminController::class,'SaveUsersData'])->name('admin/users/add');
+Route::any('admin/users/update/{id}',[App\Http\Controllers\adminpanel\AdminController::class,'UpdateUsersData'])->name('admin/users/update/{id}');
+Route::any('admin/users/delete/{id}',[App\Http\Controllers\adminpanel\AdminController::class,'DeleteUsersData'])->name('admin/users/delete/{id}');
+Route::any('admin/users/changestatus/{id}',[App\Http\Controllers\adminpanel\AdminController::class,'changeStatus'])->name('admin/users/changestatus/{id}');
+Route::get('/admin/activity-log',[App\Http\Controllers\adminpanel\AdminController::class,'activitylog'])->name('/admin/activitylog');
 
 
-
-// CRUD For Lab Tests 
-Route::get('/admin/lab-tests/', [AdminLabTestsController::class,'index'])->name('admin/lab-tests');
-Route::get('/admin/lab-tests/add',[AdminLabTestsController::class,'add'])->name('admin/lab-tests/add');
-Route::post('/admin/lab-tests/add',[AdminLabTestsController::class,'saveFormData'])->name('admin/lab-tests/add');
-Route::get('/admin/lab-tests/edit/{id}',[AdminLabTestsController::class,'editTestData'])->name('admin/lab-tests/edit/{id}');
-Route::post('/admin/lab-tests/edit/{id}',[AdminLabTestsController::class,'UpdateTestData'])->name('admin/lab-tests/edit/{id}');
-Route::get('/admin/lab-tests-params/delete/{id}',[AdminLabTestsController::class,'deleteTestParam'])->name('admin/lab-tests-params/delete/{id}');
 
 });
 

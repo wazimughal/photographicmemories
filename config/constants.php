@@ -26,4 +26,9 @@ return [
     ]
 ];
 
+/*
+    'customer_added' => 'User Added a customer',
+    'new_lead_added '=> New Lead Added
+    
+*/
 ?>

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('city', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->string('name',50);
             $table->string('slug',50)->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
 
         });
          // Insert some stuff
-         DB::table('city')->insert(
+         DB::table('cities')->insert(
             array(
                 
                 [

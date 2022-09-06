@@ -1,7 +1,7 @@
 @extends('adminpanel.admintemplate')
 @push('title')
     <title>
-        Leads| {{ config('constants.app_name') }}</title>
+        customers| {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->
@@ -11,10 +11,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
-                        <h1>View Leads </h1>
+                        <h1>View customers </h1>
 
                     </div>
-                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/leads/add') }}"
+                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/customers/add') }}"
                             class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
                     <div class="col-sm-2">&nbsp;</div>
                     <div class="col-sm-6">
@@ -36,7 +36,7 @@
 
                         <div class="card card-success">
                             <div class="card-header">
-                                <h3 class="card-title">Leads</h3>
+                                <h3 class="card-title">customers</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -47,19 +47,25 @@
                                             <th>Email</th>
                                             <th>Venue Group</th>
                                             <th>Venue Group Address</th>
+                                            <th>Manager Name</th>
+                                            <th>Manager Phone</th>
                                             <th>Type</th>
-                                            <th>Status</th>
-                                            <th>Change</th>
+                                            {{-- <th>Status</th>
+                                            <th>Change</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
                                             $counter = 1;
-                                            foreach ($leadsData as $data){
+                                            
+                                            foreach ($customersData as $data){
+                                               
+                                               
                                             $venueGroupData=getVenueGrpupById(($data['getVenueGroup']['venue_group_id']));
+                                           
                                             $data['get_venue_group']=$venueGroupData[0];
-                                                
+                                           
                                             ?>
                                         <tr id="row_{{ $data['id'] }}">
                                             <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong>
@@ -68,14 +74,18 @@
                                             <td id="venue_group_name_{{ $data['id'] }}">
                                                 {{ $data['get_venue_group']['name'] }}</td>
                                             <td id="venue_group_address_{{ $data['id'] }}">
-                                                {{ $data['get_venue_group']['address'] }}</td>
+                                                {{ $data['get_venue_group']['address'] }} </td>
+                                                 <td id="venue_group_hod_name_{{ $data['id'] }}">
+                                                    {{ $data['get_venue_group']['hod_name'] }}</td>
+                                                    <td id="venue_group_hod_phone_{{ $data['id'] }}">
+                                                        {{ $data['get_venue_group']['hod_phone'] }}</td>
                                             <td id="lead_type_title_{{ $data['id'] }}">
                                                 @php
                                                     $leadType = config('constants.lead_types.' . $data['lead_type']);
                                                     echo $leadType['title'];
                                                 @endphp
                                             </td>
-                                            <td id="status{{ $data['id'] }}">
+                                            {{-- <td id="status{{ $data['id'] }}">
                                                 @if ($data['status'] == config('constants.lead_status.pending'))
                                                     <a @disabled(true)
                                                         class="btn btn-danger btn-flat btn-sm"><i
@@ -91,12 +101,7 @@
                                                 @endif
                                             </td>
                                             <td id="is_active_{{ $data['id'] }}">
-                                                {{-- @if ($data['is_active'] == 1)
-                                                    <a @disabled(true) class="btn btn-success btn-flat btn-sm"><i class="fas fa-chart-line"></i> Active</a>
-                                                    @else
-                                                    <a @disabled(true) class="btn bg-gradient-secondary btn-flat btn-sm"><i class="fas fa-chart-line"></i> In-Active</a>
-                                                    @endif --}}
-                                                <select datacounter="{{ $counter }}" dataid="{{ $data['id'] }}"
+                                                 <select datacounter="{{ $counter }}" dataid="{{ $data['id'] }}"
                                                     class="form-control select2bs4 current_status" style="width: 100%;">
                                                     <option datacounter="{{ $counter }}" dataid="{{ $data['id'] }}"
                                                         value="{{ config('constants.lead_status.pending') }}"
@@ -111,13 +116,10 @@
                                                         @php if(config('constants.lead_status.cancelled')==$data['status']){echo 'selected="selected"';} @endphp>
                                                         Cancel</option>
                                                 </select>
-                                            </td>
+                                            </td> --}}
                                             <td>
 
-                                                <a onClick="addToCustomerForm({{ $data['id'] }},{{ $counter }})"
-                                                    class="btn btn-success btn-block btn-sm"><i class="fa fa-plus"></i> Add
-                                                    to Customer</a>
-                                                <button onClick="updateForm({{ $data['id'] }},{{ $counter }})"
+                                                <button onClick="editCustomerForm({{ $data['id'] }},{{ $counter }})"
                                                     class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</button>
                                                 <button onClick="viewLeadData({{ $data['id'] }},{{ $counter }})"
@@ -135,11 +137,7 @@
                                                             type="button" class="btn btn-warning btn-block btn-sm"><i
                                                                 class="fas fa-chart-line"></i>
                                                             Trash</button>
-                                                        {{-- @else
-                                                        <button
-                                                        onClick="changeStatus({{ $data['id'] }},{{ $counter }},'activate')"
-                                                        type="button" class="btn btn-success btn-block btn-sm"><i class="fas fa-chart-line"></i>
-                                                        Activate</button> --}}
+                                                        
                                                     @endif
                                                 </div>
                                             </td>
@@ -148,7 +146,8 @@
 
                                         </tr>
                                         <?php 
-                                                $counter ++;
+                                            
+                                              $counter ++;
                                         }
                                         ?>
 
@@ -160,16 +159,18 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Organization Name</th>
-                                            <th>Address</th>
-                                            <th>Group</th>
-                                            <th>Status</th>
-                                            <th>Change</th>
+                                            <th>Venue Group</th>
+                                            <th>Venue Group Address</th>
+                                            <th>Manager Name</th>
+                                            <th>Manager Phone</th>
+                                            <th>Type</th>
+                                            {{-- <th>Status</th>
+                                            <th>Change</th> --}}
                                             <th>Action</th>
                                         </tr>
                                         <tr>
                                             <td colspan="8">
-                                                <div class="text-right"> {{ $leadsData->links() }}</div>
+                                                <div class="text-right"> {{ $customersData->links() }}</div>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -197,7 +198,7 @@
             <div class="modal-content">
                 <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title"> Leads Panel</h3>
+                        <h3 class="card-title"> customers Panel</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -267,7 +268,7 @@
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/leads/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/customers/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -296,7 +297,7 @@
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/leads/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/customers/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -323,7 +324,7 @@
             var formData = ($('#EditLeadForm').formToJson());
             // console.log(formData);
             $.ajax({
-                url: "{{ url('/admin/leads/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/customers/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -366,16 +367,16 @@
         }
 
         // add Lead to Customer 
-        function addToCustomerForm(id, counter_id = 1) {
+        function editCustomerForm(id, counter_id = 1) {
 
             var sendInfo = {
-                action: 'addToCustomerForm',
+                action: 'editCustomerForm',
                 counter: counter_id,
                 status: status,
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/leads/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/customers/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -398,11 +399,11 @@
             return false;
         }
         // Ajax to Update Lead Data
-        function updateLead(id, counter_id = 1) {
-            var formData = ($('#EditLeadForm').formToJson());
+        function updateCustomer(id, counter_id = 1) {
+            var formData = ($('#EditCustomerForm').formToJson());
             // console.log(formData);
             $.ajax({
-                url: "{{ url('/admin/leads/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/customers/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -421,8 +422,6 @@
                         // $('#row_' + data.id).removeClass('even');
                         // $('#row_' + data.id).addClass('alert-info');
                         // // Close modal and success Message
-                        if(data.actionType=='move_to_customer')
-                        $('#row_' + data.id).html('');
                         $('#modal-xl-lead').modal('toggle')
 
 
@@ -484,7 +483,7 @@
                     };
 
                     $.ajax({
-                        url: "{{ url('/admin/leads/ajaxcall/') }}/" + id,
+                        url: "{{ url('/admin/customers/ajaxcall/') }}/" + id,
                         data: sendInfo,
                         contentType: 'application/json',
                         error: function() {
@@ -541,7 +540,7 @@
                 };
 
                 $.ajax({
-                    url: "{{ url('/admin/leads/ajaxcall/') }}/" + id,
+                    url: "{{ url('/admin/customers/ajaxcall/') }}/" + id,
                     data: sendInfo,
                     contentType: 'application/json',
                     error: function() {

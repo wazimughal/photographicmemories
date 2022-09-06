@@ -73,12 +73,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{url('admin/leads/add')}}" class="nav-link">
-                  <i class="fa fa-plus"></i>
-                  <p>Add Lead</p>
-                </a>
-              </li>
+              
               <li class="nav-item">
                 <a href="{{url('admin/leads')}}" class="nav-link">
                   <i class="fa fa-hospital"></i>
@@ -103,79 +98,84 @@
                   <p>Cancelled Lead</p>
                 </a>
               </li>
-              
+              <li class="nav-item">
+                <a href="{{url('admin/leads/add')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Add Lead</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon far fa-building"></i>
+              <i class="nav-icon far fa-hospital"></i>
               <p>
-                ORGANIZATIONS
+                Venue Group
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
+              
               <li class="nav-item">
-                <a href="{{url('admin/organizations')}}" class="nav-link">
+                <a href="{{url('admin/venuegroups')}}" class="nav-link">
                   <i class="far fa-hospital"></i>
-                  <p>Organizations</p>
+                  <p> Venue Group List</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/organizations/add')}}" class="nav-link">
+                <a href="{{url('admin/venuegroups/add')}}" class="nav-link">
                   <i class="fa fa-plus"></i>
-                  <p>Add Organization</p>
+                  <p>Add Venue Group</p>
                 </a>
               </li>
             </ul>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-comment-medical"></i>
-              
+              <i class="nav-icon fa fa-users"></i>
               <p>
-                TEST
+                Customers
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{url('admin/lab-tests')}}" class="nav-link">
-                  <i class="far fa-folder nav-icon"></i>
-                  <p>Tests</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{url('admin/lab-tests/add')}}" class="nav-link">
-                  <i class="fa fa-plus"></i>
-                     <p>Add Test</p>
-                </a>
-              </li>
               
+              <li class="nav-item">
+                <a href="{{url('admin/customers')}}" class="nav-link">
+                  <i class="fa fa-user"></i>
+                  <p> Customer List</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/customers/add')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Add Customer</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon fa fa-comment-medical"></i>
+              <i class="nav-icon fa fa-images"></i>
               <p>
-                PATIENT REPORTS
+                Photographer
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{url('admin/patient-reports')}}" class="nav-link">
-                  <i class="far fa-folder nav-icon"></i>
-                  <p>Patient Reports</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{url('admin/patient-reports/create')}}" class="nav-link">
-                  <i class="fa fa-plus"></i>
-                    <p>Add Patient Report</p>
-                </a>
-              </li>
               
+              <li class="nav-item">
+                <a href="{{url('admin/photographers')}}" class="nav-link">
+                  <i class="fa fa-images"></i>
+                  <p> Photographer List</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/photographers/add')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Add Photographer</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
@@ -201,6 +201,25 @@
                 </a>
               </li>
               
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-images"></i>
+              <p>
+                Activities
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              
+              <li class="nav-item">
+                <a href="{{url('admin/activity-log')}}" class="nav-link">
+                  <i class="fa fa-images"></i>
+                  <p> Activity Log</p>
+                </a>
+              </li>
+             
             </ul>
           </li>
           <li class="nav-item">

@@ -20,7 +20,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v1</li>
+                            <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -33,140 +33,183 @@
             <div class="container-fluid">
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>150</h3>
+                    @php
+                    $boxDataArr=array();
+                        for($i=0; $i<3; $i++){
 
-                                <p>Pnding Leads</p>
+                        if(isset($leads_info[$i]) && !empty($leads_info[$i])){
+
+                        $leadData= $leads_info[$i];
+                        if($leadData->status==config('constants.lead_status.pending')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=$leadData->total;
+                            $boxDataArr['type']=$leadData->status;
+                            $boxDataArr['title']='Pending Leads';
+                            $boxDataArr['more']='/admin/lead/pending';
+                            }
+                        elseif($leadData->status==config('constants.lead_status.approved')){
+                            $boxDataArr['class']='bg-success';
+                            $boxDataArr['total']=$leadData->total;
+                            $boxDataArr['type']=$leadData->status;
+                            $boxDataArr['title']='Approved Leads';
+                            $boxDataArr['more']='/admin/lead/approved';
+                            }
+                        elseif($leadData->status==config('constants.lead_status.cancelled')){
+                            $boxDataArr['class']='bg-danger';
+                            $boxDataArr['total']=$leadData->total;
+                            $boxDataArr['type']=$leadData->status;
+                            $boxDataArr['title']='Cancelled Leads';
+                            $boxDataArr['more']='/admin/lead/cancelled';
+                            }
+                        elseif($leadData->status==config('constants.lead_status.trashed')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=$leadData->total;
+                            $boxDataArr['type']=$leadData->status;
+                            $boxDataArr['title']='Trashed Leads';
+                            $boxDataArr['more']='/admin/lead/trash';
+                            }
+                        }
+                        else{ // ELSE portion if array is empty
+                            
+                            if($i==config('constants.lead_status.pending')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Pending Leads';
+                            $boxDataArr['more']='/admin/lead/pending';
+                            }
+                        elseif($i==config('constants.lead_status.approved')){
+                            $boxDataArr['class']='bg-success';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Approved Leads';
+                            $boxDataArr['more']='/admin/lead/approved';
+                            }
+                        elseif($i==config('constants.lead_status.cancelled')){
+                            $boxDataArr['class']='bg-danger';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Cancelled Leads';
+                            $boxDataArr['more']='/admin/lead/cancelled';
+                            }
+                        elseif($i==config('constants.lead_status.trashed')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Trashed Leads';
+                            $boxDataArr['more']='/admin/lead/trash';
+                            }
+                            
+                        }
+                         echo '<div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box '.$boxDataArr['class'].'">
+                            <div class="inner">
+                                <h3>'.$boxDataArr['total'].'</h3>
+
+                                <p>'.$boxDataArr['title'].'</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-bag"></i>
                             </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <a href="'.$boxDataArr['more'].'" class="small-box-footer">More info <i
                                     class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h3>53</h3>
+                            </div>
+                        </div>';   
+                        }
+                    @endphp
+                    @php
+                    $boxDataArr=array();
+                    $k=1;
+                        for($i=0; $i<4; $i++){
 
-                                <p>Approved Leads</p>
+                        if(isset($user_info[$i]) && !empty($user_info[$i])){
+
+                        $userData= $user_info[$i];
+                        if($userData->group_id==config('constants.groups.admin')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=$userData->total;
+                            $boxDataArr['type']=$userData->group_id;
+                            $boxDataArr['title']='Admin';
+                            $boxDataArr['more']='/admin/lead/pending';
+                            }
+                        elseif($userData->group_id==config('constants.groups.venue_group_hod')){
+                            $boxDataArr['class']='bg-success';
+                            $boxDataArr['total']=$userData->total;
+                            $boxDataArr['type']=$userData->group_id;
+                            $boxDataArr['title']='Venue Groups';
+                            $boxDataArr['more']='/admin/lead/approved';
+                            }
+                        elseif($userData->group_id==config('constants.groups.customer')){
+                            $boxDataArr['class']='bg-danger';
+                            $boxDataArr['total']=$userData->total;
+                            $boxDataArr['type']=$userData->group_id;
+                            $boxDataArr['title']='Customers';
+                            $boxDataArr['more']='/admin/lead/cancelled';
+                            }
+                        elseif($userData->group_id==config('constants.groups.photographer')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=$userData->total;
+                            $boxDataArr['type']=$userData->group_id;
+                            $boxDataArr['title']='Photographers';
+                            $boxDataArr['more']='/admin/lead/trash';
+                            }
+                        }
+                        else{ // ELSE portion if array is empty
+                            
+                            if($k==config('constants.groups.admin')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='admin';
+                            $boxDataArr['more']='/admin/lead/pending';
+                            }
+                        elseif($k==config('constants.groups.venue_group_hod')){
+                            $boxDataArr['class']='bg-success';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Venue Group';
+                            $boxDataArr['more']='/admin/lead/approved';
+                            }
+                        elseif($i==config('constants.groups.customer')){
+                            $boxDataArr['class']='bg-danger';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Customer';
+                            $boxDataArr['more']='/admin/lead/cancelled';
+                            }
+                        elseif($k==config('constants.groups.photographer')){
+                            $boxDataArr['class']='bg-info';
+                            $boxDataArr['total']=0;
+                            $boxDataArr['type']=$i;
+                            $boxDataArr['title']='Photographer';
+                            $boxDataArr['more']='/admin/lead/trash';
+                            }
+                          $k++;  
+                        }
+                         echo '<div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box '.$boxDataArr['class'].'">
+                            <div class="inner">
+                                <h3>'.$boxDataArr['total'].'</h3>
+
+                                <p>'.$boxDataArr['title'].'</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
+                                <i class="ion ion-bag"></i>
                             </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <a href="'.$boxDataArr['more'].'" class="small-box-footer">More info <i
                                     class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-danger">
-                            <div class="inner">
-                                <h3>65</h3>
-
-                                <p>Cancelled Lead</p>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-pie-graph"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
+                        </div>';   
+                        }
+                    @endphp
                     <!-- ./col -->
 
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>44</h3>
+                    
 
-                                <p>Customers</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-person-add"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                </div>
-                <div class="row">
-
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h3>15</h3>
-
-                                <p>Photographers</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-danger">
-                            <div class="inner">
-                                <h3>65</h3>
-
-                                <p>Schedules </p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-pie-graph"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>44</h3>
-
-                                <p>Reports</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-person-add"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    {{-- <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>150</h3>
-
-                <p>Pnding Leads</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div> --}}
-                    <!-- ./col -->
+                   
+               
                 </div>
                 <!-- /.row -->
                 <!-- Main row -->

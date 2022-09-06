@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\adminpanel\Users;
 use App\Models\adminpanel\Groups;
+use App\Models\adminpanel\activitiestLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +17,21 @@ class AdminController extends Controller
         
         $this->users= new Users;
         $this->groups= new Groups;
+        
       }
 
     public function index(){
      
         return view('adminpanel/register');
+    }
+    public function activitylog(){
+        $user=Auth::user();
+        $this->activitylog= new activitiestLog;
+        $activitylogData=$this->activitylog->with('userData')
+        ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+     
+    return view('adminpanel/activitylog',compact('activitylogData','user'));
+     
     }
 
     public function logout(Request $request){
