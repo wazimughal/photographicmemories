@@ -2,7 +2,11 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{url('admin/dashboard')}}" class="brand-link">
+    <img src="{{url('adminpanel/dist/img/logo_photographic.jpg')}}" alt="Thephotographic Memories" width="100%">
+    </a>
+    <a href="{{url('admin/dashboard')}}" class="brand-link">
       {{-- {{config('constants.app_name')}} --}}
+     
       <span class="brand-text font-weight-light">{{config('constants.app_name')}}</span>
     </a>
     <!-- Sidebar -->
@@ -64,6 +68,7 @@
               </li> --}}
             </ul>
           </li>
+          @if($user->group_id!=config('constants.groups.photographer'))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-building"></i>
@@ -106,6 +111,8 @@
               </li>
             </ul>
           </li>
+          @endif
+          @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.venue_group_hod'))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-hospital"></i>
@@ -130,6 +137,8 @@
               </li>
             </ul>
           </li>
+          @endif
+          @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.customer'))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-users"></i>
@@ -154,6 +163,54 @@
               </li>
             </ul>
           </li>
+          @endif
+        
+          @if($user->group_id==config('constants.groups.photographer'))
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-users"></i>
+              <p>
+                Photographer Bookings
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              
+              <li class="nav-item">
+                <a href="{{url('photographer/bookings')}}" class="nav-link">
+                  <i class="fa fa-user"></i>
+                  <p> Booking List</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @else
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-users"></i>
+              <p>
+                Bookings
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              
+              <li class="nav-item">
+                <a href="{{url('admin/bookings')}}" class="nav-link">
+                  <i class="fa fa-user"></i>
+                  <p> Booking List</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/bookings/place')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Book Venue</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @endif
+          @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.photograper'))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-images"></i>
@@ -178,6 +235,9 @@
               </li>
             </ul>
           </li>
+          @endif
+
+          @if($user->group_id==config('constants.groups.admin'))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-users"></i>
@@ -206,8 +266,7 @@
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-images"></i>
-              <p>
-                Activities
+              <p>Activities
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -219,8 +278,26 @@
                   <p> Activity Log</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{url('/admin/colors')}}" class="nav-link">
+                  <i class="nav-icon far fa-calendar-alt"></i>
+                  <p>
+                    Color Management
+                  </p>
+                </a>
+              </li>
              
             </ul>
+          </li>
+          @endif
+          <li class="nav-item">
+            <a href="{{url('admin/calender')}}" class="nav-link">
+              <i class="nav-icon far fa-calendar-alt"></i>
+              <p>
+                Calendar
+                <span class="badge badge-info right">2</span>
+              </p>
+            </a>
           </li>
           <li class="nav-item">
             <a href="{{url('/admin/logout')}}" class="nav-link">

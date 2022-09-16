@@ -47,6 +47,9 @@ class Kernel extends HttpKernel
         'adminHodGaurd' => [
             \App\Http\Middleware\adminHodGaurd::class
         ],
+        'authGaurd' => [
+            \App\Http\Middleware\authGaurd::class
+        ],
 
     ];
 
@@ -68,11 +71,11 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'adminHodGaurd'=>\App\Http\Middleware\adminHodGaurd::class,
-        'staffHodGaurd'=>\App\Http\Middleware\staffHodGaurd::class,
+        'authGaurd'=>\App\Http\Middleware\authGaurd::class,
+        'photographerGaurd'=>\App\Http\Middleware\photographerGaurd::class,
         'roleGaurd'=>\App\Http\Middleware\RoleGaurd::class,
         'adminGaurd'=>\App\Http\Middleware\AdminGaurd::class,
-        'hodGaurd'=>\App\Http\Middleware\HodGaurd::class,
+        'venueGroupGaurd'=>\App\Http\Middleware\venueGroupGaurd::class,
         'staffGaurd'=>\App\Http\Middleware\StaffGaurd::class,
         'subscriberGaurd'=>\App\Http\Middleware\SubscriberGaurd::class,
     ];

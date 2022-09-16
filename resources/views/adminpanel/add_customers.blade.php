@@ -144,6 +144,26 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
+                                          <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                                              placeholder="password" required value="{{ old('password') }}">
+                                          <div class="input-group-append">
+                                              <div class="input-group-text">
+                                                  <span class="fas fa-envelope"></span>
+                                              </div>
+                                          </div>
+                                          @error('password')
+                                              <div class="invalid-feedback">
+                                                  {{ $message }}
+                                              </div>
+                                          @enderror
+                                      </div>
+                                        </div>
+                                        <div class="col-3">&nbsp;</div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">&nbsp;</div>
+                                        <div class="col-6">
+                                        <div class="input-group mb-3">
                                           <input type="text" name="mobileno" class="form-control @error('mobileno') is-invalid @enderror"
                                               placeholder="Mobile No." value="{{ old('mobileno') }}">
                                           <div class="input-group-append">

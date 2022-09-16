@@ -10,6 +10,7 @@ use App\Models\adminpanel\activitiestLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Session;
 
 class AdminController extends Controller
 {
@@ -36,7 +37,8 @@ class AdminController extends Controller
 
     public function logout(Request $request){
       
-        $request->session()->flush();
+        Session::flush();
+        Auth::logout();
         return redirect('/');
     }
     public function noaccess(){
@@ -47,8 +49,17 @@ class AdminController extends Controller
 
     public function login(){
         $data=array();
+        if(Auth::check()){
+            return redirect('admin/dashboard');
+        }
+        
     
         return view('adminpanel/login', $data);
+    }
+    public function calenderSchedule(){
+        $user=Auth::user();
+        
+        return view('adminpanel/calender_schedule',compact('user'));
     }
     public function addUser(){
        $user=Auth::user(); 
@@ -68,6 +79,7 @@ class AdminController extends Controller
              'password'=>'required',
                
        ]);
+       
        if(Auth::check())
         return redirect('/admin/dashboard');
  
@@ -185,7 +197,6 @@ class AdminController extends Controller
             'phone'=>'required',
             'password'=>'required|',
             'password_confirmation'=>'required|same:password',
-            'group_id'=>'required',
             
         ]);
         
@@ -199,7 +210,7 @@ class AdminController extends Controller
         $this->users->password=Hash::make($request['password']);
         $this->users->is_active=1;
         $this->users->created_at=time();
-        $this->users->group_id=$request['group_id'];
+        $this->users->group_id=config('constants.groups.admin');
         $request->session()->flash('alert-success', 'Successfully Registered! Please login');
         $this->users->save();
         return redirect()->back();
@@ -211,7 +222,7 @@ class AdminController extends Controller
 
         $user=Auth::user();
         
-        $usersData=$this->users->with('getGroups')->where('is_active','<',3)->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        $usersData=$this->users->with('getGroups')->where('is_active','<',3)->where('group_id',config('constants.groups.admin'))->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
         //$usersData=$usersData->toArray();
         return view('adminpanel/users',compact('usersData','user'));
     }

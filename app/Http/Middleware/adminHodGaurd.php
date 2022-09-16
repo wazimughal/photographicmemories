@@ -16,12 +16,20 @@ class adminHodGaurd
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        if(Auth::check() && (Auth::user()->group_id==config('constants.groups.admin') || Auth::user()->group_id==config('constants.groups.hod'))){
+    { 
+        
+        if(Auth::check() && 
+            (Auth::user()->group_id==config('constants.groups.admin') || 
+            Auth::user()->group_id==config('constants.groups.venue_group_hod') ||
+            Auth::user()->group_id==config('constants.groups.customer') ||
+            Auth::user()->group_id==config('constants.groups.photographer')
+            )
+        ){
+            dd('admin ROle Gaurd');
             return $next($request);
        }
         else{
-            abort(403, sprintf('Admin or HOD of Department are allowed '));
+            abort(403, sprintf('You are not authenticate to view this Page'));
 
         }
     }

@@ -97,39 +97,48 @@ class CustomersController extends Controller
     // List All the customers 
     public function customers($type=NULL){
         $user=Auth::user();
-        
-        if($type=='pending'){
-            $customersData=$this->users->with('getVenueGroup')
-            ->where('group_id', '=', config('constants.groups.customer'))
-            ->where('status', '=', config('constants.lead_status.pending'))
-            ->where('is_active', '=', 1)
-            ->where('venue_users_id', '!=', NULL)
-            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
-        }
-        elseif($type=='approved'){
-            $customersData=$this->users->with('getVenueGroup')
-            ->where('group_id', '=', config('constants.groups.customer'))
-            ->where('status', '=', config('constants.lead_status.approved'))
-            ->where('is_active', '=', 1)
-            ->where('venue_users_id', '!=', NULL)
-            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
-        }
-        elseif($type=='cancelled'){
-            $customersData=$this->users->with('getVenueGroup')
-            ->where('group_id', '=', config('constants.groups.customer'))
-            ->where('status', '=', config('constants.lead_status.cancelled'))
-            ->where('is_active', '=', 1)
-            ->where('venue_users_id', '!=', NULL)
-            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        if($user->group_id==config('constants.groups.admin')){
+
+            
+            if($type=='pending'){
+                $customersData=$this->users->with('getVenueGroup')
+                ->where('group_id', '=', config('constants.groups.customer'))
+                ->where('status', '=', config('constants.lead_status.pending'))
+                ->where('is_active', '=', 1)
+                ->where('venue_users_id', '!=', NULL)
+                ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+            }
+            elseif($type=='approved'){
+                $customersData=$this->users->with('getVenueGroup')
+                ->where('group_id', '=', config('constants.groups.customer'))
+                ->where('status', '=', config('constants.lead_status.approved'))
+                ->where('is_active', '=', 1)
+                ->where('venue_users_id', '!=', NULL)
+                ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+            }
+            elseif($type=='cancelled'){
+                $customersData=$this->users->with('getVenueGroup')
+                ->where('group_id', '=', config('constants.groups.customer'))
+                ->where('status', '=', config('constants.lead_status.cancelled'))
+                ->where('is_active', '=', 1)
+                ->where('venue_users_id', '!=', NULL)
+                ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+            }
+            else{
+                $customersData=$this->users->with('getVenueGroup')
+                ->where('group_id', '=', config('constants.groups.customer'))
+                ->where('is_active', '=', 1)
+                ->where('venue_users_id', '!=', NULL)
+                ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+            }
         }
         else{
             $customersData=$this->users->with('getVenueGroup')
-            ->where('group_id', '=', config('constants.groups.customer'))
-            ->where('is_active', '=', 1)
-            ->where('venue_users_id', '!=', NULL)
-            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+                ->where('group_id', '=', get_session_value('group_id'))
+                ->where('is_active', '=', 1)
+                ->where('venue_users_id', '!=', NULL)
+                ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
         }
-        
         return view('adminpanel/customers',compact('customersData','user'));
     }
     public function UpdateUsersData($id,Request $request)

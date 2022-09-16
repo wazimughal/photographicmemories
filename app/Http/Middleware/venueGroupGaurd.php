@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class staffHodGaurd
+class venueGroupGaurd
 {
     /**
      * Handle an incoming request.
@@ -17,13 +17,14 @@ class staffHodGaurd
      */
     public function handle(Request $request, Closure $next)
     {
-        //echo 'group_id '.Auth::user()->group_id;
-        if(Auth::check() && (Auth::user()->group_id==config('constants.groups.staff') || Auth::user()->group_id==config('constants.groups.hod'))){
+        if(Auth::user() && Auth::user()->group_id==config('constants.groups.venue_group_hod')){
             return $next($request);
        }
         else{
-            abort(403, sprintf('HOD or Staff  of Department are allowed '));
+            abort(403, sprintf('Only HOD of Facility is allowed'));
 
         }
+        
+        
     }
 }

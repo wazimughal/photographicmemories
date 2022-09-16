@@ -59,7 +59,8 @@ class LeadsController extends Controller
         $this->users->phone=$request['phone'];
         $this->users->is_active=1;
         $this->users->password=Hash::make('12345678');
-
+        $this->users->lead_added_by_uid=get_session_value('id');
+        
         $this->users->created_at=time();
         $this->users->group_id=config('constants.groups.subscriber');
         
@@ -95,6 +96,8 @@ class LeadsController extends Controller
     // List All the Leads 
     public function leads($type=NULL){
         $user=Auth::user();
+        if($user->group_id== config('constants.groups.admin')){
+        // For Admin
         if($type=='pending'){
             $leadsData=$this->users->with('getVenueGroup')
             ->where('group_id', '=', config('constants.groups.subscriber'))
@@ -126,11 +129,47 @@ class LeadsController extends Controller
             ->where('venue_users_id', '!=', NULL)
             ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
         }
-
-      
- 
-        
         return view('adminpanel/leads',compact('leadsData','user'));
+    }
+    else{
+        if($type=='pending'){
+            $leadsData=$this->users->with('getVenueGroup')
+            ->where('group_id', '=', config('constants.groups.subscriber'))
+            ->where('status', '=', config('constants.lead_status.pending'))
+            ->where('lead_added_by_uid', '=', get_session_value('id'))
+            ->where('is_active', '=', 1)
+            ->where('venue_users_id', '!=', NULL)
+            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }
+        elseif($type=='approved'){
+            $leadsData=$this->users->with('getVenueGroup')
+            ->where('group_id', '=', config('constants.groups.subscriber'))
+            ->where('status', '=', config('constants.lead_status.approved'))
+            ->where('lead_added_by_uid', '=', get_session_value('id'))
+            ->where('is_active', '=', 1)
+            ->where('venue_users_id', '!=', NULL)
+            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }
+        elseif($type=='cancelled'){
+            $leadsData=$this->users->with('getVenueGroup')
+            ->where('group_id', '=', config('constants.groups.subscriber'))
+            ->where('status', '=', config('constants.lead_status.cancelled'))
+            ->where('lead_added_by_uid', '=', get_session_value('id'))
+            ->where('is_active', '=', 1)
+            ->where('venue_users_id', '!=', NULL)
+            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }
+        else{
+            $leadsData=$this->users->with('getVenueGroup')
+            ->where('group_id', '=', config('constants.groups.subscriber'))
+            ->where('lead_added_by_uid', '=', get_session_value('id'))
+            ->where('is_active', '=', 1)
+            ->where('venue_users_id', '!=', NULL)
+            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }
+        return view('adminpanel/user_leads',compact('leadsData','user'));
+     }
+        
     }
     public function UpdateUsersData($id,Request $request)
     {

@@ -27,20 +27,22 @@ return new class extends Migration
             $table->string('homeaddress')->nullable();
             $table->string('unitnumber')->unique()->nullable();
             $table->string('country')->default('USA');
-            $table->unsignedBigInteger('state_id')->nullable();
+            $table->unsignedBigInteger('state_id')->default(1);
             $table->foreign('state_id')->references('id')->on('states');
-            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('city_id')->default(1);
             $table->foreign('city_id')->references('id')->on('cities');
-            $table->unsignedBigInteger('zipcode_id')->nullable();
+            $table->unsignedBigInteger('zipcode_id')->default(1);
             $table->foreign('zipcode_id')->references('id')->on('zipcode');
             $table->string('password')->nullable();
             $table->string('profile_pic')->nullable();
             $table->tinyInteger('is_active')->default(0 );
             $table->tinyInteger('status')->default(0 );
             $table->tinyInteger('lead_type')->default(0 );
+            $table->unsignedInteger('lead_added_by_uid')->nullable();
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('groups');
             $table->unsignedInteger('venue_users_id')->nullable();
+            
             
   
             $table->rememberToken();

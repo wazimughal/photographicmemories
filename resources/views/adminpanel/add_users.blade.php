@@ -152,8 +152,8 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    
-                                    <div class="row form-group">
+                                    <input type="hidden" name="group_id" value="{{config('constants.groups.admin')}}"}>
+                                    {{-- <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
@@ -161,8 +161,12 @@
                                               class="form-control select2bs4" title="Select User Role">
                                               @php
                                                  
-                                                  foreach ($userGroups as $data) 
-                                                      echo '<option  value="' . $data['id'] . '">' . $data['title'] . '</option>';
+                                                //   foreach ($userGroups as $data) {
+                                                //     if($data['id']== config('constants.groups.subscriber') || $data['id']== config('constants.groups.subscriber') )
+                                                //     continue;
+                                                //     echo '<option  value="' . $data['id'] . '">' . $data['title'] . '</option>';    
+                                                //   }
+                                                      
                                               @endphp
                                           </select>
                                           <div class="input-group-append">
@@ -178,7 +182,7 @@
                                             </div>
                                         </div>
                                         <div class="col-3">&nbsp;</div>
-                                    </div>
+                                    </div> --}}
                                     
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>

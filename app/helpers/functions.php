@@ -43,6 +43,26 @@ if(!function_exists('getLeadWithVenuebyID')){
             return $data;
     }
 }
+if(!function_exists('getBookingbyID')){
+    function getBookingbyID($id=NULL){
+            if($id>0){
+                $bookingData=App\Models\adminpanel\orders::with('customer')
+                ->with('venue_group')
+                ->with('photographers')
+                ->where('id',$id)
+                ->orderBy('created_at', 'desc')->get()->toArray();
+                
+                
+            }else{
+               return array();
+            }
+            if(isset($bookingData[0]))
+            return $bookingData[0];
+
+            else 
+            return array();
+    }
+}
 if(!function_exists('phpslug')){
     function phpslug($string)
     {
@@ -180,6 +200,46 @@ if(!function_exists('getAdvisedTestsNames')){
 //         return array();
 //     }
 // }
+// Get Options of _photographer_
+if(!function_exists('get_photographer_options')){
+    function get_photographer_options($selectID=NULL){
+    
+        $photographersData = App\Models\adminpanel\users::where('is_active',1)
+        ->where('group_id', '=', config('constants.groups.photographer'))
+        ->orderBy('id', 'desc')->get();
+        if($photographersData)
+         $photographersData=$photographersData->toArray();
+         $options='';
+         //p($photographersData);
+        foreach($photographersData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        
+     return $options;   
+    }
+}
+// Get Options of _photographer_
+if(!function_exists('get_customer_options')){
+    function get_customer_options($selectID=NULL){
+    
+        $customersData = App\Models\adminpanel\users::where('is_active',1)
+        ->where('group_id', '=', config('constants.groups.customer'))
+        ->orderBy('id', 'desc')->get();
+        if($customersData)
+         $customersData=$customersData->toArray();
+         $options='';
+         
+        foreach($customersData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        
+     return $options;   
+    }
+}
 // Get Options of States
 if(!function_exists('getStatesOptions')){
     function getStatesOptions($selectID=NULL){
@@ -231,6 +291,34 @@ if(!function_exists('getZipCodeOptions')){
             $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['code'].'</option>';
         }
         $options .='<option  value="other">Other</option>';
+     return $options;   
+    }
+}
+
+// Get Options of Venue Groups
+if(!function_exists('get_packages')){
+    function get_packages(){
+    
+        $photographic_packages_data = App\Models\adminpanel\PhotographicPackages::where('is_active',1)->where('manually_added',NULL)->orderBy('id', 'asc')->get();
+        if($photographic_packages_data)
+         $photographic_packages_data=$photographic_packages_data->toArray();
+          return $photographic_packages_data;
+    }
+}
+// Get Options of Venue Groups
+if(!function_exists('get_venue_group_options')){
+    function get_venue_group_options($selectID=NULL){
+    
+        $venue_group_data = App\Models\adminpanel\Venue_groups::where('is_active',1)->with('ownerinfo')->orderBy('id', 'asc')->get();
+        if($venue_group_data)
+         $venue_group_data=$venue_group_data->toArray();
+         $options='';
+         
+        foreach($venue_group_data as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
      return $options;   
     }
 }

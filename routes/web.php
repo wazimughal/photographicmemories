@@ -37,7 +37,7 @@ Route::get('clearcache', function () {
     $exitCode = Artisan::call('config:cache');
     $exitCode1 = Artisan::call('config:clear');
     $exitCode2 = Artisan::call('cache:clear');
-   // $exitCode3 = Artisan::call('route:cache');
+    $exitCode3 = Artisan::call('route:cache');
 
     return "View Cache Cleared!";
 });
@@ -54,46 +54,55 @@ Route::get('/admin/patient-reports/view/{id}', [PatientReportsController::class,
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/admin/login/', [AdminController::class,'login'])->name('admin/login/');
-//Route::post('/admin/login/', [AdminController::class,'getlogin'])->name('admin/login/');
-Route::post('/admin/login/', [AdminController::class,'authenticate'])->name('admin/login/');
-Route::get('/admin/register/', [AdminController::class,'index'])->name('admin/register/');
-Route::post('/admin/register/', [AdminController::class,'register'])->name('admin/register/');
-Route::get('/admin/logout/', [AdminController::class,'logout'])->name('admin/logout/');
+Route::get('/admin/login/', [AdminController::class,'login'])->name('admin.loginform');
+Route::post('/admin/login/', [AdminController::class,'authenticate'])->name('admin.login');
+Route::get('/admin/register/', [AdminController::class,'index'])->name('admin.registerform');
+Route::post('/admin/register/', [AdminController::class,'register'])->name('admin.register');
+Route::get('/admin/logout/', [AdminController::class,'logout'])->name('admin.logout');
 
 
 // Route::middleware(['roleGaurd'])->group(function () {
 // Route::get('/admin/dashboard/{id?}', [DashboardController::class,'index'])->name('admin/dashboard/{id?}');
 // });
 
-Route::get('/admin/dashboard/{id?}', [DashboardController::class,'index'])->name('admin/dashboard/{id?}');
+Route::get('/admin/dashboard/{id?}', [DashboardController::class,'index'])->name('admin.dashboard}');
 
     
     
 
-Route::middleware(['adminHodGaurd'])->group(function () {
-
-//CRUD for Organization Data
-Route::get('/admin/organizations',[OrganizationsController::class,'show'])->name('/admin/organizations');
-Route::get('/admin/organizations/add',[OrganizationsController::class,'add'])->name('/admin/organizations/add');
-Route::post('admin/organizations/add',[OrganizationsController::class,'SaveOrgData'])->name('admin/organizations/add');
-Route::get('admin/organizations/update/{id}',[OrganizationsController::class,'UpdateOrgData'])->name('admin/organizations/update/{id}');
+Route::middleware(['authGaurd'])->group(function () {
 
 // Lead Management 
 
-Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/leads');
-Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('/admin/leads');
-Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('/admin/leads/add');
-Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('admin/leads/add');
-Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('admin/leads/changestatus/{id}');
+Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.leads');
+Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.lead');
+Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('leads.addform');
+Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('leads.add');
+Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('leads.changestatus/{id}');
 
 // Customers Management 
 
 Route::get('/admin/customers',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
-//Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
 Route::get('/admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'addcustomers'])->name('/admin/customers/add');
 Route::post('admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'SaveCustomersData'])->name('admin/customers/add');
 Route::any('admin/customers/ajaxcall/{id}',[App\Http\Controllers\adminpanel\CustomersController::class,'ajaxcall'])->name('admin/customers/changestatus/{id}');
+
+// Orders Management 
+
+Route::get('/admin/bookings',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings'])->name('admin.bookings');
+Route::get('/admin/booking/{type?}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings'])->name('admin.order.types');
+Route::get('/admin/bookings/place/{id?}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings_form'])->name('bookings.bookings_form');
+Route::post('admin/bookings/place',[App\Http\Controllers\adminpanel\OrdersController::class,'save_booking_data'])->name('bookings.save_bookings_data');
+Route::get('/admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings_edit_form'])->name('bookings.bookings_edit_form');
+Route::post('admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'save_booking_edit_data'])->name('bookings.save_booking_edit_data');
+Route::any('admin/bookings/ajaxcall/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'ajaxcall'])->name('bookings.ajaxcall');
+
+
+// Color Management 
+Route::get('/admin/colors',[App\Http\Controllers\adminpanel\ColorsController::class,'colors'])->name('colors');
+Route::post('/admin/colors',[App\Http\Controllers\adminpanel\ColorsController::class,'SavecolorsData'])->name('colors.add');
+Route::any('admin/colors/ajaxcall/{id}',[App\Http\Controllers\adminpanel\ColorsController::class,'ajaxcall'])->name('colors.ajaxcall');
+
 
 // PhotoGrapher Management 
 Route::get('/admin/photographers',[App\Http\Controllers\adminpanel\PhotographerController::class,'photographers'])->name('/admin/photographers');
@@ -117,10 +126,16 @@ Route::any('admin/users/update/{id}',[App\Http\Controllers\adminpanel\AdminContr
 Route::any('admin/users/delete/{id}',[App\Http\Controllers\adminpanel\AdminController::class,'DeleteUsersData'])->name('admin/users/delete/{id}');
 Route::any('admin/users/changestatus/{id}',[App\Http\Controllers\adminpanel\AdminController::class,'changeStatus'])->name('admin/users/changestatus/{id}');
 Route::get('/admin/activity-log',[App\Http\Controllers\adminpanel\AdminController::class,'activitylog'])->name('/admin/activitylog');
-
+Route::get('/admin/calender',[App\Http\Controllers\adminpanel\AdminController::class,'calenderSchedule'])->name('user.calender');
 
 
 });
+
+// Photographer Section Only
+Route::middleware(['photographerGaurd'])->group(function () {
+Route::get('/photographer/bookings',[App\Http\Controllers\adminpanel\OrdersController::class,'photographer_bookings'])->name('photographer.bookings');
+}
+);
 
 Route::get('/admin/no-access/', function(){
     echo 'you are not allowed to access the page ! ONLY the admins are allowed';
@@ -134,7 +149,8 @@ Route::get('/hod/no-access/', function(){
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin.loginform');
+    //return view('welcome');
 });
 
 
