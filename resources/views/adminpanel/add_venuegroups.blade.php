@@ -115,14 +115,34 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="mobileno" class="form-control @error('mobileno') is-invalid @enderror"
-                                              placeholder="Mobile No." value="{{ old('mobileno') }}">
+                                          <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                                              placeholder="Password" value="{{ old('password') }}">
+                                          <div class="input-group-append">
+                                              <div class="input-group-text">
+                                                  <span class="fas fa-envelope"></span>
+                                              </div>
+                                          </div>
+                                          @error('password')
+                                              <div class="invalid-feedback">
+                                                  {{ $message }}
+                                              </div>
+                                          @enderror
+                                      </div>
+                                        </div>
+                                        <div class="col-3">&nbsp;</div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">&nbsp;</div>
+                                        <div class="col-6">
+                                        <div class="input-group mb-3">
+                                          <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
+                                              placeholder="Phone No." value="{{ old('phone') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-address-card"></span>
                                               </div>
                                           </div>
-                                          @error('mobileno')
+                                          @error('phone')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>
@@ -156,14 +176,14 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="hod_name" class="form-control @error('hod_name') is-invalid @enderror"
-                                              placeholder="Group Venue Manager Name" value="{{ old('hod_name') }}">
+                                          <input type="text" name="vg_manager_name" class="form-control @error('vg_manager_name') is-invalid @enderror"
+                                              placeholder="Group Venue Manager Name" value="{{ old('vg_manager_name') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-user"></span>
                                               </div>
                                           </div>
-                                          @error('hod_name')
+                                          @error('vg_manager_name')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>
@@ -176,14 +196,14 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="hod_phone" class="form-control @error('hod_phone') is-invalid @enderror"
-                                              placeholder="Manager Phone" value="{{ old('hod_phone') }}">
+                                          <input type="text" name="vg_manager_phone" class="form-control @error('vg_manager_phone') is-invalid @enderror"
+                                              placeholder="Manager Phone" value="{{ old('vg_manager_phone') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-phone"></span>
                                               </div>
                                           </div>
-                                          @error('hod_phone')
+                                          @error('vg_manager_phone')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>
@@ -196,14 +216,14 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="description" class="form-control @error('description') is-invalid @enderror"
-                                              placeholder="Description about Venue Group" value="{{ old('description') }}">
+                                          <input type="text" name="vg_description" class="form-control @error('vg_description') is-invalid @enderror"
+                                              placeholder="vg_description about Venue Group" value="{{ old('vg_description') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-info"></span>
                                               </div>
                                           </div>
-                                          @error('description')
+                                          @error('vg_description')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>
@@ -223,7 +243,7 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div id="othercity"></div>
+                                    {{-- <div id="othercity"></div>
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
@@ -233,19 +253,19 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div id="otherzipcode"></div>
+                                    <div id="otherzipcode"></div> --}}
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="vg_address" class="form-control @error('vg_address') is-invalid @enderror"
-                                              placeholder="Venue Group Address" value="{{ old('vg_address') }}">
+                                          <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
+                                              placeholder="Venue Group Address" value="{{ old('address') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-home"></span>
                                               </div>
                                           </div>
-                                          @error('vg_address')
+                                          @error('address')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>

@@ -87,7 +87,6 @@ class AdminController extends Controller
 
             $userData = $this->users
                                 ->with('getGroups')
-                                ->with('getVenueGroup')
                                 ->where('email', '=', $request['email'])
                                 ->where('is_active', '=', 1)
                                 ->get()->toArray();

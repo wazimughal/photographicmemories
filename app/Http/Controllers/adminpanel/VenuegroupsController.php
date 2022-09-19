@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\adminpanel\Users;
 use App\Models\adminpanel\Groups;
-use App\Models\adminpanel\Venue_groups;
-use App\Models\adminpanel\venue_users;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -21,21 +19,13 @@ class VenuegroupsController extends Controller
         
         $this->users= new Users;
         $this->groups= new Groups;
-        $this->venueGroup= new Venue_groups;
-        $this->venue_users= new venue_users;
+        
       }
       public function addvenuegroups(){
         $user=Auth::user(); 
-        $leadsTypes=getTypesOfLeads();
-        
-        $VenueGroupData = $this->venueGroup->orderBy('created_at', 'desc')->with('ownerinfo')->get();
-        if($VenueGroupData)
-        $VenueGroupData= $VenueGroupData->toArray();
-        else
-        $VenueGroupData=array();
         
  
-         return view('adminpanel/add_venuegroups',compact('user','VenueGroupData','leadsTypes'));
+         return view('adminpanel/add_venuegroups',get_defined_vars());
      }
      public function SavevenuegroupsData(Request $request){
        
@@ -43,13 +33,14 @@ class VenuegroupsController extends Controller
             'firstname'=>'required',
             'lastname'=>'required',
             'email'=>'required|email|distinct|unique:users|min:5',
-            'mobileno'=>'required|distinct|unique:users|min:5',
+            'phone'=>'required',
             'vg_name'=>'required',
-            'hod_name'=>'required',
-            'hod_phone'=>'required',
-            'description'=>'required',
+            'vg_manager_name'=>'required',
+            'vg_manager_phone'=>'required',
+            'vg_description'=>'required',
             'city'=>'required',
-            'vg_address'=>'required',
+            'address'=>'required',
+            'password'=>'required',
         ]);
         
         
@@ -57,48 +48,25 @@ class VenuegroupsController extends Controller
         $this->users->firstname=$request['firstname'];
         $this->users->lastname=$request['lastname'];
         $this->users->email=$request['email'];
-        $this->users->mobileno=$request['mobileno'];
-        $this->users->unitnumber=$request['unitnumber'];
+        $this->users->phone=$request['phone'];
+        $this->users->vg_name=$request['vg_name'];
+        $this->users->vg_manager_name=$request['vg_manager_name'];
+        $this->users->vg_manager_phone=$request['vg_manager_phone'];
+        $this->users->vg_description=$request['vg_description'];
+        $this->users->address=$request['address'];
         $this->users->is_active=1;
-        $this->users->password=Hash::make('12345678');
+        $this->users->zipcode_id=1;
+        $this->users->password=Hash::make($request['password']);
         $this->users->created_at=date('Y-m-d H:I:s',time());
         $this->users->group_id=config('constants.groups.venue_group_hod');
-       
-        if(isset($request['othercity']) && !empty($request['othercity']))
-        $cityId = getOtherCity($request['othercity']);
-        else
-        $cityId=$request['city'];
-        $this->users->city_id=$cityId;
+        $this->users->city_id=$request['city'];
 
-        if(isset($request['otherzipcode']) && !empty($request['otherzipcode']))
-        $zipcode = getOtherZipCode($request['otherzipcode']);
-        else
-        $zipcode=$request['zipcode'];
-        $this->users->zipcode_id=$zipcode;
-  
-        // $this->venueGroup= new Venue_groups;
-        // $this->venue_users= new venue_users;
-  
 
 
         $request->session()->flash('alert-success', 'venuegroup Added! Please Check in venuegroups list Tab');
         $this->users->save();
-        $request['lang']='30.0358172';
-        $request['lat']='72.3670309';
-        $request['hod_designation']='Genral Manager';
-        $this->venueGroup->name=$request['vg_name'];
-        $this->venueGroup->lang=$request['lang'];
-        $this->venueGroup->lat=$request['lat'];
-        $this->venueGroup->address=$request['vg_address'];
-        $this->venueGroup->hod_name=$request['hod_name'];
-        $this->venueGroup->description=$request['description'];
-        $this->venueGroup->hod_phone=$request['hod_phone'];
-        $this->venueGroup->hod_designation=$request['hod_designation'];
-        $this->venueGroup->is_active=1;
-        $this->venueGroup->user_id=$this->users->id;
-        $this->venueGroup->save();
         // Activity Log
-                    $activityComment='Mr.'.get_session_value('name').' Added a new venuegroup '.$this->venueGroup->name;
+                    $activityComment='Mr.'.get_session_value('name').' Added a new venuegroup '.$this->users->vg_name;
                     $activityData=array(
                         'user_id'=>get_session_value('id'),
                         'action_taken_on_id'=>$this->users->id,
@@ -116,12 +84,12 @@ class VenuegroupsController extends Controller
     public function venuegroups($type=NULL){
         $user=Auth::user();
         
-            $venuegroupsData=$this->users->with('City')->with('ZipCode')->with('VenueGroup')
+            $venuegroupsData=$this->users->with('City')->with('ZipCode')
             ->where('group_id', '=', config('constants.groups.venue_group_hod'))
             ->where('is_active', '=', 1)
             ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
        
-        return view('adminpanel/venuegroups',compact('venuegroupsData','user'));
+        return view('adminpanel/venuegroups',get_defined_vars());
     }
     public function UpdateUsersData($id,Request $request)
     {

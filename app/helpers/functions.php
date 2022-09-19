@@ -211,6 +211,7 @@ if(!function_exists('get_photographer_options')){
          $photographersData=$photographersData->toArray();
          $options='';
          //p($photographersData);
+
         foreach($photographersData as $key=>$data){
             $selected='';
             if($selectID==$data['id']) $selected='selected';
@@ -218,6 +219,28 @@ if(!function_exists('get_photographer_options')){
         }
         
      return $options;   
+    }
+}
+// Get Options of _photographer_
+if(!function_exists('get_photographer_options_with_count')){
+    function get_photographer_options_with_count($selectID=NULL){
+    
+        $photographersData = App\Models\adminpanel\users::where('is_active',1)
+        ->where('group_id', '=', config('constants.groups.photographer'))
+        ->orderBy('id', 'desc')->get();
+        if($photographersData)
+         $photographersData=$photographersData->toArray();
+         $options='';
+         //p($photographersData);
+
+        foreach($photographersData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        $retData['options']=$options;
+        $retData['total']=count($photographersData);
+     return $retData;   
     }
 }
 // Get Options of _photographer_
@@ -258,6 +281,24 @@ if(!function_exists('getStatesOptions')){
      return $options;   
     }
 }
+// Get Options of Prodcut Categories
+if(!function_exists('getpackageCatOptions')){
+    function getpackageCatOptions($selectID=NULL){
+    
+        $categoryData = App\Models\adminpanel\packages_categories::where('is_active',1)->orderBy('id', 'asc')->get();
+        if($categoryData)
+         $categoryData=$categoryData->toArray();
+         $options='';
+         
+        foreach($categoryData as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
+        }
+        //$options .='<option  value="other">Other</option>';
+     return $options;   
+    }
+}
 // Get Options of Cities
 if(!function_exists('getCitiesOptions')){
     function getCitiesOptions($selectID=NULL){
@@ -272,7 +313,7 @@ if(!function_exists('getCitiesOptions')){
             if($selectID==$data['id']) $selected='selected';
             $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
         }
-        $options .='<option  value="other">Other</option>';
+       // $options .='<option  value="other">Other</option>';
      return $options;   
     }
 }
@@ -294,22 +335,60 @@ if(!function_exists('getZipCodeOptions')){
      return $options;   
     }
 }
-
+// Get Options of Relationship with groom/bride
+if(!function_exists('relation_with_event_options')){
+    function relation_with_event_options($selectID=NULL){
+        $relations[]='Father';
+        $relations[]='Mother';
+        $relations[]='Groom';
+        $relations[]='Bride';
+        $relations[]='Brother';
+        $relations[]='Sister';
+        $relations[]='Other family member';
+        $relations[]='Hall manager';
+        $options='';
+        foreach($relations as $key=>$value){
+            $selected='';
+            if($selectID==$key) $selected='selected';
+            $options .='<option '.$selected.' value="'.$key.'">'.$value.'</option>';
+        }
+        return $options;   
+    }
+}
 // Get Options of Venue Groups
 if(!function_exists('get_packages')){
     function get_packages(){
     
-        $photographic_packages_data = App\Models\adminpanel\PhotographicPackages::where('is_active',1)->where('manually_added',NULL)->orderBy('id', 'asc')->get();
+        $photographic_packages_data = App\Models\adminpanel\PhotographicPackages::where('is_active',1)->orderBy('id', 'asc')->get();
         if($photographic_packages_data)
          $photographic_packages_data=$photographic_packages_data->toArray();
           return $photographic_packages_data;
     }
 }
 // Get Options of Venue Groups
+if(!function_exists('get_packages_options')){
+    function get_packages_options($selectID=NULL){
+    
+        $packages_data =  App\Models\adminpanel\PhotographicPackages::where('is_active',1)->orderBy('id', 'asc')->get();
+        if($packages_data)
+         $packages_data=$packages_data->toArray();
+         $options='';
+         
+        foreach($packages_data as $key=>$data){
+            $selected='';
+            if($selectID==$data['id']) $selected='selected';
+            $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'&nbsp;&nbsp;&nbsp; ('.$data['price'].'USD)</option>';
+        }
+        //$options .='<option value="other">Other</option>';
+     return $options;   
+    }
+}
+
+// Get Options of Venue Groups
 if(!function_exists('get_venue_group_options')){
     function get_venue_group_options($selectID=NULL){
     
-        $venue_group_data = App\Models\adminpanel\Venue_groups::where('is_active',1)->with('ownerinfo')->orderBy('id', 'asc')->get();
+        $venue_group_data = App\Models\adminpanel\Users::where('is_active',1)->where('group_id',config('constants.groups.venue_group_hod'))->orderBy('id', 'asc')->get();
         if($venue_group_data)
          $venue_group_data=$venue_group_data->toArray();
          $options='';
@@ -319,6 +398,7 @@ if(!function_exists('get_venue_group_options')){
             if($selectID==$data['id']) $selected='selected';
             $options .='<option '.$selected.' value="'.$data['id'].'">'.$data['name'].'</option>';
         }
+        $options .='<option value="other">Other</option>';
      return $options;   
     }
 }
@@ -332,5 +412,40 @@ if(!function_exists('getReportByIDs')){
         return array();
     }
 }
+if(!function_exists('pencilBy')){
+    function pencilBy($key){
+        if($key==config('constants.pencileBy.office'))
+        return 'Office';
+        else if($key==config('constants.pencileBy.venue_group'))
+        return 'Venue Group';
+        else if($key==config('constants.pencileBy.website'))
+        return 'Website';
+
+        return 'Invalid';
+        
+    }
+}
+if(!function_exists('booking_status')){
+    function booking_status($key){
+        if($key==config('constants.booking_status.pencil'))
+        return 'New Pencil';
+        if($key==config('constants.booking_status.awaiting_for_photographer'))
+        return 'Awaiting Photographer';
+        if($key==config('constants.booking_status.declined_by_photographer'))
+        return 'Photographer Declined';
+        if($key==config('constants.booking_status.pending_customer_agreement'))
+        return 'Pending Agreement ';
+        if($key==config('constants.booking_status.pending_customer_deposit'))
+        return 'Pending Deposit';
+        if($key==config('constants.booking_status.on_hold'))
+        return 'On Hold';
+        if($key==config('constants.booking_status.confirmed'))
+        return 'Confirmed';
+        
+        return 'Invalid';
+        
+    }
+}
 
 ?>
+  

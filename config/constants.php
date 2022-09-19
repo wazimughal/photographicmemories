@@ -10,19 +10,20 @@ return [
         'venue_group_hod' => 2,
         'customer' => 3,
         'photographer' => 4,
-        'staff' =>5,
-        'subscriber' =>6,
     ],
-    'lead_types' => [
-        0 => array('id'=>0, 'title'=>'New'),
-        1 => array('id'=>1, 'title'=>'Hot'),
-        2 =>array('id'=>2, 'title'=>'Cold')
+    'booking_status' => [
+        'pencil' => 0,
+        'awaiting_for_photographer' => 1,
+        'declined_by_photographer' => 2,
+        'pending_customer_agreement' => 3, 
+        'pending_customer_deposit' => 4, 
+        'on_hold' => 5, 
+        'confirmed' => 5, 
     ],
-    'lead_status' => [
-        'pending' => 0,
-        'approved' => 1,
-        'cancelled' => 2,
-        'trashed' => 3,
+    'pencileBy' => [
+        'office' => 0,
+        'venue_group' => 1,
+        'website' => 2,
     ]
 ];
 

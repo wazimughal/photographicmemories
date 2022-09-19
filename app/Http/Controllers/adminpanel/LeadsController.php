@@ -26,16 +26,9 @@ class LeadsController extends Controller
 
     public function addLeads(){
        $user=Auth::user(); 
-       $leadsTypes=getTypesOfLeads();
-       
-       $VenueGroupData = $this->venueGroup->orderBy('created_at', 'desc')->with('ownerinfo')->get();
-       if($VenueGroupData)
-       $VenueGroupData= $VenueGroupData->toArray();
-       else
-       $VenueGroupData=array();
        
 
-        return view('adminpanel/add_leads',compact('user','VenueGroupData','leadsTypes'));
+        return view('adminpanel/add_leads',compact('user'));
     }
     public function SaveUsersData(Request $request){
        

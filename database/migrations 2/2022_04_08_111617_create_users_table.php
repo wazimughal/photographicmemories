@@ -30,7 +30,6 @@ return new class extends Migration
             $table->string('vg_description')->nullable(); //venue Group Description
             $table->string('unitnumber')->unique()->nullable();
             $table->string('country')->default('USA');
-            $table->tinyInteger('relation_with_event')->default(0); // : 0:father, 1:mother, 2:groom, 3:bride,4: brother, 5:sister,6:other family member,7:hall manager
             $table->unsignedBigInteger('state_id')->default(1);
             $table->foreign('state_id')->references('id')->on('states');
             $table->unsignedBigInteger('city_id')->default(1);

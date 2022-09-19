@@ -74,28 +74,38 @@ Route::middleware(['authGaurd'])->group(function () {
 
 // Lead Management 
 
-Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.leads');
-Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.lead');
-Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('leads.addform');
-Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('leads.add');
-Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('leads.changestatus/{id}');
+// Route::get('/admin/leads',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.leads');
+// Route::get('/admin/lead/{type?}',[App\Http\Controllers\adminpanel\LeadsController::class,'leads'])->name('admin.lead');
+// Route::get('/admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'addLeads'])->name('leads.addform');
+// Route::post('admin/leads/add',[App\Http\Controllers\adminpanel\LeadsController::class,'SaveUsersData'])->name('leads.add');
+// Route::any('admin/leads/ajaxcall/{id}',[App\Http\Controllers\adminpanel\LeadsController::class,'ajaxcall'])->name('leads.changestatus/{id}');
 
 // Customers Management 
 
-Route::get('/admin/customers',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
-Route::get('/admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'addcustomers'])->name('/admin/customers/add');
-Route::post('admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'SaveCustomersData'])->name('admin/customers/add');
-Route::any('admin/customers/ajaxcall/{id}',[App\Http\Controllers\adminpanel\CustomersController::class,'ajaxcall'])->name('admin/customers/changestatus/{id}');
+// Route::get('/admin/customers',[App\Http\Controllers\adminpanel\CustomersController::class,'customers'])->name('/admin/customers');
+// Route::get('/admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'addcustomers'])->name('/admin/customers/add');
+// Route::post('admin/customers/add',[App\Http\Controllers\adminpanel\CustomersController::class,'SaveCustomersData'])->name('admin/customers/add');
+// Route::any('admin/customers/ajaxcall/{id}',[App\Http\Controllers\adminpanel\CustomersController::class,'ajaxcall'])->name('admin/customers/changestatus/{id}');
 
-// Orders Management 
+// Pencils Management 
 
-Route::get('/admin/bookings',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings'])->name('admin.bookings');
-Route::get('/admin/booking/{type?}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings'])->name('admin.order.types');
-Route::get('/admin/bookings/place/{id?}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings_form'])->name('bookings.bookings_form');
-Route::post('admin/bookings/place',[App\Http\Controllers\adminpanel\OrdersController::class,'save_booking_data'])->name('bookings.save_bookings_data');
-Route::get('/admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'bookings_edit_form'])->name('bookings.bookings_edit_form');
-Route::post('admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'save_booking_edit_data'])->name('bookings.save_booking_edit_data');
-Route::any('admin/bookings/ajaxcall/{id}',[App\Http\Controllers\adminpanel\OrdersController::class,'ajaxcall'])->name('bookings.ajaxcall');
+Route::get('/admin/pencils',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils'])->name('admin.pencils');
+Route::get('/admin/pencil/{type?}',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils'])->name('admin.order.types');
+Route::get('/admin/pencils/add/',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils_form'])->name('pencils.pencils_form');
+Route::post('admin/pencils/add',[App\Http\Controllers\adminpanel\BookingsController::class,'save_pencil_data'])->name('pencils.save_pencils_data');
+Route::get('/admin/pencils/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils_edit_form'])->name('pencils.pencils_edit_form');
+Route::post('admin/pencils/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'save_pencil_edit_data'])->name('pencils.save_pencil_edit_data');
+Route::any('admin/pencils/ajaxcall/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'ajaxcall'])->name('pencils.ajaxcall');
+
+// Booking Management 
+Route::get('/admin/bookings',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings'])->name('admin.bookings');
+Route::get('/admin/addnew',[App\Http\Controllers\adminpanel\BookingsController::class,'addnew'])->name('bookings.addnew');
+//Route::get('/admin/booking/{type?}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings'])->name('admin.order.types');
+Route::get('/admin/bookings/add/{id?}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings_edit_form'])->name('bookings.bookings_form');
+Route::any('admin/bookings/add',[App\Http\Controllers\adminpanel\BookingsController::class,'save_booking_data'])->name('bookings.save_bookings_data');
+Route::get('/admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings_edit_form'])->name('bookings.bookings_edit_form');
+Route::post('admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'save_booking_edit_data'])->name('bookings.save_booking_edit_data');
+Route::any('admin/bookings/ajaxcall/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'ajaxcall'])->name('bookings.ajaxcall');
 
 
 // Color Management 
@@ -115,6 +125,14 @@ Route::get('/admin/venuegroups',[App\Http\Controllers\adminpanel\VenuegroupsCont
 Route::get('/admin/venuegroups/add',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'addvenuegroups'])->name('/admin/venuegroups/add');
 Route::post('admin/venuegroups/add',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'SavevenuegroupsData'])->name('admin/venuegroups/add');
 Route::any('admin/venuegroups/ajaxcall/{id}',[App\Http\Controllers\adminpanel\VenuegroupsController::class,'ajaxcall'])->name('admin/venuegroups/changestatus/{id}');
+
+// Package Management
+Route::get('/admin/packages/categories',[App\Http\Controllers\adminpanel\PackagesController::class,'categoreis'])->name('admin.categories'); 
+Route::get('/admin/packages',[App\Http\Controllers\adminpanel\PackagesController::class,'packages'])->name('/admin/packages');
+Route::get('/admin/packages/add',[App\Http\Controllers\adminpanel\PackagesController::class,'addpackages'])->name('packages.openform');
+Route::post('admin/packages/add',[App\Http\Controllers\adminpanel\PackagesController::class,'SavepackagesData'])->name('packages.add');
+Route::any('admin/packages/ajaxcall/{id}',[App\Http\Controllers\adminpanel\PackagesController::class,'ajaxcall'])->name('packages.ajaxcall');
+Route::any('admin/packages/categoryajaxcall/{id?}',[App\Http\Controllers\adminpanel\PackagesController::class,'categoryajaxcall'])->name('pro_category.ajaxcall');
 
 //echo 'echo'. config('constants.groups.staff');
 //echo '<br>echasdo'. config('constants.groups.subscriber'); die;

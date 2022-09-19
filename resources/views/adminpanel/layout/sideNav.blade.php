@@ -39,8 +39,8 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+          <li class="nav-item {{ (request()->segment(2) == 'dashboard') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'dashboard') ? 'active' : ''}}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -69,52 +69,58 @@
             </ul>
           </li>
           @if($user->group_id!=config('constants.groups.photographer'))
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'pencils' || request()->segment(2) == 'pencil') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'pencils' || request()->segment(2) == 'pencil') ? 'active' : ''}}">
               <i class="nav-icon far fa-building"></i>
               <p>
-                Leads
+                Pencils 
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
-              
               <li class="nav-item">
-                <a href="{{url('admin/leads')}}" class="nav-link">
+                <a href="{{url('admin/pencils')}}" class="nav-link {{ (request()->segment(2) == 'pencils') ? 'active' : ''}}">
                   <i class="fa fa-hospital"></i>
-                  <p>All Lead List</p>
+                  <p>Pencils</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/lead/pending')}}" class="nav-link">
+                <a href="{{url('admin/pencil/office')}}" class="nav-link">
                   <i class="fa fa-hospital"></i>
-                  <p>Pending Lead</p>
+                  <p>Pencils by Office</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/lead/approved')}}" class="nav-link">
+                <a href="{{url('admin/pencil/web')}}" class="nav-link">
                   <i class="fa fa-hospital"></i>
-                  <p>Aproved Lead</p>
+                  <p>Penciles by Web</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/lead/cancelled')}}" class="nav-link">
+                <a href="{{url('admin/pencil/venue_group')}}" class="nav-link">
                   <i class="fa fa-hospital"></i>
-                  <p>Cancelled Lead</p>
+                  <p>Penciles by Hall</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/leads/add')}}" class="nav-link">
+                <a href="{{url('admin/pencil/trashed')}}" class="nav-link">
+                  <i class="fa fa-hospital"></i>
+                  <p>Trashed Pencile</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/pencils/add')}}" class="nav-link">
                   <i class="fa fa-plus"></i>
-                  <p>Add Lead</p>
+                  <p>Add Pencil</p>
                 </a>
               </li>
             </ul>
           </li>
+          
           @endif
           @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.venue_group_hod'))
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'venuegroups') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'venuegroups') ? 'active' : ''}}">
               <i class="nav-icon far fa-hospital"></i>
               <p>
                 Venue Group
@@ -139,7 +145,7 @@
           </li>
           @endif
           @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.customer'))
-          <li class="nav-item">
+          {{-- <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fa fa-users"></i>
               <p>
@@ -162,12 +168,12 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> --}}
           @endif
         
           @if($user->group_id==config('constants.groups.photographer'))
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'photographer') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'photographer') ? 'active' : ''}}">
               <i class="nav-icon fa fa-users"></i>
               <p>
                 Photographer Bookings
@@ -185,8 +191,8 @@
             </ul>
           </li>
           @else
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'bookings') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'bookings') ? 'active' : ''}}">
               <i class="nav-icon fa fa-users"></i>
               <p>
                 Bookings
@@ -202,17 +208,17 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{url('admin/bookings/place')}}" class="nav-link">
+                <a href="{{route('bookings.addnew')}}" class="nav-link">
                   <i class="fa fa-plus"></i>
-                  <p>Book Venue</p>
+                  <p>Add Booking</p>
                 </a>
               </li>
             </ul>
           </li>
           @endif
           @if($user->group_id==config('constants.groups.admin') || $user->group_id==config('constants.groups.photograper'))
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'photographers') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'photographers') ? 'active' : ''}}">
               <i class="nav-icon fa fa-images"></i>
               <p>
                 Photographer
@@ -238,8 +244,38 @@
           @endif
 
           @if($user->group_id==config('constants.groups.admin'))
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'packages') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'packages') ? 'active' : ''}}">
+              <i class="nav-icon fa fa-images"></i>
+              <p>
+                Packages
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              
+              <li class="nav-item">
+                <a href="{{url('admin/packages')}}" class="nav-link">
+                  <i class="fa fa-images"></i>
+                  <p> Packages List</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/packages/add')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Add Packages</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url('admin/packages/categories')}}" class="nav-link">
+                  <i class="fa fa-plus"></i>
+                  <p>Categories</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item {{ (request()->segment(2) == 'users') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'users') ? 'active' : ''}}">
               <i class="nav-icon fa fa-users"></i>
               <p>
                 USERS
@@ -263,8 +299,8 @@
               
             </ul>
           </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'activity-log') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link {{ (request()->segment(2) == 'activity-log') ? 'active' : ''}}">
               <i class="nav-icon fa fa-images"></i>
               <p>Activities
                 <i class="right fas fa-angle-left"></i>
@@ -278,8 +314,8 @@
                   <p> Activity Log</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="{{url('/admin/colors')}}" class="nav-link">
+              <li class="nav-item ">
+                <a href="{{url('/admin/colors')}}" class="nav-link {{ (request()->segment(2) == 'colors') ? 'active' : ''}}">
                   <i class="nav-icon far fa-calendar-alt"></i>
                   <p>
                     Color Management
@@ -290,8 +326,8 @@
             </ul>
           </li>
           @endif
-          <li class="nav-item">
-            <a href="{{url('admin/calender')}}" class="nav-link">
+          <li class="nav-item {{ (request()->segment(2) == 'calender') ? 'menu-open' : ''}}">
+            <a href="{{url('admin/calender')}}" class="nav-link {{ (request()->segment(2) == 'calender') ? 'active' : ''}}">
               <i class="nav-icon far fa-calendar-alt"></i>
               <p>
                 Calendar

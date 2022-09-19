@@ -49,35 +49,7 @@
                               </div>
                                 <form method="POST" action="{{ url('/admin/leads/add') }}">
                                     @csrf
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                            <div class="input-group mb-3 ">
-                                              <select name="lead_type"
-                                              class="form-control select2bs4" placeholder="Select Lead Type">
-                                              @php
-                                                 $selectedID=old('lead_type'); 
-                                                //  if($selectedID==$key)
-                                                   
-                                                  foreach ($leadsTypes as $key=>$data) 
-                                                
-                                                      echo '<option selected value="' . $key . '">' . $data['title'] .'</option>';
-                                              @endphp
-                                          </select>
-                                          <div class="input-group-append">
-                                            <div class="input-group-text">
-                                                <span class="fas fa-building"></span>
-                                            </div>
-                                        </div>
-                                                @error('lead_type')
-                                                    <div class="invalid-feedback">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
+                                    
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
@@ -187,11 +159,7 @@
                                       <div class="col-6">
                                           <div class="input-group mb-3">
                                             <select name="venue_group_id" class="form-control select2bs4" placeholder="Select Venue Group">
-                                            @php
-                                               
-                                                foreach ($VenueGroupData as $data) 
-                                                    echo '<option  value="' . $data['id'] . '">' . $data['name'] . '</option>';
-                                            @endphp
+                                           
                                         </select>
                                         <div class="input-group-append">
                                           <div class="input-group-text">

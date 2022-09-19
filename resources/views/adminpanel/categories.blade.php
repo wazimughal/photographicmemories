@@ -1,7 +1,7 @@
 @extends('adminpanel.admintemplate')
 @push('title')
     <title>
-        Bookings| {{ config('constants.app_name') }}</title>
+        categories| {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->
@@ -10,13 +10,13 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-2">
-                        <h1>View Bookings </h1>
+                    <div class="col-sm-3">
+                        <h1>View categories </h1>
 
                     </div>
-                    {{-- <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/bookings/add') }}"
-                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div> --}}
-                    <div class="col-sm-2">&nbsp;</div>
+                    <div class="col-sm-2"><button style="width:60%" onclick="addCategoryForm()" 
+                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></button></div>
+                    <div class="col-sm-1">&nbsp;</div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -36,76 +36,42 @@
 
                         <div class="card card-success">
                             <div class="card-header">
-                                <h3 class="card-title">bookings</h3>
+                                <h3 class="card-title">categories</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Groom Name (Mobile)</th>
-                                            <th>Groom Billing Address</th>
-                                            <th>Bride Name (Mobile)</th>
-                                            <th>Bride Billing Address</th>
-                                            <th>Event Date</th>
-                                            <th>Venue Group</th>
-                                            <th>Customer</th>
-                                            <th>By</th>
-                                            <th>Status</th>
+                                            <th>Name</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
                                             $counter = 1;
-                                            
-                                            foreach ($pencilData as $pencil){
-                                        //         $pencil=$pencil->toArray();
-                                        //        echo  $pencil['customer']['userinfo'][0]['name'];
-                                        //    p($pencil);
-                                        //     die;
-                                            ?>
-                                        <tr id="row_{{ $pencil['id'] }}">
-                                            <td><strong id="groom_name_{{ $pencil['id'] }}">{{ $pencil['groom_name'] }} ({{ $pencil['groom_mobile'] }})</strong></td>
-                                            <td id="groom_billing_address_{{ $pencil['id'] }}">{{ $pencil['groom_billing_address'] }}
-                                            </td>
-                                            
-                                            <td><strong id="bride_name_{{ $pencil['id'] }}">{{ $pencil['bride_name'] }} ({{ $pencil['bride_mobile'] }})</strong></td>
-                                            <td id="bride_billing_address_{{ $pencil['id'] }}">{{ $pencil['bride_billing_address'] }}
-                                            </td>
-                                            <td id="date_of_event_{{ $pencil['id'] }}">{{ $pencil['date_of_event']}}</td>
-                                            <td id="venue_group_{{ $pencil['id'] }}">
-                                                {{ $pencil['venue_group']['userinfo'][0]['name'] }}</td>
                                            
-                                            <td id="customer_name_{{ $pencil['id'] }}">
-                                                {{ $pencil['customer']['userinfo'][0]['name'] }}</td>
-                                            <td id="photographer_name_{{ $pencil['id'] }}">@php echo pencilBy($pencil['pencile_by'])@endphp</td>
-                                            <td id="photographer_name_{{ $pencil['id'] }}">{{booking_status($pencil['status'])}}</td>
-
+                                            foreach ($categoriesData as $data){
+                                     
+                                           
+                                            ?>
+                                        <tr id="row_{{ $data['id'] }}">
+                                            <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong></td>
+                                            
                                             <td>
-                                                <a href="{{url('admin/bookings/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
-                                                    Edit</a>
-                                                    <a href="{{url('admin/bookings/view')}}/{{$pencil['id']}}" 
-                                                    class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
-                                                    View</a>
+                                                <button onClick="editCategoryForm({{ $data['id'] }},{{ $counter }})"
+                                                    class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
+                                                    Edit</button>
+                                                
                                                 <button
-                                                    onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'delete')"
+                                                    onClick="delete_category({{ $data['id'] }},{{ $counter }},'delete')"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
                                                     Delete</button>
-                                                <div style="margin-top: 5px;" id="status_action_btn_{{ $pencil['id'] }}">
-
-                                                    <button
-                                                        onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'trash')"
-                                                        type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                            class="fas fa-chart-line"></i>
-                                                        Trash</button>
-
-
-                                                </div>
+                                                
                                             </td>
 
-                                        
+                                            </td>
 
                                         </tr>
                                         <?php 
@@ -120,20 +86,14 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th>Groom Name (Mobile)</th>
-                                            <th>Groom Billing Address</th>
-                                            <th>Bride Name (Mobile)</th>
-                                            <th>Bride Billing Address</th>
-                                            <th>Event Date</th>
-                                            <th>Venue Group</th>
-                                            <th>Customer</th>
-                                            <th> By</th>
-                                            <th>Status</th>
+                                            <th>Name</th>
+                                           
+                                           
                                             <th>Action</th>
                                         </tr>
                                         <tr>
-                                            <td colspan="10">
-                                                <div class="text-right"> {{ $pencilData->links() }}</div>
+                                            <td colspan="8">
+                                                <div class="text-right"> {{ $categoriesData->links() }}</div>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -161,7 +121,7 @@
             <div class="modal-content">
                 <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title"> bookings Panel</h3>
+                        <h3 class="card-title"> categories Panel</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -224,14 +184,16 @@
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
         });
+        // Open package Edit Form
+        function addCategoryForm() {
 
-        function viewpencilData(id) {
             var sendInfo = {
-                action: 'viewpencilData',
-                id: id
+                action: 'addCategoryForm',
+                
             };
+            
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/packages/categoryajaxcall') }}",
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -241,8 +203,8 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.error == 'No') {
-                        $('#responseData').html(data.res);
-
+                        $('#responseData').html(data.formdata);
+                       
                     } else {
                         $('#responseData').html('There is some error, Please try again Later');
                     }
@@ -251,16 +213,18 @@
             });
             return false;
         }
+        // Open package Edit Form
+        function editCategoryForm(id, counter_id = 1) {
 
-        function updateForm(id, counter_id = 1) {
             var sendInfo = {
-                action: 'updateLeadForm',
+                action: 'editCategoryForm',
                 counter: counter_id,
                 status: status,
                 id: id
             };
+            
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/packages/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -282,12 +246,12 @@
             });
             return false;
         }
-        // Ajax to Update Lead Data
-        function updateLead(id, counter_id = 1) {
-            var formData = ($('#EditLeadForm').formToJson());
-            // console.log(formData);
+        // Ajax to Update Category Edit POP UP Data
+        function update_category_form_data(id, counter_id = 1) {
+            var formData = ($('#edit_categories_form').formToJson());
+             console.log(formData);
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/packages/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -298,15 +262,11 @@
                 success: function(data) {
                     if (data.error == 'No') {
                         console.log(data);
+
                         $('#name_' + data.id).html(data.name);
-                        $('#venue_group_name_' + data.id).html(data.venue_group_name);
-                        $('#lead_type_title_' + data.id).html(data.lead_type_tile);
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
+                        
                         // // Close modal and success Message
                         $('#modal-xl-lead').modal('toggle')
-
 
                         $(document).Toasts('create', {
                             class: 'bg-success',
@@ -328,45 +288,13 @@
             });
             return false;
         }
-
-        // add Lead to pencil 
-        function editpencilForm(id, counter_id = 1) {
-
-            var sendInfo = {
-                action: 'editpencilForm',
-                counter: counter_id,
-                status: status,
-                id: id
-            };
+      
+        // Ajax to Update Category Edit POP UP Data
+        function add_category_form_data() {
+            var formData = ($('#add_categories_form').formToJson());
+             id=1;
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.formdata);
-                        $('.select2bs4').select2({
-                            theme: 'bootstrap4'
-                        });
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-        // Ajax to Update Lead Data
-        function updatepencil(id, counter_id = 1) {
-            var formData = ($('#EditpencilForm').formToJson());
-            // console.log(formData);
-            $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/packages/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -379,14 +307,9 @@
                         console.log(data);
 
                         $('#name_' + data.id).html(data.name);
-                        $('#venue_group_name_' + data.id).html(data.venue_group_name);
-                        $('#lead_type_title_' + data.id).html(data.lead_type_tile);
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
+                        
                         // // Close modal and success Message
                         $('#modal-xl-lead').modal('toggle')
-
 
                         $(document).Toasts('create', {
                             class: 'bg-success',
@@ -404,107 +327,31 @@
                             body: data.msg
                         });
                     }
+                    window.location="";
                 }
             });
             return false;
         }
-        // Shorthand for $( document ).ready()
-        function changeCity() {
+      
 
-            selectOption = $('#city option:selected').text();
-            console.log('option' + selectOption);
-            if (selectOption == 'Other') {
-                otherCity =
-                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
-                $('#othercity').html(otherCity);
-            } else {
-                $('#othercity').html('');
-            }
-        };
-        $(function() {
+   
+      
 
-            $('.current_status').on('change', function() {
-                var status = $(this).val();
-                var id = $(this).attr('dataid');
-                var counter_id = $(this).attr('datacounter');
-                counter_id = 1;
+        function delete_category(id, counter_id, action) {
 
-                if (status == {{ config('constants.lead_status.pending') }})
-                    alertmsg = 'move in pending'
-                else if (status == {{ config('constants.lead_status.approved') }})
-                    alertmsg = 'move in approved'
-                if (status == {{ config('constants.lead_status.cancelled') }})
-                    alertmsg = 'move in Cancelled'
-
-                if (confirm("Are you sure you want to " + alertmsg + " this?")) {
-
-                    var sendInfo = {
-                        action: 'changestatus',
-                        counter: counter_id,
-                        status: status,
-                        alertmsg: alertmsg,
-                        id: id
-                    };
-
-                    $.ajax({
-                        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
-                        data: sendInfo,
-                        contentType: 'application/json',
-                        error: function() {
-                            alert('There is Some Error, Please try again !');
-                        },
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data.error == 'No') {
-                                // Close modal and success Message
-                                $('#status' + id).html(data.status_btn);
-                                // $('#status_action_btn_' + id).html(data.status_action_btn);
-
-                                $(document).Toasts('create', {
-                                    class: 'bg-success',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-
-
-                            } else {
-                                $(document).Toasts('create', {
-                                    class: 'bg-danger',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-                            }
-                            console.log(data);
-                            //alert('i am here');
-                        }
-
-                    });
-
-                }
-
-            });
-        });
-
-        function changeStatus(id, counter_id, action) {
-
-            if (action == 'trash')
-                alertMsg = 'Are you sure you want to Trash this?';
-            else if (action == 'delete')
+           
                 alertMsg = 'Are you sure you want to Delete this?';
 
             if (confirm(alertMsg)) {
 
                 var sendInfo = {
-                    action: action,
+                    action: 'delete_category',
                     counter: counter_id,
                     id: id
                 };
 
                 $.ajax({
-                    url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                    url: "{{ url('/admin/packages/ajaxcall/') }}/" + id,
                     data: sendInfo,
                     contentType: 'application/json',
                     error: function() {

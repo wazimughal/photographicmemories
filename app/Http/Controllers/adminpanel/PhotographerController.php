@@ -25,16 +25,8 @@ class PhotographerController extends Controller
       }
       public function addphotographers(){
         $user=Auth::user(); 
-        $leadsTypes=getTypesOfLeads();
         
-        $VenueGroupData = $this->venueGroup->orderBy('created_at', 'desc')->with('ownerinfo')->get();
-        if($VenueGroupData)
-        $VenueGroupData= $VenueGroupData->toArray();
-        else
-        $VenueGroupData=array();
-        
- 
-         return view('adminpanel/add_photographers',compact('user','VenueGroupData','leadsTypes'));
+         return view('adminpanel/add_photographers',get_defined_vars());
      }
      public function SavephotographersData(Request $request){
        
@@ -42,7 +34,7 @@ class PhotographerController extends Controller
             'firstname'=>'required',
             'lastname'=>'required',
             'email'=>'required|email|distinct|unique:users|min:5',
-            'mobileno'=>'required|distinct|unique:users|min:5',
+            'password'=>'required',
             'phone'=>'required',
             'unitnumber'=>'required|distinct|unique:users|min:5',
             'city'=>'required',
@@ -54,12 +46,10 @@ class PhotographerController extends Controller
         $this->users->firstname=$request['firstname'];
         $this->users->lastname=$request['lastname'];
         $this->users->email=$request['email'];
-        $this->users->mobileno=$request['mobileno'];
         $this->users->phone=$request['phone'];
         $this->users->unitnumber=$request['unitnumber'];
-        $this->users->homeaddress=$request['homeaddress'];
         $this->users->is_active=1;
-        $this->users->password=Hash::make('12345678');
+        $this->users->password=Hash::make($request['password']);
 
         $this->users->created_at=time();
         $this->users->group_id=config('constants.groups.photographer');
@@ -70,11 +60,11 @@ class PhotographerController extends Controller
         $cityId=$request['city'];
         $this->users->city_id=$cityId;
 
-        if(isset($request['otherzipcode']) && !empty($request['otherzipcode']))
-        $zipcode = getOtherZipCode($request['otherzipcode']);
-        else
-        $zipcode=$request['zipcode'];
-        $this->users->zipcode_id=$zipcode;
+        // if(isset($request['otherzipcode']) && !empty($request['otherzipcode']))
+        // $zipcode = getOtherZipCode($request['otherzipcode']);
+        // else
+        // $zipcode=$request['zipcode'];
+        // $this->users->zipcode_id=$zipcode;
   
         $request->session()->flash('alert-success', 'photographer Added! Please Check in photographers list Tab');
         $this->users->save();

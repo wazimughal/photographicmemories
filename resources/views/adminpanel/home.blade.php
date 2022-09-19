@@ -37,67 +37,67 @@
                     $boxDataArr=array();
                         for($i=0; $i<3; $i++){
 
-                        if(isset($leads_info[$i]) && !empty($leads_info[$i])){
+                        if(isset($pencils_info[$i]) && !empty($pencils_info[$i])){
 
-                        $leadData= $leads_info[$i];
-                        if($leadData->status==config('constants.lead_status.pending')){
+                        $pencilData= $pencils_info[$i];
+                        if($pencilData->status==config('constants.pencil_status.pending')){
                             $boxDataArr['class']='bg-info';
-                            $boxDataArr['total']=$leadData->total;
-                            $boxDataArr['type']=$leadData->status;
-                            $boxDataArr['title']='Pending Leads';
-                            $boxDataArr['more']='/admin/lead/pending';
+                            $boxDataArr['total']=$pencilData->total;
+                            $boxDataArr['type']=$pencilData->status;
+                            $boxDataArr['title']='Pending pencils';
+                            $boxDataArr['more']='/admin/pencil/pending';
                             }
-                        elseif($leadData->status==config('constants.lead_status.approved')){
+                        elseif($pencilData->status==config('constants.pencil_status.approved')){
                             $boxDataArr['class']='bg-success';
-                            $boxDataArr['total']=$leadData->total;
-                            $boxDataArr['type']=$leadData->status;
-                            $boxDataArr['title']='Approved Leads';
-                            $boxDataArr['more']='/admin/lead/approved';
+                            $boxDataArr['total']=$pencilData->total;
+                            $boxDataArr['type']=$pencilData->status;
+                            $boxDataArr['title']='Approved pencils';
+                            $boxDataArr['more']='/admin/pencil/approved';
                             }
-                        elseif($leadData->status==config('constants.lead_status.cancelled')){
+                        elseif($pencilData->status==config('constants.pencil_status.cancelled')){
                             $boxDataArr['class']='bg-danger';
-                            $boxDataArr['total']=$leadData->total;
-                            $boxDataArr['type']=$leadData->status;
-                            $boxDataArr['title']='Cancelled Leads';
-                            $boxDataArr['more']='/admin/lead/cancelled';
+                            $boxDataArr['total']=$pencilData->total;
+                            $boxDataArr['type']=$pencilData->status;
+                            $boxDataArr['title']='Cancelled pencils';
+                            $boxDataArr['more']='/admin/pencil/cancelled';
                             }
-                        elseif($leadData->status==config('constants.lead_status.trashed')){
+                        elseif($pencilData->status==config('constants.pencil_status.trashed')){
                             $boxDataArr['class']='bg-info';
-                            $boxDataArr['total']=$leadData->total;
-                            $boxDataArr['type']=$leadData->status;
-                            $boxDataArr['title']='Trashed Leads';
-                            $boxDataArr['more']='/admin/lead/trash';
+                            $boxDataArr['total']=$pencilData->total;
+                            $boxDataArr['type']=$pencilData->status;
+                            $boxDataArr['title']='Trashed pencils';
+                            $boxDataArr['more']='/admin/pencil/trash';
                             }
                         }
                         else{ // ELSE portion if array is empty
                             
-                            if($i==config('constants.lead_status.pending')){
+                            if($i==config('constants.pencil_status.pending')){
                             $boxDataArr['class']='bg-info';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
-                            $boxDataArr['title']='Pending Leads';
-                            $boxDataArr['more']='/admin/lead/pending';
+                            $boxDataArr['title']='Pending pencils';
+                            $boxDataArr['more']='/admin/pencil/pending';
                             }
-                        elseif($i==config('constants.lead_status.approved')){
+                        elseif($i==config('constants.pencil_status.approved')){
                             $boxDataArr['class']='bg-success';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
-                            $boxDataArr['title']='Approved Leads';
-                            $boxDataArr['more']='/admin/lead/approved';
+                            $boxDataArr['title']='Approved pencils';
+                            $boxDataArr['more']='/admin/pencil/approved';
                             }
-                        elseif($i==config('constants.lead_status.cancelled')){
+                        elseif($i==config('constants.pencil_status.cancelled')){
                             $boxDataArr['class']='bg-danger';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
-                            $boxDataArr['title']='Cancelled Leads';
-                            $boxDataArr['more']='/admin/lead/cancelled';
+                            $boxDataArr['title']='Cancelled pencils';
+                            $boxDataArr['more']='/admin/pencil/cancelled';
                             }
-                        elseif($i==config('constants.lead_status.trashed')){
+                        elseif($i==config('constants.pencil_status.trashed')){
                             $boxDataArr['class']='bg-info';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
-                            $boxDataArr['title']='Trashed Leads';
-                            $boxDataArr['more']='/admin/lead/trash';
+                            $boxDataArr['title']='Trashed pencils';
+                            $boxDataArr['more']='/admin/pencil/trash';
                             }
                             
                         }
@@ -131,28 +131,28 @@
                             $boxDataArr['total']=$userData->total;
                             $boxDataArr['type']=$userData->group_id;
                             $boxDataArr['title']='Admin';
-                            $boxDataArr['more']='/admin/lead/pending';
+                            $boxDataArr['more']='/admin/pencil/pending';
                             }
                         elseif($userData->group_id==config('constants.groups.venue_group_hod')){
                             $boxDataArr['class']='bg-success';
                             $boxDataArr['total']=$userData->total;
                             $boxDataArr['type']=$userData->group_id;
                             $boxDataArr['title']='Venue Groups';
-                            $boxDataArr['more']='/admin/lead/approved';
+                            $boxDataArr['more']='/admin/pencil/approved';
                             }
                         elseif($userData->group_id==config('constants.groups.customer')){
                             $boxDataArr['class']='bg-danger';
                             $boxDataArr['total']=$userData->total;
                             $boxDataArr['type']=$userData->group_id;
                             $boxDataArr['title']='Customers';
-                            $boxDataArr['more']='/admin/lead/cancelled';
+                            $boxDataArr['more']='/admin/pencil/cancelled';
                             }
                         elseif($userData->group_id==config('constants.groups.photographer')){
                             $boxDataArr['class']='bg-info';
                             $boxDataArr['total']=$userData->total;
                             $boxDataArr['type']=$userData->group_id;
                             $boxDataArr['title']='Photographers';
-                            $boxDataArr['more']='/admin/lead/trash';
+                            $boxDataArr['more']='/admin/pencil/trash';
                             }
                         }
                         else{ // ELSE portion if array is empty
@@ -162,28 +162,28 @@
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
                             $boxDataArr['title']='admin';
-                            $boxDataArr['more']='/admin/lead/pending';
+                            $boxDataArr['more']='/admin/pencil/pending';
                             }
                         elseif($k==config('constants.groups.venue_group_hod')){
                             $boxDataArr['class']='bg-success';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
                             $boxDataArr['title']='Venue Group';
-                            $boxDataArr['more']='/admin/lead/approved';
+                            $boxDataArr['more']='/admin/pencil/approved';
                             }
                         elseif($i==config('constants.groups.customer')){
                             $boxDataArr['class']='bg-danger';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
                             $boxDataArr['title']='Customer';
-                            $boxDataArr['more']='/admin/lead/cancelled';
+                            $boxDataArr['more']='/admin/pencil/cancelled';
                             }
                         elseif($k==config('constants.groups.photographer')){
                             $boxDataArr['class']='bg-info';
                             $boxDataArr['total']=0;
                             $boxDataArr['type']=$i;
                             $boxDataArr['title']='Photographer';
-                            $boxDataArr['more']='/admin/lead/trash';
+                            $boxDataArr['more']='/admin/pencil/trash';
                             }
                           $k++;  
                         }

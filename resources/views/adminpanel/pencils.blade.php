@@ -1,7 +1,7 @@
 @extends('adminpanel.admintemplate')
 @push('title')
     <title>
-        Bookings| {{ config('constants.app_name') }}</title>
+        Pencils| {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->
@@ -11,11 +11,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
-                        <h1>View Bookings </h1>
+                        <h1>View Pencils </h1>
 
                     </div>
-                    {{-- <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/bookings/add') }}"
-                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div> --}}
+                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/pencils/add') }}"
+                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
                     <div class="col-sm-2">&nbsp;</div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -36,7 +36,7 @@
 
                         <div class="card card-success">
                             <div class="card-header">
-                                <h3 class="card-title">bookings</h3>
+                                <h3 class="card-title">Pencils</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -75,17 +75,25 @@
                                             </td>
                                             <td id="date_of_event_{{ $pencil['id'] }}">{{ $pencil['date_of_event']}}</td>
                                             <td id="venue_group_{{ $pencil['id'] }}">
-                                                {{ $pencil['venue_group']['userinfo'][0]['name'] }}</td>
+                                               @if (isset($pencil['venue_group']))
+                                               {{ $pencil['venue_group']['userinfo'][0]['name'] }}
+                                               @else
+                                               {{$pencil['other_venue_group']}}
+                                               @endif
+                                               
+                                            </td>
                                            
                                             <td id="customer_name_{{ $pencil['id'] }}">
                                                 {{ $pencil['customer']['userinfo'][0]['name'] }}</td>
                                             <td id="photographer_name_{{ $pencil['id'] }}">@php echo pencilBy($pencil['pencile_by'])@endphp</td>
-                                            <td id="photographer_name_{{ $pencil['id'] }}">{{booking_status($pencil['status'])}}</td>
+                                            <td id="photographer_name_{{ $pencil['id'] }}"> {{  booking_status($pencil['status'])}}</td>
 
                                             <td>
-                                                <a href="{{url('admin/bookings/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
+
+                                                <a href="{{url('admin/bookings/add')}}/{{$pencil['id']}}" class="btn btn-success btn-block btn-sm"><i class="fas fa-plus"></i> Booking</a>
+                                                <a href="{{url('admin/pencils/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</a>
-                                                    <a href="{{url('admin/bookings/view')}}/{{$pencil['id']}}" 
+                                                    <a href="{{url('admin/pencils/view')}}/{{$pencil['id']}}" 
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</a>
                                                 <button
@@ -161,7 +169,7 @@
             <div class="modal-content">
                 <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title"> bookings Panel</h3>
+                        <h3 class="card-title"> pencils Panel</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -231,7 +239,7 @@
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -260,7 +268,7 @@
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -287,7 +295,7 @@
             var formData = ($('#EditLeadForm').formToJson());
             // console.log(formData);
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -339,7 +347,7 @@
                 id: id
             };
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -366,7 +374,7 @@
             var formData = ($('#EditpencilForm').formToJson());
             // console.log(formData);
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall') }}/" + id,
+                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
                 data: formData,
                 contentType: 'application/json',
                 error: function() {
@@ -447,7 +455,7 @@
                     };
 
                     $.ajax({
-                        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                        url: "{{ url('/admin/pencils/ajaxcall/') }}/" + id,
                         data: sendInfo,
                         contentType: 'application/json',
                         error: function() {
@@ -504,7 +512,7 @@
                 };
 
                 $.ajax({
-                    url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                    url: "{{ url('/admin/pencils/ajaxcall/') }}/" + id,
                     data: sendInfo,
                     contentType: 'application/json',
                     error: function() {

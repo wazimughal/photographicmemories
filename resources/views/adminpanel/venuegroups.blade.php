@@ -45,10 +45,11 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Mobile Number</th>
                                             <th>Venue Group Name</th>
+                                            <th>Manager Name</th>
+                                            <th>Mobile Number</th>
                                             <th>Address</th>
-                                            <th>Zip Code</th>
+                                            <th>Venue Description</th>
                                             <th>City</th>
                                             <th>Action</th>
                                         </tr>
@@ -67,24 +68,25 @@
                                             <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong>
                                             </td>
                                             <td id="email_{{ $data['id'] }}">{{ $data['email'] }}</td>
-                                            <td id="mobileno_{{ $data['id'] }}">
-                                                {{ $data['mobileno'] }}</td>
-                                            <td id="vg_name{{ $data['id'] }}">
-                                                {{ $data['VenueGroup']['name'] }} </td>
-                                                 <td id="vg_address_{{ $data['id'] }}">
-                                                    {{ $data['VenueGroup']['address'] }}</td>
-                                                    <td id="zipcode_{{ $data['id'] }}">
-                                                        {{ $data['zipcode']['code']}}</td>
-                                                    <td id="city_{{ $data['id'] }}">
-                                                        {{ $data['city']['name']}}</td>
-                                           
+                                            <td id="vg_name_{{ $data['id'] }}">
+                                                {{ $data['vg_name'] }}</td>
+                                            <td id="vg_manager_name_{{ $data['id'] }}">
+                                                {{ $data['vg_manager_name'] }}</td>
+                                            <td id="vg_manager_phone_{{ $data['id'] }}">
+                                                {{ $data['vg_manager_phone'] }}</td>
+                                            <td id="address_{{ $data['id'] }}">
+                                                {{ $data['address'] }} </td>
+                                            <td id="vg_description_{{ $data['id'] }}">
+                                                {{ $data['vg_description'] }}</td>
+                                            <td id="city_{{ $data['id'] }}">
+                                                {{ $data['city']['name'] }}</td>
                                             
                                             <td>
-
                                                 <button onClick="editvenuegroupForm({{ $data['id'] }},{{ $counter }})"
                                                     class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</button>
-                                                <button onClick="viewVenueGroupData({{ $data['id'] }},{{ $counter }})"
+                                                <button
+                                                    onClick="viewVenueGroupData({{ $data['id'] }},{{ $counter }})"
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</button>
                                                 {{-- <button
@@ -104,7 +106,7 @@
                                                 </div> --}}
                                             </td>
 
-                                            </td>
+                                          
 
                                         </tr>
                                         <?php 
@@ -121,10 +123,11 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Email</th>
+                                            <th>Venue Group Name</th>
+                                            <th>Manager Name</th>
                                             <th>Mobile Number</th>
-                                            <th>Unit Number</th>
                                             <th>Address</th>
-                                            <th>Zip Code</th>
+                                            <th>Venue Description</th>
                                             <th>City</th>
                                             <th>Action</th>
                                         </tr>
@@ -374,7 +377,7 @@
                 success: function(data) {
                     if (data.error == 'No') {
                         console.log(data);
-                        
+
                         $('#name_' + data.id).html(data.name);
                         $('#mobileno_' + data.id).html(data.mobileno);
                         $('#vg_name' + data.id).html(data.vg_name);
@@ -382,7 +385,7 @@
                         $('#zipcode_' + data.id).html(data.zipcode);
                         $('#city_' + data.id).html(data.city);
 
-                        
+
                         // $('#row_' + data.id).removeClass('odd');
                         // $('#row_' + data.id).removeClass('even');
                         // $('#row_' + data.id).addClass('alert-info');
@@ -412,31 +415,34 @@
         }
         // Shorthand for $( document ).ready()
         function changeCity() {
-            
-                selectOption = $('#city option:selected').text();
-               $('#cityname').val(selectOption);
 
-                console.log('option' + selectOption);
-                if (selectOption == 'Other') {
-                    otherCity ='<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
-                    $('#othercity').html(otherCity);
-                } else {
-                    $('#othercity').html('');
-                }
-            };
-            function changezipcode() {
+            selectOption = $('#city option:selected').text();
+            $('#cityname').val(selectOption);
+
+            console.log('option' + selectOption);
+            if (selectOption == 'Other') {
+                otherCity =
+                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
+                $('#othercity').html(otherCity);
+            } else {
+                $('#othercity').html('');
+            }
+        };
+
+        function changezipcode() {
             selectOption = $('#zipcode_id option:selected').text();
             $('#zipcode_no').val(selectOption);
 
             if (selectOption == 'Other') {
-                otherZipCode ='<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="otherzipcode" class="form-control" placeholder="Please enter Zip Code" required></div></div><div class="col-3">&nbsp;</div></div>';
+                otherZipCode =
+                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="otherzipcode" class="form-control" placeholder="Please enter Zip Code" required></div></div><div class="col-3">&nbsp;</div></div>';
                 $('#otherzipcode').html(otherZipCode);
             } else {
                 $('#otherzipcode').html('');
             }
         };
         $(function() {
-       
+
             $('.current_status').on('change', function() {
                 var status = $(this).val();
                 var id = $(this).attr('dataid');

@@ -36,6 +36,9 @@
                                 <div class="col-3">&nbsp;</div>
                                 <div class="col-6">
                                  <!-- flash-message -->
+                                 @if ($errors->any())
+                                 {{ implode('', $errors->all('<div>:message</div>')) }}
+                             @endif
                                 <div class="flash-message">
                                   @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                                     @if(Session::has('alert-' . $msg))
@@ -115,14 +118,14 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="mobileno" class="form-control @error('mobileno') is-invalid @enderror"
-                                              placeholder="Mobile No." value="{{ old('mobileno') }}">
+                                          <input type="password" name="password" class="form-control @error('mobileno') is-invalid @enderror"
+                                              placeholder="Password" value="{{ old('password') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
                                                   <span class="fas fa-address-card"></span>
                                               </div>
                                           </div>
-                                          @error('mobileno')
+                                          @error('password')
                                               <div class="invalid-feedback">
                                                   {{ $message }}
                                               </div>
@@ -182,7 +185,7 @@
                                         <div class="col-3">&nbsp;</div>
                                     </div>
                                     <div id="othercity"></div>
-                                    <div class="row form-group">
+                                    {{-- <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
@@ -191,7 +194,7 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div id="otherzipcode"></div>
+                                    <div id="otherzipcode"></div> --}}
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">

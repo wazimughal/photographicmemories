@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('photographer_orders', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('photographer_id');
-            $table->foreign('photographer_id')->references('id')->on('users');
-            $table->unsignedBigInteger('orders_id');
-            $table->foreign('orders_id')->references('id')->on('orders');
-            $table->string('photographer_cost')->nullable();
+            $table->string('name')->nullable();
+            $table->string('slug')->nullable();
+            $table->string('path')->nullable();
             $table->string('description')->nullable();
+            $table->string('otherinfo')->nullable();
+            $table->unsignedBigInteger('user_id'); // Document uploaded by user
+            $table->foreign('user_id')->references('id')->on('users'); // 
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('photographer_orders');
+        Schema::dropIfExists('documents');
     }
 };

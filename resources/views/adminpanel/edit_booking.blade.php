@@ -58,7 +58,6 @@
                                 </div>
                                 <form method="POST" action="{{ url('/admin/bookings/place') }}">
                                     @csrf
-                                    <input type="hidden" name="Booking_type" value="single" id="Booking_type">
                                     {{-- List of items --}}
                                     <?php
                                     $total_items = 0;
