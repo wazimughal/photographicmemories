@@ -98,11 +98,13 @@ class PackagesController extends Controller
        
         $validator=$request->validate([
             'name'=>'required',
+            'price'=>'required',
             'cat_id'=>'required',
         ]);
         
         
         $this->packages->name=$request['name'];
+        $this->packages->price=$request['price'];
         $this->packages->description=($request['description']);
         $this->packages->is_active=1;
         $this->packages->user_id=get_session_value('id');
@@ -335,6 +337,7 @@ class PackagesController extends Controller
             //$dataArray['formdata']=$req->all();
 
             $dataArray['name']=$req['name'];
+            $dataArray['price']=$req['price'];
             $dataArray['id']=$req['package_id'];
             $dataArray['description']=$req['description'];
             $dataArray['catname']=$req['catname'];
@@ -349,6 +352,7 @@ class PackagesController extends Controller
             $this->packages->where('id', $req['package_id'])->update(
                 array(
                     'name'=>$req['name'],
+                    'price'=>$req['price'],
                     'description'=>$req['description'],
                     'cat_id'=>$cat_id,
                     
@@ -405,8 +409,21 @@ $formHtml='<form id="EditpackageForm"
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
                                                                                     <div class="input-group mb-3">
+                                                                                        <input type="text" name="price"
+                                                                                            class="form-control"
+                                                                                            placeholder=" price"
+                                                                                            value="'. $data['price'].'"
+                                                                                            required>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                            </div>
+                                                                            <div class="row form-group">
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                                <div class="col-6">
+                                                                                    <div class="input-group mb-3">
                                                                                         <textarea type="text" name="description" class="form-control"
-                                                                                            placeholder=" Any additional Notes"
+                                                                                            placeholder="Description"
                                                                                             >'. $data['description'].'</textarea>
                                                                                     </div>
                                                                                 </div>

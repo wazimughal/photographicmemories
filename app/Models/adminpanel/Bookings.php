@@ -18,6 +18,14 @@ class Bookings extends Model
     {
         return $this->hasMany(bookings_users::class, 'booking_id', 'id')->where('group_id',config('constants.groups.photographer'))->with('userinfo');
     }
+    public function invoices()
+    {
+        return $this->hasMany(invoices::class, 'booking_id', 'id');
+    }
+    public function files()
+    {
+        return $this->hasMany(files::class, 'booking_id', 'id');
+    }
     public function venue_group()
     {
         return $this->hasOne(bookings_users::class, 'booking_id', 'id')->where('group_id',config('constants.groups.venue_group_hod'))->with('userinfo');

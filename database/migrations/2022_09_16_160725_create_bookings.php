@@ -36,6 +36,9 @@ return new class extends Migration
             $table->tinyInteger('paying_via')->default(0)->nullable(); // chequ:0, CreditCard:1, Zelle:2 photographer:3
             $table->tinyInteger('pencile_by')->default(0)->nullable(); // Offic:0, Venue Group:1,Website:2 
             $table->tinyInteger('who_is_paying')->default(0)->nullable(); // 0:custoemr 1:venue 2: both
+            $table->string('venue_group_to_pay')->nullable(); // 0:custoemr 1:venue 2: both
+            $table->string('customer_to_pay')->nullable(); // 0:custoemr 1:venue 2: both
+
             $table->string('other_venue_group')->nullable();
             $table->text('notes_for_photographer')->nullable();
             $table->text('notes_for_customer')->nullable();
@@ -48,9 +51,12 @@ return new class extends Migration
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('package_id')->default(1);
             $table->foreign('package_id')->references('id')->on('packages');
-            $table->string('title_for_extra_price')->nullable(); // description about packages, e.g over time will charged for 200 USD per hours
+            $table->string('overtime_hours')->nullable();
+            $table->string('overtime_rate_per_hour')->nullable();
+            //$table->string('title_for_extra_price')->nullable(); // description about packages, e.g over time will charged for 200 USD per hours
             $table->string('extra_price')->nullable(); // description about packages, e.g over time will charged for 200 USD per hours
             $table->text('extra_charge_desc')->nullable(); // description about packages, e.g over time will charged for 200 USD per hours
+            $table->string('total_cost')->nullable();
             $table->tinyInteger('created_by_user')->nullable(); // chequ:0, CreditCard:1, Zelle:2 photographer:3
             
             $table->timestamps();

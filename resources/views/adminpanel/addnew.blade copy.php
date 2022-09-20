@@ -25,6 +25,7 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card card-success">
@@ -32,6 +33,479 @@
                                 <h3 class="card-title">Add New booking</h3>
                             </div>
                             <div class="card-body">
+
+
+                                <!-- /.row -->
+
+                                <div class="row">
+
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header p-2">
+                                                <ul class="nav nav-pills">
+                                                    <li class="nav-item"><a class="nav-link active" href="#customer"
+                                                            data-toggle="tab">Customer</a></li>
+                                                    <li class="nav-item"><a class="nav-link" href="#groom_info"
+                                                            data-toggle="tab">Groom Details</a></li>
+                                                    <li class="nav-item"><a class="nav-link" href="#bride_info"
+                                                            data-toggle="tab">Bride Details</a></li>
+                                                    <li class="nav-item"><a class="nav-link" href="#event_info"
+                                                            data-toggle="tab">Event Details</a></li>
+                                                    <li class="nav-item"><a class="nav-link" href="#photographer_info"
+                                                            data-toggle="tab">Photographer</a></li>
+                                                    <li class="nav-item"><a class="nav-link" href="#payment_info"
+                                                            data-toggle="tab">Who is Paying ?</a>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- /.card-header -->
+                                            <div class="card-body">
+                                                <div class="tab-content">
+                                                    <div class="active tab-pane" id="customer">
+                                                        <form class="form-horizontal">
+                                                            <div class="form-group row">
+                                                                <label for="inputCustomerName"
+                                                                    class="col-sm-2 col-form-label">Customer</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control"
+                                                                        id="inputCustomerName" placeholder="Jake Knight">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="inputName"
+                                                                    class="col-sm-2 col-form-label">Name</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control"
+                                                                        id="inputName" placeholder="Bill Gate">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="CustomerEmail"
+                                                                    class="col-sm-2 col-form-label">Email</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="email" name="email" disabled=""
+                                                                            readonly="" class="form-control "
+                                                                            placeholder="Email" required=""
+                                                                            value="customer@yahoo.com">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-envelope"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="Password"
+                                                                    class="col-sm-2 col-form-label">Password</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="password" name="password"
+                                                                            class="form-control " placeholder="Password"
+                                                                            required="" value="12345678">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-lock"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Phone</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="phone" name=""
+                                                                            class="form-control " placeholder=""
+                                                                            required="" value="12345678">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-phone"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Relation</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <select name="relation_with_event" required
+                                                                            class="form-control select2bs4"
+                                                                            placeholder="Relationship with Event">
+                                                                            @php echo relation_with_event_options($bookingData['customer']['userinfo'][0]['relation_with_event']);@endphp
+                                                                        </select>
+
+                                                                        @error('relation_with_event')
+                                                                            <div class="invalid-feedback">
+                                                                                {{ $message }}
+                                                                            </div>
+                                                                        @enderror
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Preffered
+                                                                    Photographer</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <select name="preferred_photographer_id" disabled
+                                                                            required class="form-control select2bs4"
+                                                                            placeholder="Preffered Photographer">
+                                                                            <option value="No" selected>No Preffrence
+                                                                            </option>
+                                                                            @php echo get_photographer_options($bookingData['preferred_photographer_id']); @endphp
+
+                                                                        </select>
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-camera"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                        @error('preferred_photographer_id')
+                                                                            <div class="invalid-feedback">
+                                                                                {{ $message }}
+                                                                            </div>
+                                                                        @enderror
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="offset-sm-2 col-sm-10">
+                                                                    <ul class="nav nav-pills">
+                                                                        <li class="nav-item">
+                                                                    <a class="nav-link btn btn-success" href="#groom_info"
+                                                                    data-toggle="tab">Next</a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+                                                    <div class="tab-pane" id="groom_info">
+                                                        <form class="form-horizontal">
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Name</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control"
+                                                                        placeholder="Groom Name">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Mobile</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="phone" name=""
+                                                                            class="form-control ">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-mobile"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="CustomerEmail"
+                                                                    class="col-sm-2 col-form-label">Phone</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="tel" name="email"
+                                                                            class="form-control">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-phone"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="CustomerEmail"
+                                                                    class="col-sm-2 col-form-label">Email</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="email" name="email"
+                                                                            class="form-control "
+                                                                            placeholder="email@gmail.co">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-envelope"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Address</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
+                                                                        name="groom_billing_address" class=" form-control ">Sharqi Colony Vehari</textarea>
+                                                                </div>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+
+                                                    <div class="tab-pane" id="bride_info">
+                                                        <form class="form-horizontal">
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Name</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control"
+                                                                        placeholder="Bride Name">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Mobile</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="phone" name=""
+                                                                            class="form-control ">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-mobile"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="CustomerEmail"
+                                                                    class="col-sm-2 col-form-label">Phone</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="tel" name="email"
+                                                                            class="form-control">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-phone"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="CustomerEmail"
+                                                                    class="col-sm-2 col-form-label">Email</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="email" name="email"
+                                                                            class="form-control "
+                                                                            placeholder="email@gmail.co">
+                                                                        <div class="input-group-append">
+                                                                            <div class="input-group-text">
+                                                                                <span class="fas fa-envelope"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Address</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
+                                                                        name="groom_billing_address" class=" form-control ">Sharqi Colony Vehari</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+
+                                                    <!-- /.tab-pane -->
+                                                    <div class="tab-pane" id="event_info">
+                                                        <form class="form-horizontal">
+                                                            <div class="form-group row">
+                                                                <label for=""
+                                                                    class="col-sm-2 col-form-label">Select Event
+                                                                    Date</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group date" id="reservationdate"
+                                                                        data-target-input="nearest">
+                                                                        <input name="date_of_event"
+                                                                            placeholder="Event Date (09/22/2022)"
+                                                                            value="{{ $bookingData['date_of_event'] }}"
+                                                                            type="text"
+                                                                            class="form-control datetimepicker-input @error('date_of_event') is-invalid @enderror"
+                                                                            data-target="#reservationdate" />
+                                                                        <div class="input-group-append"
+                                                                            data-target="#reservationdate"
+                                                                            data-toggle="datetimepicker">
+                                                                            <div class="input-group-text"><i
+                                                                                    class="far fa-calendar-alt"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        @error('date_of_event')
+                                                                            <div class="invalid-feedback">
+                                                                                {{ $message }}
+                                                                            </div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="" class="col-sm-2 col-form-label">
+                                                                    Venue Group/Hall
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="form-group">
+
+                                                                        <select class="form-control select2"
+                                                                            style="width: 100%;">
+                                                                            <option selected="selected">Alabama</option>
+                                                                            <option>Alaska</option>
+                                                                            <option>California</option>
+                                                                            <option>Delaware</option>
+                                                                            <option>Tennessee</option>
+                                                                            <option>Texas</option>
+                                                                            <option>Washington</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="" class="col-sm-2 col-form-label">
+                                                                    Packages
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <select name="venue_group_id" id="venue_group_id"
+                                                                            class="form-control select2bs4"
+                                                                            placeholder="Select Venue Group">
+                                                                            @php
+                                                                                $package_id = null;
+                                                                                if ($bookingData['package_id'] > 0) {
+                                                                                    $package_id = $bookingData['package_id'];
+                                                                                }
+                                                                                echo get_packages_options($package_id);
+                                                                            @endphp
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="" class="col-sm-2 col-form-label">
+                                                                    Deposit Needed?
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <div class="form-group clearfix">
+
+                                                                            <div class="icheck-primary d-inline">
+                                                                                <input value="YES" type="radio"
+                                                                                    id="desposite_needed1"
+                                                                                    name="deposit_needed"
+                                                                                    checked="checked">
+                                                                                <label for="desposite_needed1">YES</label>
+                                                                            </div> &nbsp;
+                                                                            <div class="icheck-primary d-inline">
+                                                                                <input value="NO" type="radio"
+                                                                                    id="deposit_needed2"
+                                                                                    name="deposit_needed">
+                                                                                <label for="deposit_needed2">NO</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+                                                    <!-- /.tab-pane -->
+                                                    <div class="tab-pane" id="photographer_info">
+                                                        this is گراپھعر
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+
+                                                    <!-- /.tab-pane -->
+                                                    <div class="tab-pane" id="payment_info">
+                                                        this is Payment tab
+                                                    </div>
+                                                    <!-- /.tab-pane -->
+                                                </div>
+                                                <!-- /.tab-content -->
+                                            </div><!-- /.card-body -->
+                                        </div>
+                                        <!-- /.card -->
+                                    </div>
+                                    <!-- /.col -->
+
+                                    <div class="col-md-4">
+                                        <p class="lead">Amount Due </p>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th style="width:50%">Package 1:</th>
+                                                        <td>$300</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tax (9.3%)</th>
+                                                        <td>$27.9</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Over time:</th>
+                                                        <td>$100 ($50/Hour)</td>
+                                                    </tr>
+                                                    <tr class="alert-info">
+                                                        <th>Total Cost:</th>
+                                                        <td>$427.9</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total Received:</th>
+                                                        <td>$175</td>
+                                                    </tr>
+                                                    <tr class="alert-danger">
+                                                        <th>Due Amount:</th>
+                                                        <td>$175</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+
+                                        <button type="button" class="btn btn-success float-right"><i
+                                                class="far fa-credit-card"></i> Submit
+                                            Payment
+                                        </button>
+                                        <button type="button" class="btn btn-primary float-right"
+                                            style="margin-right: 5px;">
+                                            <i class="fas fa-download"></i> Generate PDF
+                                        </button>
+
+
+
+                                    </div>
+                                    <!-- /.col -->
+                                </div>
+                              
+
                                 <div class="row">
                                     <div class="col-3">&nbsp;</div>
                                     <div class="col-6">
@@ -48,8 +522,9 @@
                                             @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                                                 @if (Session::has('alert-' . $msg))
                                                     <p class="alert alert-{{ $msg }}">
-                                                        {{ Session::get('alert-' . $msg) }} <a href="#" class="close"
-                                                            data-dismiss="alert" aria-label="close">&times;</a></p>
+                                                        {{ Session::get('alert-' . $msg) }} <a href="#"
+                                                            class="close" data-dismiss="alert"
+                                                            aria-label="close">&times;</a></p>
                                                 @endif
                                             @endforeach
                                         </div> <!-- end .flash-message -->

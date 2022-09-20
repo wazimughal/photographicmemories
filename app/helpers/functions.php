@@ -355,7 +355,22 @@ if(!function_exists('relation_with_event_options')){
         return $options;   
     }
 }
-// Get Options of Venue Groups
+// Get Options of Relationship with groom/bride
+if(!function_exists('relation_with_event')){
+    function relation_with_event($id){
+        $relations[]='Father';
+        $relations[]='Mother';
+        $relations[]='Groom';
+        $relations[]='Bride';
+        $relations[]='Brother';
+        $relations[]='Sister';
+        $relations[]='Other family member';
+        $relations[]='Hall manager';
+        return $relations[$id];
+
+    }
+}
+// Get Packages
 if(!function_exists('get_packages')){
     function get_packages(){
     
@@ -363,6 +378,14 @@ if(!function_exists('get_packages')){
         if($photographic_packages_data)
          $photographic_packages_data=$photographic_packages_data->toArray();
           return $photographic_packages_data;
+    }
+}
+// Get Packages
+if(!function_exists('get_package_by_id')){
+    function get_package_by_id($id){
+    
+        $photographic_package_data = App\Models\adminpanel\PhotographicPackages::where('id',$id)->orderBy('id', 'asc')->get()->toArray();
+         return $photographic_package_data[0];
     }
 }
 // Get Options of Venue Groups
@@ -402,14 +425,12 @@ if(!function_exists('get_venue_group_options')){
      return $options;   
     }
 }
-if(!function_exists('getReportByIDs')){
-    function getReportByIDs($advisedTestID, $patientTestID){
+if(!function_exists('get_user_by_id')){
+    function get_user_by_id($id){
         //return array($id);
-        $testReport = App\Models\adminpanel\PatientReports::with('LabTest')->where('lab_test_id',$advisedTestID)->where('patient_test_id',$patientTestID)->orderBy('id', 'desc')->get();
-        if($testReport)
-        return $testReport->toArray();
+        $userData = App\Models\adminpanel\Users::where('id',$id)->get()->toArray();
         
-        return array();
+        return $userData[0];
     }
 }
 if(!function_exists('pencilBy')){

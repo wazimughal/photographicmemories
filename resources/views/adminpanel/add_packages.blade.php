@@ -1,6 +1,6 @@
 @extends('adminpanel.admintemplate')
 @push('title')
-    <title>Add products | {{ config('constants.app_name') }}</title>
+    <title>Add Packages | {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->
@@ -10,12 +10,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Add New products</h1>
+                        <h1>Add New Packages</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Add New product</li>
+                            <li class="breadcrumb-item active">Add New Package</li>
                         </ol>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                     <div class="col-12">
                         <div class="card card-success">
                             <div class="card-header">
-                                <h3 class="card-title">Add New products</h3>
+                                <h3 class="card-title">Add New Packages</h3>
                             </div>
                             <div class="card-body">
                               <div class="row">
@@ -54,7 +54,7 @@
                                         <div class="col-6">
                                           <div class="input-group mb-3">
                                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                                placeholder="Product Name" value="{{ old('name') }}">
+                                                placeholder="Package Name" value="{{ old('name') }}">
                                             <div class="input-group-append">
                                                 <div class="input-group-text">
                                                     <span class="fas fa-user"></span>
@@ -74,14 +74,35 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                           <div class="input-group mb-3">
-                                            <textarea type="text" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror"
-                                                placeholder="Addition Notes" >{{ old('additional_notes');}}</textarea>
+                                            <input type="text" name="price" class="form-control @error('price') is-invalid @enderror"
+                                                placeholder="Package price" value="{{ old('price') }}">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    <span class="fas fa-user"></span>
+                                                </div>
+                                            </div>
+                                            @error('price')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                    
+                                        </div>
+                                        </div>
+                                        <div class="col-3">&nbsp;</div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">&nbsp;</div>
+                                        <div class="col-6">
+                                          <div class="input-group mb-3">
+                                            <textarea type="text" name="description" class="form-control @error('additional_notes') is-invalid @enderror"
+                                                placeholder="Package Description" >{{ old('description');}}</textarea>
                                             <div class="input-group-append">
                                                 <div class="input-group-text">
                                                     <span class="fas fa-building"></span>
                                                 </div>
                                             </div>
-                                            @error('additional_notes')
+                                            @error('description')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>

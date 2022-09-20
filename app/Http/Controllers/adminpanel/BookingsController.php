@@ -8,6 +8,8 @@ use App\Models\adminpanel\Users;
 use App\Models\adminpanel\Groups;
 use App\Models\adminpanel\Bookings;
 use App\Models\adminpanel\bookings_users;
+use App\Models\adminpanel\files;
+use App\Models\adminpanel\invoices;
 use App\Models\adminpanel\PhotographicPackages;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
@@ -24,6 +26,8 @@ class BookingsController extends Controller
         $this->bookings= new Bookings;
         $this->packages= new PhotographicPackages;
         $this->bookings_users= new bookings_users;
+        $this->invoices= new invoices;
+        $this->files= new files;
         //$this->middleware('photographerGaurd', ['only' => ['bookings']]);
         
       }
@@ -55,11 +59,16 @@ class BookingsController extends Controller
         ->with('customer')
         ->with('photographer')
         ->with('venue_group')
+        ->with('invoices')
+        ->with('files')
         ->where('id',$id)
         ->orderBy('created_at', 'desc')->get()->toArray();
         $bookingData=$bookingData[0];
-        //p($bookingData);
-         return view('adminpanel/pencil_to_bookings',get_defined_vars());
+
+        $assigne_photographers=$this->bookings_users->with('userinfo')->where('booking_id',$id)->where('group_id',config('constants.groups.photographer'))->get()->toArray();
+        //p($assigne_photographers); die;
+         return view('adminpanel/add_to_booking',get_defined_vars());
+         //return view('adminpanel/pencil_to_bookings',get_defined_vars());
      }
      public function save_pencil_data(Request $request){
         $validator=$request->validate([
@@ -376,78 +385,99 @@ class BookingsController extends Controller
             
         return view('adminpanel/bookings',get_defined_vars());
     }
+    
+    public function save_booking_invoice_data($id,Request $request){
+        $validator=$request->validate([
+            'payee_name'=>'required',
+            'payee_uid '=>'required',
+            'paid_amount'=>'required',
+        ]);
+        $payee=explode('-',$request['payee_uid']);
+        
+        $this->invoices->payee_name=$request['payee_name'];
+        $this->invoices->payee_uid =$payee[0];
+        $this->invoices->slug =$payee[1];
+        $this->invoices->description=$request['description'];
+        $this->invoices->paid_amount=$request['paid_amount'];
+        $this->invoices->booking_id=$id;
+        $this->invoices->created_by=get_session_value('id');
+        $this->invoices->save();
+       
+        //activity Logged
+        $activityComment='Mr.'.get_session_value('name').' Received Payment ';
+        $activityData=array(
+            'user_id'=>get_session_value('id'),
+            'action_taken_on_id'=>$id,
+            'action_slug'=>'new_payment',
+            'comments'=>$activityComment,
+            'others'=>'bookings',
+            'created_at'=>date('Y-m-d H:I:s',time()),
+        );
+        $activityID=log_activity($activityData);
+
+
+        $request->session()->flash('alert-success', 'Payment Added in System');
+
+        return redirect()->back();
+        //redirect route('bookings.save_booking_edit_data', $id);
+    }
+
     public function save_booking_edit_data($id,Request $request){
         $validator=$request->validate([
-            'firstname'=>'required',
-            'lastname'=>'required',
-            'phone'=>'required',
-            'relation_with_event'=>'required',
-            'groom_name'=>'required',
-            'groom_home_phone'=>'required',
-            'groom_mobile'=>'required',
-            //'groom_email'=>'required|email|distinct|unique:bookings|min:5',
-            'groom_billing_address'=>'required',
-            'bride_name'=>'required',
-            'bride_home_phone'=>'required',
-            'bride_mobile'=>'required',
-            //'bride_email'=>'required|email|distinct|unique:bookings|min:5',
-            'bride_billing_address'=>'required',
             'date_of_event'=>'required',
-            'venue_group_id'=>'required'
+            'venue_group_id'=>'required',
+            'package_id'=>'required',
+            'paying_via'=>'required',
+            'package_id'=>'required',
         ]);
        
-        $dataArray['firstname']=$request['firstname'];
-        $dataArray['lastname']=$request['lastname'];
-        $dataArray['name']=$request['firstname'].' '.$request['lastname'];
-        $dataArray['phone']=$request['phone'];
-        $dataArray['relation_with_event']=$request['relation_with_event'];
-        
-        $this->users->where('id',$request['customer_id'])->update($dataArray);
-        
-        //$this->bookings->preferred_photographer_id=$request['preferred_photographer_id'];
-        $bookingData['groom_name']=$request['groom_name'];
-        $bookingData['groom_home_phone']=$request['groom_home_phone'];
-        $bookingData['groom_mobile']=$request['groom_mobile'];
-        $bookingData['groom_email']=$request['groom_email'];
-        $bookingData['groom_billing_address']=$request['groom_billing_address'];
-        $bookingData['bride_name']=$request['bride_name'];
-        $bookingData['bride_home_phone']=$request['bride_home_phone'];
-        $bookingData['bride_mobile']=$request['bride_mobile'];
-        $bookingData['bride_email']=$request['bride_email'];
-        $bookingData['bride_billing_address']=$request['bride_billing_address'];
         $bookingData['date_of_event']=$request['date_of_event'];
-        //$bookingData['created_by_user']=get_session_value('id');
-        //$bookingData['pencile_by']=config('constants.pencileBy.office');
-
-       
+        $bookingData['time_of_event']=$request['time_of_event'];
+        $bookingData['package_id']=$request['package_id'];
+        
         if(isset($request['other_venue_group']) && !empty($request['other_venue_group']))
         $bookingData['other_venue_group']=$request['other_venue_group'];
 
         $bookingData['who_is_paying']=$request['who_is_paying'];
+        $bookingData['paying_via']=$request['paying_via'];
         $bookingData['status']=config('constants.booking_status.awaiting_for_photographer'); // 1 is for waiting for photographer
+        
         if(isset($request['customer_to_pay']) && !empty($request['customer_to_pay']))
         $bookingData['customer_to_pay']=$request['customer_to_pay'];
+        
         if(isset($request['venue_group_to_pay']) && !empty($request['venue_group_to_pay']))
         $bookingData['venue_group_to_pay']=$request['venue_group_to_pay'];
 
-        if(isset($request['title_for_extra_price']) && !empty($request['title_for_extra_price']))
-        $bookingData['title_for_extra_price']=$request['title_for_extra_price'];
-
+        
         if(isset($request['extra_price']) && !empty($request['extra_price']))
         $bookingData['extra_price']=$request['extra_price'];
 
         if(isset($request['extra_charge_desc']) && !empty($request['extra_charge_desc']))
         $bookingData['extra_charge_desc']=$request['extra_charge_desc'];
+        
+        if(isset($request['overtime_hours']) && !empty($request['overtime_hours']))
+        $bookingData['overtime_hours']=$request['overtime_hours'];
+        
+        if(isset($request['overtime_rate_per_hour']) && !empty($request['overtime_rate_per_hour']))
+        $bookingData['overtime_rate_per_hour']=$request['overtime_rate_per_hour'];
+     
+        $bookingData['deposit_needed']=1;
+        if($request['deposit_needed']=='NO')
+        $bookingData['deposit_needed']=0;
         //$this->bookings->notes_by_pencil=$request['notes_by_pencil'];
         
         // Booking data updated
         $this->bookings->where('id',$id)->update($bookingData);
       
 
-        // Venue Group Added to Pencil
+        // Venue Group Added to Booking
+        echo $request['selected_venue_group_id'].'!='.$request['venue_group_id'];
+
         if($request['selected_venue_group_id']!=$request['venue_group_id'])
-        if((isset($request['venue_group_id']) && $request['venue_group_id']>0) && !isset($request['other_venue_group']) || empty($request['other_venue_group'])){
-            $this->bookings_users->where('booking_id',$id)->where('user_id',$request['venue_group_id'])->limit(1)->delete();
+        if((isset($request['venue_group_id']) && $request['venue_group_id']>0)){
+            //$this->bookings_users->where('booking_id',$id)->where('user_id',$request['venue_group_id'])->delete();
+            $this->bookings_users->where('booking_id',$id)->where('group_id',config('constants.groups.venue_group_hod'))->delete();
+            //echo '<br> I am in'; die;
             DB::table('bookings_users')->insert([
             ['user_id' => $request['venue_group_id'],
              'booking_id' => $id,
@@ -458,7 +488,15 @@ class BookingsController extends Controller
 
         }
 
+        
+        
+    
+        if(!empty($request['photographer_id'][0]))
+        $this->bookings_users->where('booking_id',$id)->where('status',0)->where('group_id',config('constants.groups.photographer'))->delete();
+
         foreach($request['photographer_id'] as $key=>$value){
+            if(empty($value))
+            continue;
             DB::table('bookings_users')->insert([
                 ['user_id' => $value,
                  'booking_id' => $id,
@@ -472,7 +510,7 @@ class BookingsController extends Controller
      
       
         //activity Logged
-        $activityComment='Mr.'.get_session_value('name').' Added new Booking by '.$dataArray['name'];
+        $activityComment='Mr.'.get_session_value('name').' Added new Booking of date '.$bookingData['date_of_event'];
         $activityData=array(
             'user_id'=>get_session_value('id'),
             'action_taken_on_id'=>$id,
@@ -491,6 +529,50 @@ class BookingsController extends Controller
 
 
      }
+// Upload new documents
+public function upload_documents($id,Request $request){
+    $user=Auth::user();
+        $image = $request->file('file');
+        $imageExt=$image->extension();
+        $imageName = time().'.'.$imageExt;
+
+ 
+
+        $image->move(public_path('uploads'),$imageName);
+        $orginalImageName=$image->getClientOriginalName();
+    
+    //return response()->json(['success'=>$imageName]);
+
+        $this->files->name=$orginalImageName;
+        $this->files->slug=phpslug($imageName);
+        $this->files->path=url('uploads').'/'.$imageName;
+        $this->files->description=$orginalImageName.' file uploaded';
+        $this->files->otherinfo=$imageExt;
+        $this->files->booking_id=$id;
+        $this->files->uploaded_by=get_session_value('id');
+        $this->files->save();
+    //             ->update($data);
+    // $this->files->where('id', $id)
+    //             ->update($data);
+
+                // Activity Log
+                $activityComment='Mr.'.get_session_value('name').' uploaded documents for booking';
+                $activityData=array(
+                    'user_id'=>get_session_value('id'),
+                    'action_taken_on_id'=>$id,
+                    'action_slug'=>'booking_documents_added',
+                    'comments'=>$activityComment,
+                    'others'=>'files',
+                    'created_at'=>date('Y-m-d H:I:s',time()),
+                );
+                $activityID=log_activity($activityData);
+
+    return response()->json(['success'=>$imageName]);
+
+    
+ }
+
+     
      public function ajaxcall($id=NULL, Request $req){
         $dataArray['error']='No';
         $dataArray['title']='Action Taken';
@@ -500,6 +582,38 @@ class BookingsController extends Controller
             $dataArray['msg']='There is some error ! Please try again later!.';
             echo json_encode($dataArray);
             die;
+        }
+
+        if(isset($req['action']) && $req['action']=='delteFile'){ 
+            $dataArray['title']='ٖFile deleted';
+            $fileData=$this->files->where('id','=',$id)->get()->toArray();
+            if($fileData){
+                $fileData=$fileData[0];
+              $filePath=public_path('uploads').'/'.$fileData['slug'];
+              
+                unlink($filePath);
+                
+           
+                $file=$this->files->where('id', $id)->delete();
+                $dataArray['msg']='Mr.'.get_session_value('name').', deleted  '.$fileData['name'].' successfully!';
+                $activityComment=$fileData['name'].' File delted ';
+                $activityData=array(
+                    'user_id'=>get_session_value('id'),
+                    'action_taken_on_id'=>$id,
+                    'action_slug'=>'file_deleted',
+                    'comments'=>$activityComment,
+                    'others'=>'files',
+                    'created_at'=>date('Y-m-d H:I:s',time()),
+                );
+                $activityID=log_activity($activityData);
+                $dataArray['error']='No';
+            }
+            
+            else{
+                $dataArray['error']='Yes';
+                $dataArray['msg']='There is some error ! Please fill all the required fields.';
+            }
+            
         }
         else if(isset($req['action']) && $req['action'] =='show_photographer'){
             $dataArray['error']='No';

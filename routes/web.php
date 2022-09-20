@@ -46,11 +46,6 @@ Route::resource('/admin/patient-reports', PatientReportsController::class)->exce
     'store'
 ])->middleware('adminHodGaurd');
 
-Route::post('/admin/patient-reports/save', [PatientReportsController::class,'saveReport'])->name('save')->middleware('adminHodGaurd');
-Route::get('/admin/patient-reports/delete/{id}', [PatientReportsController::class,'destroy'])->name('destroy')->middleware('adminHodGaurd');
-Route::get('/admin/patient-reports/show/{id}', [PatientReportsController::class,'showReportJson'])->name('showReport')->middleware('adminHodGaurd');
-Route::get('/admin/patient-reports/view/{id}', [PatientReportsController::class,'viewReport'])->name('view')->middleware('adminHodGaurd');
-
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -106,7 +101,10 @@ Route::any('admin/bookings/add',[App\Http\Controllers\adminpanel\BookingsControl
 Route::get('/admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings_edit_form'])->name('bookings.bookings_edit_form');
 Route::post('admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'save_booking_edit_data'])->name('bookings.save_booking_edit_data');
 Route::any('admin/bookings/ajaxcall/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'ajaxcall'])->name('bookings.ajaxcall');
+Route::post('admin/bookings/add_invoice/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'save_booking_invoice_data'])->name('bookings.add_invoice');
 
+//Route::get('/admin/bookings/add-documents/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'add_documents'])->name('bookings.add-documents');
+Route::any('/admin/bookings/upload-documents/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'upload_documents'])->name('bookings.uploaddocuments');
 
 // Color Management 
 Route::get('/admin/colors',[App\Http\Controllers\adminpanel\ColorsController::class,'colors'])->name('colors');
