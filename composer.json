@@ -23,7 +23,8 @@
     },
     "autoload": {
         "files": [
-            "app/helpers/functions.php"
+            "app/helpers/functions.php",
+            "app/helpers/email_templates.php"
         ],
         "psr-4": {
             "App\\": "app/",

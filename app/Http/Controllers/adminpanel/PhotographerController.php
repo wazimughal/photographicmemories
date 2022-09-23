@@ -38,7 +38,7 @@ class PhotographerController extends Controller
             'phone'=>'required',
             'unitnumber'=>'required|distinct|unique:users|min:5',
             'city'=>'required',
-            'homeaddress'=>'required',
+            'address'=>'required',
         ]);
         
         
@@ -54,18 +54,8 @@ class PhotographerController extends Controller
         $this->users->created_at=time();
         $this->users->group_id=config('constants.groups.photographer');
        
-        if(isset($request['othercity']) && !empty($request['othercity']))
-        $cityId = getOtherCity($request['othercity']);
-        else
-        $cityId=$request['city'];
-        $this->users->city_id=$cityId;
+        $this->users->city_id=$request['city'];
 
-        // if(isset($request['otherzipcode']) && !empty($request['otherzipcode']))
-        // $zipcode = getOtherZipCode($request['otherzipcode']);
-        // else
-        // $zipcode=$request['zipcode'];
-        // $this->users->zipcode_id=$zipcode;
-  
         $request->session()->flash('alert-success', 'photographer Added! Please Check in photographers list Tab');
         $this->users->save();
        
@@ -87,13 +77,21 @@ class PhotographerController extends Controller
     // List All the photographers 
     public function photographers($type=NULL){
         $user=Auth::user();
-        
-            $photographersData=$this->users->with('City')->with('ZipCode')
+        if($user->group_id==config('constants.groups.admin')){
+            $photographersData=$this->users->with('City')
             ->where('group_id', '=', config('constants.groups.photographer'))
             ->where('is_active', '=', 1)
             ->where('zipcode_id', '!=', NULL)
             ->where('city_id', '!=', NULL)
             ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }else{
+            $photographersData=$this->users->with('City')
+            ->where('group_id', '=', config('constants.groups.photographer'))
+            ->where('is_active', '=', 1)
+            ->where('id', '=', get_session_value('id'))
+            ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
+        }
+            
        
         return view('adminpanel/photographers',compact('photographersData','user'));
     }
@@ -145,34 +143,6 @@ class PhotographerController extends Controller
         echo json_encode($dataArray);
         die;
 
-    }
-    public function DeleteLeadssData($id){
-        $dataArray['error']='No';
-        $dataArray['title']='User';
-
-        $result=$this->users->where('id','=',$id)->update(array('is_active'=>3));             
-        if($result){
-            $dataArray['msg']='Mr.'.get_session_value('name').', record delted successfully!';
-
-            $activityComment='Mr.'.get_session_value('name').' moved lead to approved/pending/cancelled';
-            $activityData=array(
-                'user_id'=>get_session_value('id'),
-                'action_taken_on_id'=>$id,
-                'action_slug'=>'lead_status_changed',
-                'comments'=>$activityComment,
-                'others'=>'users',
-                'created_at'=>date('Y-m-d H:I:s',time()),
-            );
-            $activityID=log_activity($activityData);
-        }
-        
-        else{
-            $dataArray['error']='Yes';
-            $dataArray['msg']='There is some error ! Please fill all the required fields.';
-
-        }
-        echo json_encode($dataArray);
-        die;
     }
     public function ajaxcall($id, Request $req){
         $dataArray['error']='No';
@@ -266,20 +236,17 @@ class PhotographerController extends Controller
             }
 
         }
-        else if(isset($req['action']) && $req['action'] =='viewLeadData'){
+        else if(isset($req['action']) && $req['action'] =='view_photographer'){
             $dataArray['error']='No';
             $dataArray['msg']='Lead Successfully Updated';
-            $dataArray['title']='Leads Panel';
+            $dataArray['title']='Photographer';
            
-            $data=$this->users->with('City')->with('ZipCode')
+            $data=$this->users->with('City')
             ->where('group_id', '=', config('constants.groups.photographer'))
             ->where('id', '=', $req['id'])
-            ->where('zipcode_id', '!=', NULL)
-            ->where('city_id', '!=', NULL)
             ->orderBy('created_at', 'desc')->get()->toArray();
             $photographerData=$data[0];
             
-            //p($photographerData); dd('bss');
             $leadHTML='<div class="container">
             <div class="row">
                 <div class="col-1">&nbsp;</div>
@@ -297,16 +264,6 @@ class PhotographerController extends Controller
                 </div>
                 <div class="col-5">
                     '.$photographerData['email'].'</div>
-                <div class="col-1">&nbsp;</div>
-            </div>
-            <div class="row">
-                <div class="col-1">&nbsp;</div>
-                <div class="col-5">
-                    <strong>Mobile No.</strong>
-                </div>
-                <div class="col-5">
-                    '.$photographerData['mobileno'].'
-                </div>
                 <div class="col-1">&nbsp;</div>
             </div>
             <div class="row">
@@ -330,10 +287,10 @@ class PhotographerController extends Controller
             <div class="row">
                 <div class="col-1">&nbsp;</div>
                 <div class="col-5">
-                    <strong>Home Address</strong>
+                    <strong>Address</strong>
                 </div>
                 <div class="col-5">
-                    '.$photographerData['homeaddress'].'
+                    '.$photographerData['address'].'
                 </div>
                 <div class="col-1">&nbsp;</div>
             </div>
@@ -347,62 +304,32 @@ class PhotographerController extends Controller
                 </div>
                 <div class="col-1">&nbsp;</div>
             </div>
-            <div class="row">
-                <div class="col-1">&nbsp;</div>
-                <div class="col-5">
-                    <strong>Zip Code.</strong>
-                </div>
-                <div class="col-5">
-                    '.$photographerData['zip_code']['code'].'
-                    </div>
-                <div class="col-1">&nbsp;</div>
-            </div>
         </div>';
             $dataArray['res']=$leadHTML;
         }
         else if(isset($req['action']) && $req['action'] =='SaveAddtophotographerForm'){
             $dataArray['error']='No';
             $dataArray['msg']='photographer Successfully Updated';
-            $dataArray['title']='Leads Panel';
+            $dataArray['title']='Photographer';
             $dataArray['actionType']='move_to_photographer';
             //$dataArray['formdata']=$req->all();
 
             $dataArray['firstname']=$req['firstname'];
             $dataArray['lastname']=$req['lastname'];
             $dataArray['name']=$req['firstname'].' '.$req['lastname'];
-            $dataArray['mobileno']=$req['mobileno'];
             $dataArray['phone']=$req['phone'];
-            $dataArray['homeaddress']=$req['homeaddress'];
+            $dataArray['address']=$req['address'];
             $dataArray['unitnumber']=$req['unitnumber'];
             $dataArray['id']=$req['photographer_id'];
-            $dataArray['city']=$req['cityname'];
-            $dataArray['zipcode']=$req['zipcode_no'];
-            // Get The City ID from table Cities
-            if(isset($req['othercity']) && !empty($req['othercity'])){
-                $cityId = getOtherCity($req['othercity']);
-                $dataArray['city']=$req['othercity'];
-            } else
-                $cityId=$req['city'];
-
-            // Get the Zipcode id from the table zipcode
-            if(isset($req['otherzipcode']) && !empty($req['otherzipcode'])){
-                $zipcode_id = getOtherZipCode($req['otherzipcode']);
-                $dataArray['zipcode']=$req['otherzipcode'];
-            }
-            else
-                $zipcode_id=$req['zipcode_id'];                
-
+            
             $this->users->where('id', $req['photographer_id'])->update(
                 array(
                     'firstname'=>$req['firstname'],
                     'lastname'=>$req['lastname'],
                     'name'=>$req['firstname'].' '.$req['lastname'],
-                    'mobileno'=>$req['mobileno'],
                     'phone'=>$req['phone'],
                     'unitnumber'=>$req['unitnumber'],
-                    'homeaddress'=>$req['homeaddress'],
-                    'city_id'=>$cityId,
-                    'zipcode_id'=>$zipcode_id,
+                    'address'=>$req['address'],
                     )
             );
             // Activity Logged
@@ -420,176 +347,16 @@ class PhotographerController extends Controller
             die;
 
         }
-        else if(isset($req['action']) && $req['action'] =='SaveEditFormLead'){
-            $dataArray['error']='No';
-            $dataArray['msg']='Lead Successfully Updated';
-            $dataArray['title']='Leads Panel';
-            //$dataArray['formdata']=$req->all();
-
-            // $this->venue_users->user_id=$req['id'];
-            // $this->venue_users->venue_group_id=$req['venue_group_id'];
-            // $this->venue_users->save();
-    
-            $this->venue_users->where('id', $req['venue_user_id'])->update(array('venue_group_id'=>$req['venue_group_id']));
-            $LeadData=array();
-            $dataArray['firstname']=$req['firstname'];
-            $dataArray['lastname']=$req['lastname'];
-            $dataArray['name']=$req['firstname'].' '.$req['lastname'];
-            $dataArray['mobileno']=$req['mobileno'];
-            $dataArray['phone']=$req['phone'];
-            $dataArray['id']=$req['lead_id'];
-            $dataArray['lead_type']=$req['lead_type'];
-            
-            $this->users->where('id', $req['lead_id'])->update(array(
-                'firstname'=>$req['firstname'],
-                'lastname'=>$req['lastname'],
-                'name'=>$req['firstname'].' '.$req['lastname'],
-                'mobileno'=>$req['mobileno'],
-                'phone'=>$req['phone'],
-                'lead_type'=>$req['lead_type'],
-
-            ));
-             // Activity Logged
-             $activityID=log_activity(array(
-                'user_id'=>get_session_value('id'),
-                'action_taken_on_id'=>$req['lead_id'],
-                'action_slug'=>'lead_updated',
-                'comments'=>'Mr.'.get_session_value('name').' updated Lead having name Mr.'.$req['firstname'].' '.$req['lastname'],
-                'others'=>'users',
-                'created_at'=>date('Y-m-d H:I:s',time()),
-            ));
-
-            $leadType=config('constants.lead_types.'.$req['lead_type']);
-            $dataArray['lead_type_tile']=$leadType['title'];
-            $dataArray['venue_group_name']=$req['venue_group_name'];
-            echo json_encode($dataArray);
-            die;
-
-        }
-        else if(isset($req['action']) && $req['action'] =='updateLeadForm'){
-            $dataArray['error']='No';
-           
-            $data=getLeadWithVenuebyID($req['id']);
-           // p($data); die;
-            $csrf_token = csrf_token();
-           
         
-$formHtml='<form id="EditPhotographerForm"
-                                                                            method="GET"
-                                                                            action=""
-                                                                            onsubmit="return updatePhotographer('. $data['id'].','. $req['counter'].')">
-                                                                            <input type="hidden" name="_token" value="'.$csrf_token.'" />
-                                                                            <input type="hidden" name="action" value="SaveEditFormPhotographer" />
-                                                                            <input type="hidden" name="photographer_id" value="'.$data['id'].'" />
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                    <select name="lead_type"class="form-control select2bs4" placeholder="Select Lead Type">
-                                                                                   '.$leadTypeOptions.'
-                                                                                    </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <input type="text" name="firstname"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Name"
-                                                                                            value="'. $data['firstname'].'"
-                                                                                            required>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <input type="text" name="lastname"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Name"
-                                                                                            value="'. $data['lastname'].'"
-                                                                                            required>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <input disabled readonly type="text"
-                                                                                            name="email"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Email"
-                                                                                            value="'. $data['email'].'"
-                                                                                            required>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
-                                                                                    <input type="text"
-                                                                                        name="mobileno"
-                                                                                        class="form-control"
-                                                                                        placeholder="Mobile No."
-                                                                                        value="'. $data['mobileno'].'"
-                                                                                        required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
-                                                                                    <input  type="text" name="phone" class="form-control" placeholder="Phone No." value="'. $data['phone'].'" required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                    <select id="venue_group_id" name="venue_group_id" onchange="$(\'#venue_group_name\').val($(\'#venue_group_id option:selected\').text())" class="form-control select2bs4" placeholder="Select Venue Group">'.$venueGroupOptions.'</select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-5">&nbsp;</div>
-                                                                                <div class="col-2">
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-outline-success btn-block btn-lg"><i
-                                                                                            class="fa fa-save"></i>
-                                                                                        Save Changes</button>
-                                                                                </div>
-                                                                                <div class="col-5">&nbsp;</div>
-
-                                                                            </div>
-                                                                        </form>';
-            $dataArray['formdata']=$formHtml;
-        }
         else if(isset($req['action']) && $req['action'] =='editphotographerForm'){
             $dataArray['error']='No';
            
-            //$data=getLeadWithVenuebyID($req['id']);
-            $data=$this->users->with('City')->with('ZipCode')
+            
+            $data=$this->users->with('City')
             ->where('group_id', '=', config('constants.groups.photographer'))
             ->where('id', '=', $req['id'])
-            ->where('zipcode_id', '!=', NULL)
-            ->where('city_id', '!=', NULL)
             ->orderBy('created_at', 'desc')->get()->toArray();
             $data=$data[0];
-            //p($data); die;
             $csrf_token = csrf_token();
             
         
@@ -598,8 +365,6 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <input type="hidden" name="_token" value="'.$csrf_token.'" />
                                                                             <input type="hidden" name="action" value="SaveAddtophotographerForm" />
                                                                             <input type="hidden" name="photographer_id" value="'.$data['id'].'" />
-                                                                            <input type="hidden" id="cityname" name="cityname" value="'.$data['city']['name'].'" />
-                                                                            <input id="zipcode_no" type="hidden" name="zipcode_no" value="'.$data['zip_code']['code'].'" />
                                                                             
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
@@ -645,20 +410,6 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
                                                                                 <div class="input-group mb-3">
-                                                                                    <input type="text"
-                                                                                        name="mobileno"
-                                                                                        class="form-control"
-                                                                                        placeholder="Mobile No."
-                                                                                        value="'. $data['mobileno'].'"
-                                                                                        required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
                                                                                     <input  type="text" name="phone" class="form-control" placeholder="Phone No." value="'. $data['phone'].'" required>
                                                                                 </div>
                                                                             </div>
@@ -674,30 +425,10 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="col-3">&nbsp;</div>
                                                                             </div>
                                                                             <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                    <select id="city" onChange="changeCity()" name="city" class="form-control select2bs4" placeholder="Select Venue Group">'.getCitiesOptions($data['city_id']).'</select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div id="othercity"></div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                    <select id="zipcode_id" onChange="changezipcode()" name="zipcode_id" class="form-control select2bs4" placeholder="Select Venue Group">'.getzipcodeOptions($data['zipcode_id']).'</select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div id="otherzipcode"></div>
-                                                                            <div class="row form-group">
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
                                                                                 <div class="input-group mb-3">
-                                                                                    <input  type="text" name="homeaddress" class="form-control" placeholder="Home Address" value="'. $data['homeaddress'].'" required>
+                                                                                    <input  type="text" name="address" class="form-control" placeholder="Home Address" value="'. $data['address'].'" required>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-3">&nbsp;</div>

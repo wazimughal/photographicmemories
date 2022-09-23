@@ -51,6 +51,8 @@ return new class extends Migration
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('package_id')->default(1);
             $table->foreign('package_id')->references('id')->on('packages');
+            $table->unsignedBigInteger('customer_id')->default(1);
+            $table->foreign('customer_id')->references('id')->on('users');
             $table->string('overtime_hours')->nullable();
             $table->string('overtime_rate_per_hour')->nullable();
             //$table->string('title_for_extra_price')->nullable(); // description about packages, e.g over time will charged for 200 USD per hours

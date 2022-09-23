@@ -200,6 +200,116 @@ if(!function_exists('getAdvisedTestsNames')){
 //         return array();
 //     }
 // }
+if(!function_exists('booking_status_for_msg')){
+    function booking_status_for_msg($booking_status){
+        $msg='invalid';
+        if ($booking_status==config('constants.booking_status.awaiting_for_photographer'))
+        $msg='We are Waiting for photographer response, Photographer will have to accept or Reject the Invitation';
+        elseif ($booking_status==config('constants.booking_status.declined_by_photographer'))
+        $msg='All the photographer declined the requests, we need to assign new photographer';
+        elseif ($booking_status==config('constants.booking_status.pending_customer_agreement'))
+        $msg='Customer agreement is pending !';
+        elseif ($booking_status==config('constants.booking_status.pending_customer_deposit'))
+        'Customer need to deposit, ask the customer to deposit !';
+        elseif ($booking_status==config('constants.booking_status.on_hold'))
+        $msg='Booking is on hold, Please review it';
+        elseif ($booking_status==config('constants.booking_status.confirmed'))
+        $msg='Everyth is perfect. Booking is confirmed!';
+        return $msg;
+    }
+}
+if(!function_exists('get_booking_status')){
+    function get_booking_status($booking_id){
+        
+        $photographer_status = DB::table('bookings_users')
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->where('group_id',config('constants.groups.photographer'))
+            ->where('booking_id',$booking_id)
+            ->get()->toArray();
+        //p( $photographer_status);
+        
+        if(empty($photographer_status))
+        return config('constants.booking_status.awaiting_for_photographer'); 
+        //config('constants.photographer_assigned.awaiting') =0
+        //config('constants.photographer_assigned.accepted') =1
+        //config('constants.photographer_assigned.declined') =2
+        //config('constants.photographer_assigned.cancelled') =3
+        //config('constants.photographer_assigned.removed') =4
+
+        $status=config('constants.booking_status.pending_customer_agreement'); 
+        $awaiting_photographer=0;
+        $accepted_photographer=0;
+        $declined_photographer=0;
+        $cancelled_photographer=0;
+
+        foreach($photographer_status as $data){
+
+            if($data->status==config('constants.photographer_assigned.awaiting')){  //0
+                $awaiting_photographer=$data->total;
+                continue;
+            
+            }elseif($data->status==config('constants.photographer_assigned.accepted')){ //1
+               
+                $accepted_photographer=$data->total;
+                continue;
+            
+            }elseif($data->status==config('constants.photographer_assigned.declined') && $data->total>0 ){
+                $declined_photographer=$data->total;
+                continue;
+            }elseif($data->status==config('constants.photographer_assigned.declined') && $data->total>0 ){
+                $cancelled_photographer=$data->total;
+                continue;  
+            }
+            
+        }
+
+        if($awaiting_photographer>0 || $accepted_photographer<1  ){
+            return config('constants.booking_status.awaiting_for_photographer'); 
+        }else if($declined_photographer>0){
+            return config('constants.booking_status.awaiting_for_photographer'); 
+        }else if($declined_photographer>0){
+            return config('constants.booking_status.awaiting_for_photographer'); 
+        }
+        else{
+            return config('constants.booking_status.pending_customer_agreement'); 
+        }
+       
+    }
+}
+// assign new photographer
+if(!function_exists('assign_photographer_to_booking')){
+    function assign_photographer_to_booking($event_date, $data){
+        
+        $photographersData = App\Models\adminpanel\bookings_users::where('user_id',$data['user_id'])
+                            ->where('status','<=',config('constants.photographer_assigned.accepted'))
+                            ->where('group_id',config('constants.groups.photographer'))
+                            ->with('booking')->get()->toArray();
+                            //p($photographersData); 
+                            $retData['result']=true;
+
+                            //echo 'user_id:'.$data['user_id'].'<br>';
+                            //echo 'count :'.count($photographersData);
+           foreach($photographersData as $photographer){
+                if($photographer['booking']['date_of_event']==$event_date){
+                    $retData['result']=false;
+                    $retData['msg']=$photographer['user_id'].' Photographer already booked for this date '.$event_date;
+                    return $retData;
+                    
+                }elseif($photographer['user_id']==$data['user_id'] && $photographer['booking_id']==$data['booking_id']){
+                    $retData['result']=false;
+                    $retData['msg']=$photographer['user_id'].' Photographer already assigned for this booking id '.$data['booking_id'];
+                    return $retData;
+                }
+                
+           } 
+           
+           $retData['msg']=$data['user_id'].' assigned to the booking id '.$data['booking_id'];
+           DB::table('bookings_users')->insert($data);
+           return $retData;
+          
+    }
+}
 // Get Options of _photographer_
 if(!function_exists('get_photographer_options')){
     function get_photographer_options($selectID=NULL){

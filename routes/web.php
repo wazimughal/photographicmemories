@@ -88,14 +88,15 @@ Route::get('/admin/pencils',[App\Http\Controllers\adminpanel\BookingsController:
 Route::get('/admin/pencil/{type?}',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils'])->name('admin.order.types');
 Route::get('/admin/pencils/add/',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils_form'])->name('pencils.pencils_form');
 Route::post('admin/pencils/add',[App\Http\Controllers\adminpanel\BookingsController::class,'save_pencil_data'])->name('pencils.save_pencils_data');
+Route::get('/admin/pencils/view/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'view_pencil'])->name('pencil.view');
 Route::get('/admin/pencils/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'pencils_edit_form'])->name('pencils.pencils_edit_form');
 Route::post('admin/pencils/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'save_pencil_edit_data'])->name('pencils.save_pencil_edit_data');
 Route::any('admin/pencils/ajaxcall/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'ajaxcall'])->name('pencils.ajaxcall');
 
 // Booking Management 
 Route::get('/admin/bookings',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings'])->name('admin.bookings');
-Route::get('/admin/addnew',[App\Http\Controllers\adminpanel\BookingsController::class,'addnew'])->name('bookings.addnew');
-//Route::get('/admin/booking/{type?}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings'])->name('admin.order.types');
+Route::get('/admin/bookings/view/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'view_booking'])->name('bookings.view');
+Route::get('/admin/booking/{type?}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings'])->name('bookings.trash');
 Route::get('/admin/bookings/add/{id?}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings_edit_form'])->name('bookings.bookings_form');
 Route::any('admin/bookings/add',[App\Http\Controllers\adminpanel\BookingsController::class,'save_booking_data'])->name('bookings.save_bookings_data');
 Route::get('/admin/bookings/edit/{id}',[App\Http\Controllers\adminpanel\BookingsController::class,'bookings_edit_form'])->name('bookings.bookings_edit_form');

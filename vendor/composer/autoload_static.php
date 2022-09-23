@@ -33,6 +33,7 @@ class ComposerStaticInit6a5d6b3616af506698b893983ed9e07c
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
         '868f7b8ff9807a9ca7220d283955c57d' => __DIR__ . '/../..' . '/app/helpers/functions.php',
+        '271a5707d35c89b81c6cf91d0e30afee' => __DIR__ . '/../..' . '/app/helpers/email_templates.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -601,6 +602,8 @@ class ComposerStaticInit6a5d6b3616af506698b893983ed9e07c
         'App\\Models\\adminpanel\\bookings_users' => __DIR__ . '/../..' . '/app/Models/adminpanel/bookings_users.php',
         'App\\Models\\adminpanel\\cities' => __DIR__ . '/../..' . '/app/Models/adminpanel/cities.php',
         'App\\Models\\adminpanel\\colorsBook' => __DIR__ . '/../..' . '/app/Models/adminpanel/colorsBook.php',
+        'App\\Models\\adminpanel\\comments' => __DIR__ . '/../..' . '/app/Models/adminpanel/comments.php',
+        'App\\Models\\adminpanel\\files' => __DIR__ . '/../..' . '/app/Models/adminpanel/files.php',
         'App\\Models\\adminpanel\\invoices' => __DIR__ . '/../..' . '/app/Models/adminpanel/invoices.php',
         'App\\Models\\adminpanel\\packages_categories' => __DIR__ . '/../..' . '/app/Models/adminpanel/packages_categories.php',
         'App\\Models\\adminpanel\\photographer_orders' => __DIR__ . '/../..' . '/app/Models/adminpanel/photographer_orders.php',

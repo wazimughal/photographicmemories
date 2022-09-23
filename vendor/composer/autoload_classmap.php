@@ -61,6 +61,8 @@ return array(
     'App\\Models\\adminpanel\\bookings_users' => $baseDir . '/app/Models/adminpanel/bookings_users.php',
     'App\\Models\\adminpanel\\cities' => $baseDir . '/app/Models/adminpanel/cities.php',
     'App\\Models\\adminpanel\\colorsBook' => $baseDir . '/app/Models/adminpanel/colorsBook.php',
+    'App\\Models\\adminpanel\\comments' => $baseDir . '/app/Models/adminpanel/comments.php',
+    'App\\Models\\adminpanel\\files' => $baseDir . '/app/Models/adminpanel/files.php',
     'App\\Models\\adminpanel\\invoices' => $baseDir . '/app/Models/adminpanel/invoices.php',
     'App\\Models\\adminpanel\\packages_categories' => $baseDir . '/app/Models/adminpanel/packages_categories.php',
     'App\\Models\\adminpanel\\photographer_orders' => $baseDir . '/app/Models/adminpanel/photographer_orders.php',

@@ -59,12 +59,12 @@
                                         <?php 
                                             $counter = 1;
                                             
-                                            foreach ($pencilData as $pencil){
-                                        //         $pencil=$pencil->toArray();
-                                        //        echo  $pencil['customer']['userinfo'][0]['name'];
-                                        //    p($pencil);
-                                        //     die;
+                                            foreach ($pencilData as $data){
+                                        
                                             ?>
+                                            @foreach ($data['bookings'] as $pencil)
+                                                
+                                           
                                         <tr id="row_{{ $pencil['id'] }}">
                                             <td><strong id="groom_name_{{ $pencil['id'] }}">{{ $pencil['groom_name'] }} ({{ $pencil['groom_mobile'] }})</strong></td>
                                             <td id="groom_billing_address_{{ $pencil['id'] }}">{{ $pencil['groom_billing_address'] }}
@@ -80,10 +80,9 @@
                                             <td id="customer_name_{{ $pencil['id'] }}">
                                                 {{ $pencil['customer']['userinfo'][0]['name'] }}</td>
                                             <td id="photographer_name_{{ $pencil['id'] }}">@php echo pencilBy($pencil['pencile_by'])@endphp</td>
-                                            <td  id="photographer_name_{{ $pencil['id'] }}"><span class="badge badge-info" >{{booking_status($pencil['status'])}}</span></td>
+                                            <td id="photographer_name_{{ $pencil['id'] }}">{{booking_status($pencil['status'])}}</td>
 
                                             <td>
-                                                @if ($pencil['is_active']!=2)
                                                 @if ($user->group_id==config('constants.groups.admin'))
                                                 <a href="{{url('admin/bookings/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</a>  
@@ -92,34 +91,17 @@
                                                     <a href="{{url('admin/bookings/view')}}/{{$pencil['id']}}" 
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</a>
-                                                    @endif
-                                                {{-- <button
-                                                    onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'delete')"
+                                                <button
+                                                     onClick="do_action({{ $pencil['id'] }},'delete_booking')"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
-                                                    Delete</button> --}}
-                                                <div style="margin-top: 5px;">
-                                                    @if ($pencil['is_active']==2)
-                                                    <button
-                                                    onClick="do_action({{ $pencil['id'] }},'restor_booking')"
-                                                    type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                        class="fas fa-chart-line"></i>
-                                                    Restor</button>
-                                                    @elseif($pencil['is_active']==1)
-                                                    
-                                                    <button
-                                                    onClick="do_action({{ $pencil['id'] }},'trash_booking')"
-                                                    type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                        class="fas fa-chart-line"></i>
-                                                    Trash</button>
-                                                    @endif
-                                                    
-                                                </div>
+                                                    Delete</button>
                                             </td>
 
                                         
 
                                         </tr>
+                                        @endforeach
                                         <?php 
                                             
                                               $counter ++;
@@ -226,17 +208,8 @@
             $('.select2bs4').select2({
                 theme: 'bootstrap4'
             });
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "paging": false,
-                "autoWidth": false,
-                "info": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
+            
         });
-
         function do_action(id, action_name='') {
     //var formData = ($('#'+action_name).formToJson());
     
@@ -257,7 +230,7 @@
         dataType: 'json',
         success: function(data) {
             if (data.error == 'No') {
-                if(action_name=='trash_booking' || action_name=='restor_booking')
+                if(action_name=='trash_booking' || action_name=='restor_booking' || action_name=='delete_booking')
                 $('#row_' + id).remove();
                 $(document).Toasts('create', {
                     class: 'bg-success',
@@ -277,8 +250,6 @@
     });
 
 }
-        
-
-        
+    
     </script>
 @endsection

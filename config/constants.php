@@ -20,6 +20,13 @@ return [
         'on_hold' => 5, 
         'confirmed' => 5, 
     ],
+    'photographer_assigned' => [
+        'awaiting' => 0,
+        'accepted' => 1,
+        'declined' => 2,
+        'cancelled' => 3, 
+        'removed' => 4, 
+    ],
     'pencileBy' => [
         'office' => 0,
         'venue_group' => 1,

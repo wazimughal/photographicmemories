@@ -82,10 +82,10 @@
                                                 <button onClick="editphotographerForm({{ $data['id'] }},{{ $counter }})"
                                                     class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</button>
-                                                <button onClick="viewLeadData({{ $data['id'] }},{{ $counter }})"
+                                                <button onClick="view_photographer({{ $data['id'] }},{{ $counter }})"
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</button>
-                                                <button
+                                                {{-- <button
                                                     onClick="changeStatus({{ $data['id'] }},{{ $counter }},'delete')"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
@@ -99,7 +99,7 @@
                                                             Trash</button>
                                                         
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                             </td>
 
                                             </td>
@@ -178,30 +178,13 @@
 @endsection
 
 @section('head-js-css')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    
 @endsection
 
 @section('footer-js-css')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ url('adminpanel/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/jszip/jszip.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-    <!-- Select2 -->
+   
     <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
 
     <script>
@@ -209,20 +192,11 @@
             $('.select2bs4').select2({
                 theme: 'bootstrap4'
             });
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "paging": false,
-                "autoWidth": false,
-                "info": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
         });
-
-        function viewLeadData(id) {
+    
+        function view_photographer(id) {
             var sendInfo = {
-                action: 'viewLeadData',
+                action: 'view_photographer',
                 id: id
             };
             $.ajax({
@@ -246,7 +220,7 @@
             });
             return false;
         }
-
+   
         function updateForm(id, counter_id = 1) {
             var sendInfo = {
                 action: 'updateLeadForm',
@@ -324,13 +298,13 @@
             return false;
         }
 
-        // add Lead to photographer 
+        
         function editphotographerForm(id, counter_id = 1) {
+     
 
             var sendInfo = {
                 action: 'editphotographerForm',
                 counter: counter_id,
-                status: status,
                 id: id
             };
             $.ajax({
@@ -408,31 +382,8 @@
             });
             return false;
         }
-        // Shorthand for $( document ).ready()
-        function changeCity() {
-            
-                selectOption = $('#city option:selected').text();
-               $('#cityname').val(selectOption);
-
-                console.log('option' + selectOption);
-                if (selectOption == 'Other') {
-                    otherCity ='<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
-                    $('#othercity').html(otherCity);
-                } else {
-                    $('#othercity').html('');
-                }
-            };
-            function changezipcode() {
-            selectOption = $('#zipcode_id option:selected').text();
-            $('#zipcode_no').val(selectOption);
-
-            if (selectOption == 'Other') {
-                otherZipCode ='<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="otherzipcode" class="form-control" placeholder="Please enter Zip Code" required></div></div><div class="col-3">&nbsp;</div></div>';
-                $('#otherzipcode').html(otherZipCode);
-            } else {
-                $('#otherzipcode').html('');
-            }
-        };
+    
+     
         $(function() {
        
             $('.current_status').on('change', function() {
@@ -441,11 +392,7 @@
                 var counter_id = $(this).attr('datacounter');
                 counter_id = 1;
 
-                if (status == {{ config('constants.lead_status.pending') }})
-                    alertmsg = 'move in pending'
-                else if (status == {{ config('constants.lead_status.approved') }})
-                    alertmsg = 'move in approved'
-                if (status == {{ config('constants.lead_status.cancelled') }})
+             
                     alertmsg = 'move in Cancelled'
 
                 if (confirm("Are you sure you want to " + alertmsg + " this?")) {
@@ -552,8 +499,5 @@
             }
 
         }
-
-        // $(document).ready(function() {
-        // });
     </script>
 @endsection

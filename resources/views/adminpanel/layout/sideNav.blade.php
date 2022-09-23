@@ -2,7 +2,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{url('admin/dashboard')}}" class="brand-link">
-    <img src="{{url('adminpanel/dist/img/logo_photographic.jpg')}}" alt="Thephotographic Memories" width="100%">
+    <img src="{{url('adminpanel/dist/img/logo_photographic.png')}}" alt="Thephotographic Memories" width="100%">
     </a>
     <a href="{{url('admin/dashboard')}}" class="brand-link">
       {{-- {{config('constants.app_name')}} --}}
@@ -188,6 +188,7 @@
                   <p> Booking List</p>
                 </a>
               </li>
+              
             </ul>
           </li>
           @else
@@ -207,12 +208,15 @@
                   <p> Booking List</p>
                 </a>
               </li>
+              @if($user->group_id==config('constants.groups.admin'))
               <li class="nav-item">
-                <a href="{{route('bookings.addnew')}}" class="nav-link">
-                  <i class="fa fa-plus"></i>
-                  <p>Add Booking</p>
+                <a href="{{url('admin/booking/trashed')}}" class="nav-link">
+                  <i class="fa fa-hospital"></i>
+                  <p>Trashed Bookings</p>
                 </a>
               </li>
+              @endif
+              
             </ul>
           </li>
           @endif

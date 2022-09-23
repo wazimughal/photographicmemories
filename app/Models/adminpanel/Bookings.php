@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Bookings extends Model
 {
     use HasFactory;
+    protected $table='bookings';
+    protected $primaryKey='id';
 
   
     public function customer()
@@ -25,6 +27,14 @@ class Bookings extends Model
     public function files()
     {
         return $this->hasMany(files::class, 'booking_id', 'id');
+    }
+    public function deposite_requests()
+    {
+        return $this->hasMany(booking_actions::class, 'booking_id', 'id');
+    }
+    public function comments()
+    {
+        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user');
     }
     public function venue_group()
     {

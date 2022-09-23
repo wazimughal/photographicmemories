@@ -1,7 +1,7 @@
 @extends('adminpanel.admintemplate')
 @push('title')
     <title>
-        Bookings| {{ config('constants.app_name') }}</title>
+        Pencils| {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->
@@ -11,11 +11,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-2">
-                        <h1>View Bookings </h1>
+                        <h1>View Pencils </h1>
 
                     </div>
-                    {{-- <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/bookings/add') }}"
-                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div> --}}
+                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/pencils/add') }}"
+                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
                     <div class="col-sm-2">&nbsp;</div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -36,7 +36,7 @@
 
                         <div class="card card-success">
                             <div class="card-header">
-                                <h3 class="card-title">bookings</h3>
+                                <h3 class="card-title">Pencils</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -59,12 +59,13 @@
                                         <?php 
                                             $counter = 1;
                                             
-                                            foreach ($pencilData as $pencil){
+                                            foreach ($pencilData as $data){
                                         //         $pencil=$pencil->toArray();
                                         //        echo  $pencil['customer']['userinfo'][0]['name'];
                                         //    p($pencil);
                                         //     die;
                                             ?>
+                                             @foreach ($data['bookings'] as $pencil)
                                         <tr id="row_{{ $pencil['id'] }}">
                                             <td><strong id="groom_name_{{ $pencil['id'] }}">{{ $pencil['groom_name'] }} ({{ $pencil['groom_mobile'] }})</strong></td>
                                             <td id="groom_billing_address_{{ $pencil['id'] }}">{{ $pencil['groom_billing_address'] }}
@@ -75,51 +76,39 @@
                                             </td>
                                             <td id="date_of_event_{{ $pencil['id'] }}">{{ $pencil['date_of_event']}}</td>
                                             <td id="venue_group_{{ $pencil['id'] }}">
-                                                {{ (isset($pencil['venue_group']['userinfo'][0]['name']))?$pencil['venue_group']['userinfo'][0]['name']: $pencil['other_venue_group'];}}</td>
+                                               @if (isset($pencil['venue_group']))
+                                               {{ $pencil['venue_group']['userinfo'][0]['name'] }}
+                                               @else
+                                               {{$pencil['other_venue_group']}}
+                                               @endif
+                                               
+                                            </td>
                                            
                                             <td id="customer_name_{{ $pencil['id'] }}">
                                                 {{ $pencil['customer']['userinfo'][0]['name'] }}</td>
                                             <td id="photographer_name_{{ $pencil['id'] }}">@php echo pencilBy($pencil['pencile_by'])@endphp</td>
-                                            <td  id="photographer_name_{{ $pencil['id'] }}"><span class="badge badge-info" >{{booking_status($pencil['status'])}}</span></td>
+                                            <td id="photographer_name_{{ $pencil['id'] }}"> {{  booking_status($pencil['status'])}}</td>
 
                                             <td>
-                                                @if ($pencil['is_active']!=2)
-                                                @if ($user->group_id==config('constants.groups.admin'))
-                                                <a href="{{url('admin/bookings/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
-                                                    Edit</a>  
-                                                @endif
-                                                
-                                                    <a href="{{url('admin/bookings/view')}}/{{$pencil['id']}}" 
+
+                                                <a href="{{url('admin/bookings/add')}}/{{$pencil['id']}}" class="btn btn-success btn-block btn-sm"><i class="fas fa-plus"></i> Booking</a>
+                                                <a href="{{url('admin/pencils/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
+                                                    Edit</a>
+                                                    <a href="{{url('admin/pencils/view')}}/{{$pencil['id']}}" 
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</a>
-                                                    @endif
-                                                {{-- <button
-                                                    onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'delete')"
+                                                <button
+                                                onClick="do_action({{ $pencil['id'] }},'delete_pencil')"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
-                                                    Delete</button> --}}
-                                                <div style="margin-top: 5px;">
-                                                    @if ($pencil['is_active']==2)
-                                                    <button
-                                                    onClick="do_action({{ $pencil['id'] }},'restor_booking')"
-                                                    type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                        class="fas fa-chart-line"></i>
-                                                    Restor</button>
-                                                    @elseif($pencil['is_active']==1)
-                                                    
-                                                    <button
-                                                    onClick="do_action({{ $pencil['id'] }},'trash_booking')"
-                                                    type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                        class="fas fa-chart-line"></i>
-                                                    Trash</button>
-                                                    @endif
-                                                    
-                                                </div>
+                                                    Delete</button>
+                                                
                                             </td>
 
                                         
 
                                         </tr>
+                                        @endforeach
                                         <?php 
                                             
                                               $counter ++;
@@ -173,7 +162,7 @@
             <div class="modal-content">
                 <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title"> bookings Panel</h3>
+                        <h3 class="card-title"> pencils Panel</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -194,49 +183,10 @@
     </div>
 @endsection
 
-@section('head-js-css')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-    <!-- Select2 -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-@endsection
-
 @section('footer-js-css')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ url('adminpanel/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/jszip/jszip.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
-
+   
     <script>
-        $(function() {
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            });
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "paging": false,
-                "autoWidth": false,
-                "info": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-        });
-
+        
         function do_action(id, action_name='') {
     //var formData = ($('#'+action_name).formToJson());
     
@@ -257,7 +207,7 @@
         dataType: 'json',
         success: function(data) {
             if (data.error == 'No') {
-                if(action_name=='trash_booking' || action_name=='restor_booking')
+                if(action_name=='delete_pencil')
                 $('#row_' + id).remove();
                 $(document).Toasts('create', {
                     class: 'bg-success',
@@ -277,8 +227,6 @@
     });
 
 }
-        
-
-        
+    
     </script>
 @endsection

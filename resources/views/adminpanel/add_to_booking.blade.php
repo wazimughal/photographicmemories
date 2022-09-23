@@ -36,7 +36,18 @@
 
 
                                 <!-- /.row -->
-
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <div class="alert alert-info alert-dismissible">
+                                            <button type="button" class="close"
+                                                data-dismiss="alert"
+                                                aria-hidden="true">&times;</button>
+                                            <h5><i class="icon fa fa-user"></i>
+                                                Booking Status!</h5>
+                                                {{booking_status_for_msg($bookingData['status'])}}
+                                            </div>
+                                    </div>
+                                </div>
                                 <div class="row">
 
                                     <div class="col-md-8">
@@ -572,16 +583,42 @@
                                         <div class="card-header alert-secondary">
                                             <h3 class="card-title">Deposit Need</h3>
                                         </div>
+                                        <?php $recievedAmount=0; if($bookingData['deposite_requests']){  ?>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <?php foreach ($bookingData['deposite_requests'] as $key=>$ask_for_deposit){ ?>
+                                                                
+                                                            <tr>
+                                                                
+                                                                <td>Deposit Needed</td>
+                                                                <td>{{ $ask_for_deposit['amount']}} USD</td>
+                                                                <td>{{ date('d/m/Y ',strtotime($ask_for_deposit['created_at'])) }}</td>
+                                                                <td style="width:100px">
+                                                                    <span style="width:200px"  class=" btn-success btn-sm">Sent!</span>
+                                                                </td>
+                                                                <div </tr>
+    
+                                                                    <?php }?>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+    
+                                            <?php }?>
                                         <div class="table-responsive">
-                                            <form action="" method="POST">
+                                            <form id="askfordeposit" action="" method="POST">
+                                                <input type="hidden" name="action" value="askfordeposit">
                                             <table class="table">
                                                 <tbody>
                                                     <tr>
-                                                        <th style="width:20%">Amount?</th>
-                                                        <td><input type="text" name="deposit_needed" class="form-control"> <br>
-                                                            <button type="button" class="btn btn-success float-right"><i
-                                                                class="far fa-credit-card"></i> Send </button>
+                                                        <th style="width:40%">Deposit Needed</th>
+                                                        <td><input type="number" name="deposit_needed" placeholder="How much?" class="form-control"><br>
+                                                            <button onclick="do_action({{$bookingData['id']}},'askfordeposit')" type="button" class="btn btn-success float-right"><i
+                                                                class="far fa-credit-card"></i> Ask </button>
                                                             </td>
+                                                            
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -649,21 +686,33 @@
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
                                                     <table class="table">
-                                                        <?php foreach ($assigne_photographers as $key=>$photographer){ ?>
+                                                        <?php $counter=1;
+                                                            foreach ($assigne_photographers as $key=>$photographer){ ?>
 
-                                                        <tr>
-                                                            <td>{{ $photographer['userinfo'][0]['firstname'] }}
+                                                        <tr id="photographer_row_{{$photographer['id']}}" >
+                                                            <td width="40%">{{ $photographer['userinfo'][0]['firstname'] }}
                                                                 {{ $photographer['userinfo'][0]['lastname'] }}
                                                             </td>
-                                                            <td style="width:200px">
-                                                                {!! $photographer['status'] == 0
-                                                                    ? '<span style="width:200px"  class=" btn-primary btn-sm">Waiting Response</span>'
+                                                            <td style="width:145px">
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.awaiting')
+                                                                    ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'"  class=" btn-info btn-sm">Waiting Response</span>'
                                                                     : '' !!}
-                                                                {!! $photographer['status'] == 1 ? '<span style="width:200px" class=" btn-success btn-sm">Accpted</span>' : '' !!}
-                                                                {!! $photographer['status'] == 2 ? '<span style="width:200px" class=" btn-danger btn-sm">Declined</span>' : '' !!}
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.accepted') ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-success btn-sm">Accepted</span>' : '' !!}
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.declined') ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-danger btn-sm">Declined</span>' : '' !!}
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.cancelled')? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-warning btn-sm">Cancelled</span>' : '' !!}
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.removed')? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-danger btn-sm">Removed</span>' : '' !!}
 
                                                             </td>
-                                                            <div </tr>
+                                                            <td>
+                                                                <select data_booking_id="{{$bookingData['id']}}" datacounter="{{ $counter++ }}" dataid="{{ $photographer['id'] }}" class="select2bs4 form-control photographer_status">
+                                                                    <option {{($photographer['status']==config('constants.photographer_assigned.awaiting'))?'Selected':''}} value="0">Awaiting</option>
+                                                                    <option {{($photographer['status']==config('constants.photographer_assigned.accepted'))?'Selected':''}} value="1">Accepted</option>
+                                                                    <option {{($photographer['status']==config('constants.photographer_assigned.declined'))?'Selected':''}} value="2">Declined</option>
+                                                                    <option {{($photographer['status']==config('constants.photographer_assigned.cancelled'))?'Selected':''}} value="3">Cancel</option>
+                                                                    <option {{($photographer['status']==config('constants.photographer_assigned.removed'))?'Selected':''}} value="4">Remove</option>
+                                                                </select>
+                                                            </td>
+                                                            </tr>
 
                                                                 <?php }?>
                                                     </table>
@@ -691,6 +740,9 @@
                                         </div>
                                         <div class="table-responsive">
                                             <table class="table">
+                                                <form method="post" id="customer_update">
+                                                    <input type="hidden" name="action" value="customer_update">
+                                                    <input type="hidden" name="uid" value="{{$bookingData['customer']['userinfo'][0]['id']}}">
                                                 <tbody>
                                                     <tr>
                                                         <th style="width:50%">Name</th>
@@ -725,18 +777,21 @@
                                                         <td>
                                                             <input type="password" name="password" class="form-control "
                                                                 placeholder="Password" required value="12345678"><br>
-                                                            <button type="button" class="btn btn-success float-right"><i
-                                                                    class="far fa-credit-card"></i> Save </button>
+                                                            <button onclick="do_action({{$bookingData['id']}},'customer_update')" type="button" class="btn btn-success float-right"><i
+                                                                    class="far fa-credit-card"></i> Save Changes </button>
                                                         </td>
                                                     </tr>
-
                                                 </tbody>
+                                            </form>
+                                                
                                             </table>
                                         </div>
                                         <div class="card-header alert-secondary">
                                             <h3 class="card-title">Groom Info</h3>
                                         </div>
                                         <table class="table">
+                                            <form method="post" id="groom_update">
+                                                <input type="hidden" name="action" value="groom_update">
                                             <tbody>
                                                 <tr>
                                                     <th style="width:50%">Name</th>
@@ -759,18 +814,19 @@
                                                     <td>
                                                         <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
                                                             name="groom_billing_address" class=" form-control ">{{ $bookingData['groom_billing_address'] }}</textarea><br>
-                                                        <button type="button" class="btn btn-success float-right"><i
-                                                                class="far fa-credit-card"></i> Save </button>
+                                                        <button  onclick="do_action({{$bookingData['id']}},'groom_update')" type="button" class="btn btn-success float-right"><i
+                                                                class="far fa-credit-card"></i> Save Changes</button>
                                                     </td>
                                                 </tr>
-
-
                                             </tbody>
+                                            </form>
                                         </table>
                                         <div class="card-header alert-secondary">
                                             <h3 class="card-title">Bride Info</h3>
                                         </div>
                                         <table class="table">
+                                            <form method="post" id="bride_update">
+                                                <input type="hidden" name="action" value="bride_update">
                                             <tbody>
                                                 <tr>
                                                     <th style="width:50%">Name</th>
@@ -792,14 +848,13 @@
                                                     <th>Billing Address</th>
                                                     <td>
                                                         <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
-                                                            name="groom_billing_address" class=" form-control ">{{ $bookingData['bride_billing_address'] }}</textarea><br>
-                                                        <button type="button" class="btn btn-success float-right"><i
-                                                                class="far fa-credit-card"></i> Save </button>
+                                                            name="bride_billing_address" class=" form-control ">{{ $bookingData['bride_billing_address'] }}</textarea><br>
+                                                        <button onclick="do_action({{$bookingData['id']}},'bride_update')" type="button" class="btn btn-success float-right"><i
+                                                                class="far fa-credit-card"></i> Save Changes</button>
                                                     </td>
                                                 </tr>
-
-
                                             </tbody>
+                                            </form>
                                         </table>
 
 
@@ -960,8 +1015,6 @@ var myDropzone = new Dropzone('#image-upload', {
 
 
 function removeFile(id) {
-
-
 if (confirm('Are you sure? you want to delete this file?')) {
 
     var sendInfo = {
@@ -987,8 +1040,6 @@ if (confirm('Are you sure? you want to delete this file?')) {
                     subtitle: 'record',
                     body: data.msg
                 });
-
-
             } else {
                 $(document).Toasts('create', {
                     class: 'bg-danger',
@@ -996,13 +1047,141 @@ if (confirm('Are you sure? you want to delete this file?')) {
                     subtitle: 'record',
                     body: data.msg
                 });
-            }
-            
+            }   
         }
-
     });
-
 }
+}
+// This is to change photographer Status
+$(function() {
+       
+       $('.photographer_status').on('change', function() {
+           var status = $(this).val();
+           var id = $(this).attr('dataid');
+           var booking_id = $(this).attr('data_booking_id');
+           var counter_id = $(this).attr('datacounter');
+           
+
+           if (status == '0'){
+            alertmsg = 'move in waiting';
+            current_status="Waiting Response";
+           }else if (status == '1'){
+            alertmsg = 'accept';
+            current_status="Accepted";
+           }else if (status == '2'){
+            alertmsg = 'move in declined';
+            current_status="Declined";
+           }else if (status == '3'){
+            alertmsg = ' Cancel';
+            current_status="Cancelled";
+           }else if (status == '4'){
+            alertmsg = 'Delete';
+            current_status="Removed";
+           }
+            
+
+           if (confirm("Are you sure you want to " + alertmsg + " this?")) {
+
+               var sendInfo = {
+                   action: 'change_photographer_status',
+                   counter: counter_id,
+                   booking_id: booking_id,
+                   status: status,
+                   alertmsg: alertmsg,
+                   current_status: current_status,
+                   id: id
+               };
+
+               $.ajax({
+                   url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                   data: sendInfo,
+                   contentType: 'application/json',
+                   error: function() {
+                       alert('There is Some Error, Please try again !');
+                   },
+                   type: 'GET',
+                   dataType: 'json',
+                   success: function(data) {
+                       if (data.error == 'No') {
+                           // Close modal and success Message
+                           
+                           if(data.status=='4'){
+                            $('#photographer_row_' + id).html('');
+                           }
+                           else{
+                            $('#photographer_status_' + id).html(current_status);
+                           }
+                           
+                           
+                           
+
+                           // $('#status_action_btn_' + id).html(data.status_action_btn);
+
+                           $(document).Toasts('create', {
+                               class: 'bg-success',
+                               title: data.title,
+                               subtitle: 'record',
+                               body: data.msg
+                           });
+
+
+                       } else {
+                           $(document).Toasts('create', {
+                               class: 'bg-danger',
+                               title: data.title,
+                               subtitle: 'record',
+                               body: data.msg
+                           });
+                       }
+                       console.log(data);
+                       //alert('i am here');
+                   }
+
+               });
+
+           }
+
+       });
+   });
+// End to change photographer status
+
+function do_action(id, action_name='') {
+    var formData = ($('#'+action_name).formToJson());
+    console.log('formdata:'+formData);
+    var sendInfo = {
+        data: formData,
+        action:action_name,
+        id: id
+    };
+
+    $.ajax({
+        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+        data: sendInfo,
+        contentType: 'application/json',
+        error: function() {
+            alert('There is Some Error, Please try again !');
+        },
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.error == 'No') {
+                $('#file_' + id).remove();
+                $(document).Toasts('create', {
+                    class: 'bg-success',
+                    title: data.title,
+                    subtitle: 'record',
+                    body: data.msg
+                });
+            } else {
+                $(document).Toasts('create', {
+                    class: 'bg-danger',
+                    title: data.title,
+                    subtitle: 'record',
+                    body: data.msg
+                });
+            }   
+        }
+    });
 
 }
     </script>

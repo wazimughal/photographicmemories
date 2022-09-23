@@ -82,19 +82,19 @@
                                                 {{ $data['city']['name'] }}</td>
                                             
                                             <td>
-                                                <button onClick="editvenuegroupForm({{ $data['id'] }},{{ $counter }})"
+                                                <button onClick="do_action({{ $data['id'] }},'editvenuegroupForm',{{ $counter }})"
                                                     class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</button>
                                                 <button
-                                                    onClick="viewVenueGroupData({{ $data['id'] }},{{ $counter }})"
+                                                    onClick="do_action({{ $data['id'] }},'viewVenueGroupData',{{ $counter }})"
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</button>
-                                                {{-- <button
-                                                    onClick="changeStatus({{ $data['id'] }},{{ $counter }},'delete')"
+                                                <button
+                                                    onClick="do_action({{ $data['id'] }},'delete',{{ $counter }})"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
                                                     Delete</button>
-                                                <div style="margin-top: 5px;" id="status_action_btn_{{ $data['id'] }}">
+                                                {{-- <div style="margin-top: 5px;" id="status_action_btn_{{ $data['id'] }}">
                                                     @if ($data['is_active'] == 1)
                                                         <button
                                                             onClick="changeStatus({{ $data['id'] }},{{ $counter }},'trash')"
@@ -214,49 +214,17 @@
             $('.select2bs4').select2({
                 theme: 'bootstrap4'
             });
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "paging": false,
-                "autoWidth": false,
-                "info": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
         });
+            
 
-        function viewVenueGroupData(id) {
+
+
+        // Edit to venuegroup 
+        function do_action(id, action_name, counter_id=1 ) {
+
             var sendInfo = {
-                action: 'viewVenueGroupData',
-                id: id
-            };
-            $.ajax({
-                url: "{{ url('/admin/venuegroups/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.res);
-
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-
-        function updateForm(id, counter_id = 1) {
-            var sendInfo = {
-                action: 'updateLeadForm',
+                action: action_name,
                 counter: counter_id,
-                status: status,
                 id: id
             };
             $.ajax({
@@ -270,6 +238,11 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.error == 'No') {
+                        if(action_name=='delete'){
+                            $('#row_'+data.id).html('');
+                           
+                        }
+                        
                         $('#responseData').html(data.formdata);
                         $('.select2bs4').select2({
                             theme: 'bootstrap4'
@@ -277,85 +250,7 @@
                     } else {
                         $('#responseData').html('There is some error, Please try again Later');
                     }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-        // Ajax to Update Lead Data
-        function updateLead(id, counter_id = 1) {
-            var formData = ($('#EditLeadForm').formToJson());
-            // console.log(formData);
-            $.ajax({
-                url: "{{ url('/admin/venuegroups/ajaxcall') }}/" + id,
-                data: formData,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        console.log(data);
-                        $('#name_' + data.id).html(data.name);
-                        $('#venue_group_name_' + data.id).html(data.venue_group_name);
-                        $('#lead_type_title_' + data.id).html(data.lead_type_tile);
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
-                        // // Close modal and success Message
-                        $('#modal-xl-lead').modal('toggle')
-
-
-                        $(document).Toasts('create', {
-                            class: 'bg-success',
-                            title: data.title,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-
-
-                    } else {
-                        $(document).Toasts('create', {
-                            class: 'bg-danger',
-                            title: data.name,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-                    }
-                }
-            });
-            return false;
-        }
-
-        // add Lead to venuegroup 
-        function editvenuegroupForm(id, counter_id = 1) {
-
-            var sendInfo = {
-                action: 'editvenuegroupForm',
-                counter: counter_id,
-                status: status,
-                id: id
-            };
-            $.ajax({
-                url: "{{ url('/admin/venuegroups/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.formdata);
-                        $('.select2bs4').select2({
-                            theme: 'bootstrap4'
-                        });
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
+                    if(action_name!='delete')
                     $('#modal-xl-lead').modal('toggle')
                 }
             });
@@ -364,7 +259,7 @@
         // Ajax to Update Lead Data
         function updatevenuegroup(id, counter_id = 1) {
             var formData = ($('#EditvenuegroupForm').formToJson());
-            // console.log(formData);
+            
             $.ajax({
                 url: "{{ url('/admin/venuegroups/ajaxcall') }}/" + id,
                 data: formData,
@@ -379,17 +274,12 @@
                         console.log(data);
 
                         $('#name_' + data.id).html(data.name);
-                        $('#mobileno_' + data.id).html(data.mobileno);
+                        $('#vg_manager_phone' + data.id).html(data.vg_manager_phone);
+                        $('#vg_manager_name' + data.id).html(data.vg_manager_name);
                         $('#vg_name' + data.id).html(data.vg_name);
-                        $('#vg_address_' + data.id).html(data.vg_address);
-                        $('#zipcode_' + data.id).html(data.zipcode);
+                        $('#vg_description' + data.id).html(data.vg_description);
+                        $('#address_' + data.id).html(data.address);
                         $('#city_' + data.id).html(data.city);
-
-
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
-                        // // Close modal and success Message
                         $('#modal-xl-lead').modal('toggle')
 
 
@@ -413,155 +303,6 @@
             });
             return false;
         }
-        // Shorthand for $( document ).ready()
-        function changeCity() {
-
-            selectOption = $('#city option:selected').text();
-            $('#cityname').val(selectOption);
-
-            console.log('option' + selectOption);
-            if (selectOption == 'Other') {
-                otherCity =
-                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
-                $('#othercity').html(otherCity);
-            } else {
-                $('#othercity').html('');
-            }
-        };
-
-        function changezipcode() {
-            selectOption = $('#zipcode_id option:selected').text();
-            $('#zipcode_no').val(selectOption);
-
-            if (selectOption == 'Other') {
-                otherZipCode =
-                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="otherzipcode" class="form-control" placeholder="Please enter Zip Code" required></div></div><div class="col-3">&nbsp;</div></div>';
-                $('#otherzipcode').html(otherZipCode);
-            } else {
-                $('#otherzipcode').html('');
-            }
-        };
-        $(function() {
-
-            $('.current_status').on('change', function() {
-                var status = $(this).val();
-                var id = $(this).attr('dataid');
-                var counter_id = $(this).attr('datacounter');
-                counter_id = 1;
-
-                if (status == {{ config('constants.lead_status.pending') }})
-                    alertmsg = 'move in pending'
-                else if (status == {{ config('constants.lead_status.approved') }})
-                    alertmsg = 'move in approved'
-                if (status == {{ config('constants.lead_status.cancelled') }})
-                    alertmsg = 'move in Cancelled'
-
-                if (confirm("Are you sure you want to " + alertmsg + " this?")) {
-
-                    var sendInfo = {
-                        action: 'changestatus',
-                        counter: counter_id,
-                        status: status,
-                        alertmsg: alertmsg,
-                        id: id
-                    };
-
-                    $.ajax({
-                        url: "{{ url('/admin/venuegroups/ajaxcall/') }}/" + id,
-                        data: sendInfo,
-                        contentType: 'application/json',
-                        error: function() {
-                            alert('There is Some Error, Please try again !');
-                        },
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data.error == 'No') {
-                                // Close modal and success Message
-                                $('#status' + id).html(data.status_btn);
-                                // $('#status_action_btn_' + id).html(data.status_action_btn);
-
-                                $(document).Toasts('create', {
-                                    class: 'bg-success',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-
-
-                            } else {
-                                $(document).Toasts('create', {
-                                    class: 'bg-danger',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-                            }
-                            console.log(data);
-                            //alert('i am here');
-                        }
-
-                    });
-
-                }
-
-            });
-        });
-
-        function changeStatus(id, counter_id, action) {
-
-            if (action == 'trash')
-                alertMsg = 'Are you sure you want to Trash this?';
-            else if (action == 'delete')
-                alertMsg = 'Are you sure you want to Delete this?';
-
-            if (confirm(alertMsg)) {
-
-                var sendInfo = {
-                    action: action,
-                    counter: counter_id,
-                    id: id
-                };
-
-                $.ajax({
-                    url: "{{ url('/admin/venuegroups/ajaxcall/') }}/" + id,
-                    data: sendInfo,
-                    contentType: 'application/json',
-                    error: function() {
-                        alert('There is Some Error, Please try again !');
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.error == 'No') {
-                            $('#row_' + id).remove();
-                            $(document).Toasts('create', {
-                                class: 'bg-success',
-                                title: data.title,
-                                subtitle: 'record',
-                                body: data.msg
-                            });
-
-
-                        } else {
-                            $(document).Toasts('create', {
-                                class: 'bg-danger',
-                                title: data.title,
-                                subtitle: 'record',
-                                body: data.msg
-                            });
-                        }
-                        console.log(data);
-                        //alert('i am here');
-                    }
-
-                });
-
-            }
-
-        }
-
-        // $(document).ready(function() {
-        // });
+       
     </script>
 @endsection

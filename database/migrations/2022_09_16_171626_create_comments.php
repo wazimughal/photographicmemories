@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('groups');
+            $table->string('slug')->nullable();
             $table->tinyInteger('status')->default(1);// Comment can be hidden with status 0 or deletee status:3
             $table->timestamps();
         });

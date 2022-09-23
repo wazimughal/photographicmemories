@@ -97,20 +97,11 @@
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</a>
                                                 <button
-                                                    onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'delete')"
+                                                onClick="do_action({{ $pencil['id'] }},'delete_pencil')"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
                                                     Delete</button>
-                                                <div style="margin-top: 5px;" id="status_action_btn_{{ $pencil['id'] }}">
-
-                                                    <button
-                                                        onClick="changeStatus({{ $pencil['id'] }},{{ $counter }},'trash')"
-                                                        type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                            class="fas fa-chart-line"></i>
-                                                        Trash</button>
-
-
-                                                </div>
+                                                
                                             </td>
 
                                         
@@ -190,366 +181,50 @@
     </div>
 @endsection
 
-@section('head-js-css')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-    <!-- Select2 -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-@endsection
-
 @section('footer-js-css')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ url('adminpanel/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/jszip/jszip.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ url('adminpanel/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
-
+   
     <script>
-        $(function() {
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            });
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "paging": false,
-                "autoWidth": false,
-                "info": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        
+        function do_action(id, action_name='') {
+    //var formData = ($('#'+action_name).formToJson());
+    
+    var sendInfo = {
+        //data: formData,
+        action:action_name,
+        id: id
+    };
 
-        });
-
-        function viewpencilData(id) {
-            var sendInfo = {
-                action: 'viewpencilData',
-                id: id
-            };
-            $.ajax({
-                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.res);
-
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-
-        function updateForm(id, counter_id = 1) {
-            var sendInfo = {
-                action: 'updateLeadForm',
-                counter: counter_id,
-                status: status,
-                id: id
-            };
-            $.ajax({
-                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.formdata);
-                        $('.select2bs4').select2({
-                            theme: 'bootstrap4'
-                        });
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-        // Ajax to Update Lead Data
-        function updateLead(id, counter_id = 1) {
-            var formData = ($('#EditLeadForm').formToJson());
-            // console.log(formData);
-            $.ajax({
-                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
-                data: formData,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        console.log(data);
-                        $('#name_' + data.id).html(data.name);
-                        $('#venue_group_name_' + data.id).html(data.venue_group_name);
-                        $('#lead_type_title_' + data.id).html(data.lead_type_tile);
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
-                        // // Close modal and success Message
-                        $('#modal-xl-lead').modal('toggle')
-
-
-                        $(document).Toasts('create', {
-                            class: 'bg-success',
-                            title: data.title,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-
-
-                    } else {
-                        $(document).Toasts('create', {
-                            class: 'bg-danger',
-                            title: data.name,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-                    }
-                }
-            });
-            return false;
-        }
-
-        // add Lead to pencil 
-        function editpencilForm(id, counter_id = 1) {
-
-            var sendInfo = {
-                action: 'editpencilForm',
-                counter: counter_id,
-                status: status,
-                id: id
-            };
-            $.ajax({
-                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
-                data: sendInfo,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        $('#responseData').html(data.formdata);
-                        $('.select2bs4').select2({
-                            theme: 'bootstrap4'
-                        });
-                    } else {
-                        $('#responseData').html('There is some error, Please try again Later');
-                    }
-                    $('#modal-xl-lead').modal('toggle')
-                }
-            });
-            return false;
-        }
-        // Ajax to Update Lead Data
-        function updatepencil(id, counter_id = 1) {
-            var formData = ($('#EditpencilForm').formToJson());
-            // console.log(formData);
-            $.ajax({
-                url: "{{ url('/admin/pencils/ajaxcall') }}/" + id,
-                data: formData,
-                contentType: 'application/json',
-                error: function() {
-                    alert('There is Some Error, Please try again !');
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.error == 'No') {
-                        console.log(data);
-
-                        $('#name_' + data.id).html(data.name);
-                        $('#venue_group_name_' + data.id).html(data.venue_group_name);
-                        $('#lead_type_title_' + data.id).html(data.lead_type_tile);
-                        // $('#row_' + data.id).removeClass('odd');
-                        // $('#row_' + data.id).removeClass('even');
-                        // $('#row_' + data.id).addClass('alert-info');
-                        // // Close modal and success Message
-                        $('#modal-xl-lead').modal('toggle')
-
-
-                        $(document).Toasts('create', {
-                            class: 'bg-success',
-                            title: data.title,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-
-
-                    } else {
-                        $(document).Toasts('create', {
-                            class: 'bg-danger',
-                            title: data.name,
-                            subtitle: 'record',
-                            body: data.msg
-                        });
-                    }
-                }
-            });
-            return false;
-        }
-        // Shorthand for $( document ).ready()
-        function changeCity() {
-
-            selectOption = $('#city option:selected').text();
-            console.log('option' + selectOption);
-            if (selectOption == 'Other') {
-                otherCity =
-                    '<div class="row form-group"><div class="col-3">&nbsp;</div><div class="col-6"><div class="input-group mb-3"><input  type="text" name="othercity" class="form-control" placeholder="City Name" required></div></div><div class="col-3">&nbsp;</div></div>';
-                $('#othercity').html(otherCity);
-            } else {
-                $('#othercity').html('');
-            }
-        };
-        $(function() {
-
-            $('.current_status').on('change', function() {
-                var status = $(this).val();
-                var id = $(this).attr('dataid');
-                var counter_id = $(this).attr('datacounter');
-                counter_id = 1;
-
-                if (status == {{ config('constants.lead_status.pending') }})
-                    alertmsg = 'move in pending'
-                else if (status == {{ config('constants.lead_status.approved') }})
-                    alertmsg = 'move in approved'
-                if (status == {{ config('constants.lead_status.cancelled') }})
-                    alertmsg = 'move in Cancelled'
-
-                if (confirm("Are you sure you want to " + alertmsg + " this?")) {
-
-                    var sendInfo = {
-                        action: 'changestatus',
-                        counter: counter_id,
-                        status: status,
-                        alertmsg: alertmsg,
-                        id: id
-                    };
-
-                    $.ajax({
-                        url: "{{ url('/admin/pencils/ajaxcall/') }}/" + id,
-                        data: sendInfo,
-                        contentType: 'application/json',
-                        error: function() {
-                            alert('There is Some Error, Please try again !');
-                        },
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data.error == 'No') {
-                                // Close modal and success Message
-                                $('#status' + id).html(data.status_btn);
-                                // $('#status_action_btn_' + id).html(data.status_action_btn);
-
-                                $(document).Toasts('create', {
-                                    class: 'bg-success',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-
-
-                            } else {
-                                $(document).Toasts('create', {
-                                    class: 'bg-danger',
-                                    title: data.title,
-                                    subtitle: 'record',
-                                    body: data.msg
-                                });
-                            }
-                            console.log(data);
-                            //alert('i am here');
-                        }
-
-                    });
-
-                }
-
-            });
-        });
-
-        function changeStatus(id, counter_id, action) {
-
-            if (action == 'trash')
-                alertMsg = 'Are you sure you want to Trash this?';
-            else if (action == 'delete')
-                alertMsg = 'Are you sure you want to Delete this?';
-
-            if (confirm(alertMsg)) {
-
-                var sendInfo = {
-                    action: action,
-                    counter: counter_id,
-                    id: id
-                };
-
-                $.ajax({
-                    url: "{{ url('/admin/pencils/ajaxcall/') }}/" + id,
-                    data: sendInfo,
-                    contentType: 'application/json',
-                    error: function() {
-                        alert('There is Some Error, Please try again !');
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.error == 'No') {
-                            $('#row_' + id).remove();
-                            $(document).Toasts('create', {
-                                class: 'bg-success',
-                                title: data.title,
-                                subtitle: 'record',
-                                body: data.msg
-                            });
-
-
-                        } else {
-                            $(document).Toasts('create', {
-                                class: 'bg-danger',
-                                title: data.title,
-                                subtitle: 'record',
-                                body: data.msg
-                            });
-                        }
-                        console.log(data);
-                        //alert('i am here');
-                    }
-
+    $.ajax({
+        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+        data: sendInfo,
+        contentType: 'application/json',
+        error: function() {
+            alert('There is Some Error, Please try again !');
+        },
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.error == 'No') {
+                if(action_name=='delete_pencil')
+                $('#row_' + id).remove();
+                $(document).Toasts('create', {
+                    class: 'bg-success',
+                    title: data.title,
+                    subtitle: 'record',
+                    body: data.msg
                 });
-
-            }
-
+            } else {
+                $(document).Toasts('create', {
+                    class: 'bg-danger',
+                    title: data.title,
+                    subtitle: 'record',
+                    body: data.msg
+                });
+            }   
         }
+    });
 
-        // $(document).ready(function() {
-        // });
+}
+    
     </script>
 @endsection
