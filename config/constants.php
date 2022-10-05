@@ -3,6 +3,9 @@
 
 return [
     'app_name'=>'Thephotographic Memories',
+    'admin_email'=>'to.wazim@gmail.com',
+    'date_formate'=>'d/m/Y',
+    'date_formate_us'=>'m/d/Y',
     'per_page'=>2,
     // Costant Value ID set for the groups table for User ROLEs
     'groups' => [
@@ -18,7 +21,7 @@ return [
         'pending_customer_agreement' => 3, 
         'pending_customer_deposit' => 4, 
         'on_hold' => 5, 
-        'confirmed' => 5, 
+        'confirmed' => 6, 
     ],
     'photographer_assigned' => [
         'awaiting' => 0,

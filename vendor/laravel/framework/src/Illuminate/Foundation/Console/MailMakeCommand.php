@@ -5,8 +5,10 @@ namespace Illuminate\Foundation\Console;
 use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
+#[AsCommand(name: 'make:mail')]
 class MailMakeCommand extends GeneratorCommand
 {
     use CreatesMatchingTest;
@@ -160,7 +162,6 @@ class MailMakeCommand extends GeneratorCommand
     {
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the mailable already exists'],
-
             ['markdown', 'm', InputOption::VALUE_OPTIONAL, 'Create a new Markdown template for the mailable', false],
         ];
     }

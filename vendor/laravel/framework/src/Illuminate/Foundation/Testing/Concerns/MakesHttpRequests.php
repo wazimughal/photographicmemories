@@ -64,6 +64,13 @@ trait MakesHttpRequests
     protected $withCredentials = false;
 
     /**
+     * The latest test response.
+     *
+     * @var \Illuminate\Testing\TestResponse|null
+     */
+    public $latestResponse;
+
+    /**
      * Define additional headers to be sent with the request.
      *
      * @param  array  $headers
@@ -100,6 +107,18 @@ trait MakesHttpRequests
     public function withToken(string $token, string $type = 'Bearer')
     {
         return $this->withHeader('Authorization', $type.' '.$token);
+    }
+
+    /**
+     * Remove the authorization token from the request.
+     *
+     * @return $this
+     */
+    public function withoutToken()
+    {
+        unset($this->defaultHeaders['Authorization']);
+
+        return $this;
     }
 
     /**
@@ -532,7 +551,7 @@ trait MakesHttpRequests
             $response = $this->followRedirects($response);
         }
 
-        return $this->createTestResponse($response);
+        return $this->latestResponse = $this->createTestResponse($response);
     }
 
     /**

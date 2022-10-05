@@ -23,7 +23,7 @@ class bookings_users extends Model
     }
     public function booking()
     {
-        return $this->hasOne(Bookings::class, 'id', 'booking_id');
+        return $this->hasOne(Bookings::class, 'id', 'booking_id')->with('customer');
     }
     public function bookings_trashed()
     {

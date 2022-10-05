@@ -23,7 +23,10 @@
   <link rel="stylesheet" href="{{url('adminpanel/plugins/daterangepicker/daterangepicker.css')}}">
   @yield('head-js-css')
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed" style="position: relative;">
+  <div id="_loader" style="position: absolute; width:100%;text-align:center;min-height:100%;background-color:rgba(0, 0, 0, 0.3); z-index:9999; display:none">
+    <img style="top:30%; position: fixed;" src="{{url('/adminpanel/dist/img/loader.gif')}}">
+  </div>
 <div class="wrapper">
 
   <!-- Preloader -->

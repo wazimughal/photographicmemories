@@ -73,7 +73,7 @@
                                             <td><strong id="bride_name_{{ $pencil['id'] }}">{{ $pencil['bride_name'] }} ({{ $pencil['bride_mobile'] }})</strong></td>
                                             <td id="bride_billing_address_{{ $pencil['id'] }}">{{ $pencil['bride_billing_address'] }}
                                             </td>
-                                            <td id="date_of_event_{{ $pencil['id'] }}">{{ $pencil['date_of_event']}}</td>
+                                            <td id="date_of_event_{{ $pencil['id'] }}">{{ date(config('constants.date_formate'),$pencil['date_of_event'])}}</td>
                                             <td id="venue_group_{{ $pencil['id'] }}">
                                                 {{ (isset($pencil['venue_group']['userinfo'][0]['name']))?$pencil['venue_group']['userinfo'][0]['name']: $pencil['other_venue_group'];}}</td>
                                            

@@ -86,7 +86,11 @@
                                                 @if ($user->group_id==config('constants.groups.admin'))
                                                 <a href="{{url('admin/bookings/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</a>  
+                                                @elseif ($user->group_id==config('constants.groups.photographer'))
+                                                <a href="{{route('booking.photos',$pencil['id'])}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-upload"></i>
+                                                    Upload Photos</a>                                                  
                                                 @endif
+                                                
                                                 
                                                     <a href="{{url('admin/bookings/view')}}/{{$pencil['id']}}" 
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>

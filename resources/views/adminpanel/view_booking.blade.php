@@ -119,6 +119,11 @@
                                                     <div class="tab-content">
                                                         <?php $recievedAmount=0; if($bookingData['invoices']){  $k=1;?>
                                                         <div class="form-group row">
+                                                            <div class="col-sm-4"><a href="{{route('download.customer.invoice',$id)}}"  class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download Customer invoice</a></div>
+                                                            <div class="col-sm-4"><a href="{{route('download.venue.invoice',$id)}}"  class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download Venue invoice</a></div>
+                                                            <div class="col-sm-3"><a href="{{route('download.invoice',$id)}}" class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download invoice</a></div>
+                                                        </div>
+                                                        <div class="form-group row">
                                                             <div class="col-sm-12">
                                                                 <div class="table-responsive">
                                                                     <table class="table">
@@ -561,7 +566,7 @@
                 if($('#comments').val()=='')
                 return false;
             }
-
+            $('#_loader').show();
             $.ajax({
                 url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
                 data: sendInfo,
@@ -575,6 +580,7 @@
                    
                     $('#'+action_name+'_replace').append(data.response);
                     $('#comments').val('');
+                    $('#_loader').hide();
                     //console.log('result :'+action_name);
                     if (data.error == 'No') {
                         $('#file_' + id).remove();

@@ -202,19 +202,30 @@ if(!function_exists('getAdvisedTestsNames')){
 // }
 if(!function_exists('booking_status_for_msg')){
     function booking_status_for_msg($booking_status){
+       
         $msg='invalid';
-        if ($booking_status==config('constants.booking_status.awaiting_for_photographer'))
-        $msg='We are Waiting for photographer response, Photographer will have to accept or Reject the Invitation';
-        elseif ($booking_status==config('constants.booking_status.declined_by_photographer'))
-        $msg='All the photographer declined the requests, we need to assign new photographer';
-        elseif ($booking_status==config('constants.booking_status.pending_customer_agreement'))
-        $msg='Customer agreement is pending !';
-        elseif ($booking_status==config('constants.booking_status.pending_customer_deposit'))
-        'Customer need to deposit, ask the customer to deposit !';
-        elseif ($booking_status==config('constants.booking_status.on_hold'))
-        $msg='Booking is on hold, Please review it';
-        elseif ($booking_status==config('constants.booking_status.confirmed'))
-        $msg='Everyth is perfect. Booking is confirmed!';
+        if ($booking_status==config('constants.booking_status.pencil')){
+            $msg='Pencil, We need to add this pencil to booking';
+        }
+        elseif ($booking_status==config('constants.booking_status.awaiting_for_photographer')){
+            $msg='We are Waiting for photographer response, Photographer will have to accept or Reject the Invitation';
+        }
+        elseif ($booking_status==config('constants.booking_status.declined_by_photographer')){
+            $msg='All the photographer declined the requests, we need to assign new photographer';
+        }
+        elseif ($booking_status==config('constants.booking_status.pending_customer_agreement')){
+            $msg='Customer agreement is pending !';
+        }
+        elseif ($booking_status==config('constants.booking_status.pending_customer_deposit')){
+            $msg='Customer need to deposit, ask the customer to deposit !';
+        }
+        elseif ($booking_status==config('constants.booking_status.on_hold')){
+            $msg='Booking is on hold, Please review it';
+        }
+        elseif ($booking_status==config('constants.booking_status.confirmed')){
+            $msg='Everyth is perfect. Booking is confirmed!';
+        }
+        
         return $msg;
     }
 }
@@ -227,7 +238,6 @@ if(!function_exists('get_booking_status')){
             ->where('group_id',config('constants.groups.photographer'))
             ->where('booking_id',$booking_id)
             ->get()->toArray();
-        //p( $photographer_status);
         
         if(empty($photographer_status))
         return config('constants.booking_status.awaiting_for_photographer'); 
@@ -578,5 +588,26 @@ if(!function_exists('booking_status')){
     }
 }
 
+if(!function_exists('booking_email_body')){
+    function booking_email_body($bookingsMailData){
+        $retData='<table width="100%"  style="text-align:center;">
+        <tr><td> Name :</td><td>'.$bookingsMailData['customer']['userinfo'][0]['name'].'</td></tr>
+        <tr><td> Email :</td><td>'.$bookingsMailData['customer']['userinfo'][0]['email'].'</td></tr>
+        <tr><td> Phone :</td><td>'.$bookingsMailData['customer']['userinfo'][0]['phone'].'</td></tr>
+        <tr><td> Relationship with Event :</td><td>'.relation_with_event($bookingsMailData['customer']['userinfo'][0]['relation_with_event']).'</td></tr>
+        <tr><td colspan=2> <hr></td></tr>
+        <tr><td> Groom Name :</td><td>'.$bookingsMailData['groom_name'].'</td></tr>
+        <tr><td> Groom Home Phone :</td><td>'.$bookingsMailData['groom_home_phone'].'</td></tr>
+        <tr><td> Groom Mobile :</td><td>'.$bookingsMailData['groom_mobile'].'</td></tr>
+        <tr><td> Groom Billing Address :</td><td>'.$bookingsMailData['groom_billing_address'].'</td></tr>
+        <tr><td> Bride Name :</td><td>'.$bookingsMailData['bride_name'].'</td></tr>
+        <tr><td> Bride Home Phone :</td><td>'.$bookingsMailData['bride_home_phone'].'</td></tr>
+        <tr><td> Bride Mobile :</td><td>'.$bookingsMailData['bride_mobile'].'</td></tr>
+        <tr><td> Bride Billing Address :</td><td>'.$bookingsMailData['bride_billing_address'].'</td></tr>
+        <tr><td> Date of Event :</td><td>'.date('d/m/Y',($bookingsMailData['date_of_event'])).'</td></tr>
+</table>';
+return $retData;
+    }
+}
 ?>
   

@@ -540,7 +540,7 @@ class Blueprint
      * @param  string|array  $columns
      * @param  string|null  $name
      * @param  string|null  $algorithm
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function primary($columns, $name = null, $algorithm = null)
     {
@@ -553,7 +553,7 @@ class Blueprint
      * @param  string|array  $columns
      * @param  string|null  $name
      * @param  string|null  $algorithm
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function unique($columns, $name = null, $algorithm = null)
     {
@@ -566,7 +566,7 @@ class Blueprint
      * @param  string|array  $columns
      * @param  string|null  $name
      * @param  string|null  $algorithm
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function index($columns, $name = null, $algorithm = null)
     {
@@ -579,7 +579,7 @@ class Blueprint
      * @param  string|array  $columns
      * @param  string|null  $name
      * @param  string|null  $algorithm
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function fullText($columns, $name = null, $algorithm = null)
     {
@@ -591,7 +591,7 @@ class Blueprint
      *
      * @param  string|array  $columns
      * @param  string|null  $name
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function spatialIndex($columns, $name = null)
     {
@@ -603,7 +603,7 @@ class Blueprint
      *
      * @param  string  $expression
      * @param  string  $name
-     * @return \Illuminate\Support\Fluent
+     * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function rawIndex($expression, $name)
     {
@@ -1243,7 +1243,7 @@ class Blueprint
     }
 
     /**
-     * Create a new uuid column on the table.
+     * Create a new UUID column on the table.
      *
      * @param  string  $column
      * @return \Illuminate\Database\Schema\ColumnDefinition
@@ -1264,6 +1264,34 @@ class Blueprint
         return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
             'type' => 'uuid',
             'name' => $column,
+        ]));
+    }
+
+    /**
+     * Create a new ULID column on the table.
+     *
+     * @param  string  $column
+     * @param  int|null  $length
+     * @return \Illuminate\Database\Schema\ColumnDefinition
+     */
+    public function ulid($column = 'uuid', $length = 26)
+    {
+        return $this->char($column, $length);
+    }
+
+    /**
+     * Create a new ULID column on the table with a foreign key constraint.
+     *
+     * @param  string  $column
+     * @param  int|null  $length
+     * @return \Illuminate\Database\Schema\ForeignIdColumnDefinition
+     */
+    public function foreignUlid($column, $length = 26)
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'char',
+            'name' => $column,
+            'length' => $length,
         ]));
     }
 
@@ -1505,6 +1533,17 @@ class Blueprint
     public function rememberToken()
     {
         return $this->string('remember_token', 100)->nullable();
+    }
+
+    /**
+     * Add a comment to the table.
+     *
+     * @param  string  $comment
+     * @return \Illuminate\Support\Fluent
+     */
+    public function comment($comment)
+    {
+        return $this->addCommand('tableComment', compact('comment'));
     }
 
     /**

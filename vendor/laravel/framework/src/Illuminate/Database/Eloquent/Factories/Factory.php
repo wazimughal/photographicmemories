@@ -8,6 +8,8 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
@@ -17,6 +19,8 @@ use Throwable;
 
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @method $this trashed()
  */
 abstract class Factory
 {
@@ -58,6 +62,13 @@ abstract class Factory
      * @var \Illuminate\Support\Collection
      */
     protected $for;
+
+    /**
+     * The model instances to always use when creating relationships.
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $recycle;
 
     /**
      * The "after making" callbacks that will be applied to the model.
@@ -118,6 +129,7 @@ abstract class Factory
      * @param  \Illuminate\Support\Collection|null  $afterMaking
      * @param  \Illuminate\Support\Collection|null  $afterCreating
      * @param  string|null  $connection
+     * @param  \Illuminate\Support\Collection|null  $recycle
      * @return void
      */
     public function __construct($count = null,
@@ -126,7 +138,8 @@ abstract class Factory
                                 ?Collection $for = null,
                                 ?Collection $afterMaking = null,
                                 ?Collection $afterCreating = null,
-                                $connection = null)
+                                $connection = null,
+                                ?Collection $recycle = null)
     {
         $this->count = $count;
         $this->states = $states ?? new Collection;
@@ -135,6 +148,7 @@ abstract class Factory
         $this->afterMaking = $afterMaking ?? new Collection;
         $this->afterCreating = $afterCreating ?? new Collection;
         $this->connection = $connection;
+        $this->recycle = $recycle ?? new Collection;
         $this->faker = $this->withFaker();
     }
 
@@ -276,7 +290,7 @@ abstract class Factory
     /**
      * Create a collection of models and persist them to the database without dispatching any model events.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param  (callable(array<string, mixed>): array<string, mixed>)|array<string, mixed>  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model|TModel>|\Illuminate\Database\Eloquent\Model|TModel
      */
@@ -296,9 +310,7 @@ abstract class Factory
      */
     public function lazy(array $attributes = [], ?Model $parent = null)
     {
-        return function () use ($attributes, $parent) {
-            return $this->create($attributes, $parent);
-        };
+        return fn () => $this->create($attributes, $parent);
     }
 
     /**
@@ -330,7 +342,7 @@ abstract class Factory
     {
         Model::unguarded(function () use ($model) {
             $this->has->each(function ($has) use ($model) {
-                $has->createFor($model);
+                $has->recycle($this->recycle)->createFor($model);
             });
         });
     }
@@ -437,7 +449,7 @@ abstract class Factory
         $model = $this->newModel();
 
         return $this->for->map(function (BelongsToRelationship $for) use ($model) {
-            return $for->attributesFor($model);
+            return $for->recycle($this->recycle)->attributesFor($model);
         })->collapse()->all();
     }
 
@@ -449,27 +461,36 @@ abstract class Factory
      */
     protected function expandAttributes(array $definition)
     {
-        return collect($definition)->map(function ($attribute, $key) use (&$definition) {
-            if (is_callable($attribute) && ! is_string($attribute) && ! is_array($attribute)) {
-                $attribute = $attribute($definition);
-            }
+        return collect($definition)
+            ->map($evaluateRelations = function ($attribute) {
+                if ($attribute instanceof self) {
+                    $attribute = $this->recycle->has($attribute->modelName())
+                            ? $this->recycle->get($attribute->modelName())
+                            : $attribute->recycle($this->recycle)->create()->getKey();
+                } elseif ($attribute instanceof Model) {
+                    $attribute = $attribute->getKey();
+                }
 
-            if ($attribute instanceof self) {
-                $attribute = $attribute->create()->getKey();
-            } elseif ($attribute instanceof Model) {
-                $attribute = $attribute->getKey();
-            }
+                return $attribute;
+            })
+            ->map(function ($attribute, $key) use (&$definition, $evaluateRelations) {
+                if (is_callable($attribute) && ! is_string($attribute) && ! is_array($attribute)) {
+                    $attribute = $attribute($definition);
+                }
 
-            $definition[$key] = $attribute;
+                $attribute = $evaluateRelations($attribute);
 
-            return $attribute;
-        })->all();
+                $definition[$key] = $attribute;
+
+                return $attribute;
+            })
+            ->all();
     }
 
     /**
      * Add a new state transformation to the model definition.
      *
-     * @param  (callable(array<string, mixed>, \Illuminate\Database\Eloquent\Model|null=): array<string, mixed>)|array<string, mixed>  $state
+     * @param  (callable(array<string, mixed>, \Illuminate\Database\Eloquent\Model|null): array<string, mixed>)|array<string, mixed>  $state
      * @return static
      */
     public function state($state)
@@ -481,6 +502,18 @@ abstract class Factory
                 },
             ]),
         ]);
+    }
+
+    /**
+     * Set a single model attribute.
+     *
+     * @param  string|int  $key
+     * @param  mixed  $value
+     * @return static
+     */
+    public function set($key, $value)
+    {
+        return $this->state([$key => $value]);
     }
 
     /**
@@ -548,7 +581,7 @@ abstract class Factory
     /**
      * Define an attached relationship for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model  $factory
+     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $factory
      * @param  (callable(): array<string, mixed>)|array<string, mixed>  $pivot
      * @param  string|null  $relationship
      * @return static
@@ -583,6 +616,22 @@ abstract class Factory
                 $factory instanceof Factory ? $factory->modelName() : $factory
             ))
         )])]);
+    }
+
+    /**
+     * Provide a model instance to use instead of any nested factory calls when creating relationships.
+     *
+     * @param  \Illuminate\Eloquent\Model|\Illuminate\Support\Collection|array  $model
+     * @return static
+     */
+    public function recycle($model)
+    {
+        return $this->newInstance([
+            'recycle' => $this->recycle->merge(
+                Collection::wrap($model instanceof Model ? func_get_args() : $model)
+                    ->keyBy(fn ($model) => get_class($model))
+            ),
+        ]);
     }
 
     /**
@@ -676,6 +725,7 @@ abstract class Factory
             'afterMaking' => $this->afterMaking,
             'afterCreating' => $this->afterCreating,
             'connection' => $this->connection,
+            'recycle' => $this->recycle,
         ], $arguments)));
     }
 
@@ -820,6 +870,12 @@ abstract class Factory
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
+        }
+
+        if ($method === 'trashed' && in_array(SoftDeletes::class, class_uses_recursive($this->modelName()))) {
+            return $this->state([
+                $this->newModel()->getDeletedAtColumn() => $parameters[0] ?? Carbon::now()->subDay(),
+            ]);
         }
 
         if (! Str::startsWith($method, ['for', 'has'])) {

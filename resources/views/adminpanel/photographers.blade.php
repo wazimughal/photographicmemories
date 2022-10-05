@@ -48,7 +48,6 @@
                                             <th>Mobile Number</th>
                                             <th>Unit Number</th>
                                             <th>Address</th>
-                                            <th>Zip Code</th>
                                             <th>City</th>
                                             <th>Action</th>
                                         </tr>
@@ -65,14 +64,12 @@
                                             <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong>
                                             </td>
                                             <td id="email_{{ $data['id'] }}">{{ $data['email'] }}</td>
-                                            <td id="mobileno_{{ $data['id'] }}">
-                                                {{ $data['mobileno'] }}</td>
+                                            <td id="phone_{{ $data['id'] }}">
+                                                {{ $data['phone'] }}</td>
                                             <td id="unitnumber_{{ $data['id'] }}">
                                                 {{ $data['unitnumber'] }} </td>
                                                  <td id="homeaddress_{{ $data['id'] }}">
                                                     {{ $data['homeaddress'] }}</td>
-                                                    <td id="zipcode_{{ $data['id'] }}">
-                                                        {{ $data['ZipCode']['code'] }}</td>
                                                     <td id="city_{{ $data['id'] }}">
                                                         {{ $data['City']['name'] }}</td>
                                            
@@ -122,8 +119,7 @@
                                             <th>Mobile Number</th>
                                             <th>Unit Number</th>
                                             <th>Address</th>
-                                            <th>Zip Code</th>
-                                            <th>City</th>
+                                           <th>City</th>
                                             <th>Action</th>
                                         </tr>
                                         <tr>
@@ -348,7 +344,7 @@
                         console.log(data);
                         
                         $('#name_' + data.id).html(data.name);
-                        $('#mobileno_' + data.id).html(data.mobileno_);
+                        $('#phone_' + data.id).html(data.phone_);
                         $('#unitnumber_' + data.id).html(data.unitnumber);
                         $('#homeaddress_' + data.id).html(data.homeaddress);
                         $('#zipcode_' + data.id).html(data.zipcode);

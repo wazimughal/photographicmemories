@@ -89,8 +89,10 @@
                                             <td id="photographer_name_{{ $pencil['id'] }}"> {{  booking_status($pencil['status'])}}</td>
 
                                             <td>
-
-                                                <a href="{{url('admin/bookings/add')}}/{{$pencil['id']}}" class="btn btn-success btn-block btn-sm"><i class="fas fa-plus"></i> Booking</a>
+                                                @if ($user->group_id==config('constants.groups.admin'))
+                                                <a href="{{url('admin/bookings/add')}}/{{$pencil['id']}}" class="btn btn-success btn-block btn-sm"><i class="fas fa-plus"></i> Booking</a>  
+                                                @endif
+                                                
                                                 <a href="{{url('admin/pencils/edit')}}/{{$pencil['id']}}" class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
                                                     Edit</a>
                                                     <a href="{{url('admin/pencils/view')}}/{{$pencil['id']}}" 

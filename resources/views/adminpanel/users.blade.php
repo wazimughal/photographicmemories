@@ -63,7 +63,7 @@
                                                 <td id="phone_{{ $data['id'] }}">
                                                     {{$data['phone']}}</td>
                                                 <td id="address_{{ $data['id'] }}">
-                                                    {{$data['homeaddress']}}</td>
+                                                    {{$data['address']}}</td>
                                                 <td id="group_title_{{ $data['id'] }}">
                                                     {{ $data['getGroups']['title'] }}</td>
                                                 <td id="group_role_{{ $data['id'] }}">
@@ -119,7 +119,7 @@
                                                                             action="{{ url('/admin/users/update') . '/' . $data['id'] }}"
                                                                             onsubmit="return updateUser({{ $data['id'] }},{{ $counter }})">
                                                                             @csrf
-
+<input type="hidden" name="group_id" value="{{ $data['group_id'] }}">
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
@@ -147,29 +147,66 @@
                                                                                 </div>
                                                                                 <div class="col-3">&nbsp;</div>
                                                                             </div>
-                                                                            
-                                                                     
                                                                             <div class="row form-group">
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                                <div class="col-6">
+                                                                                    <div class="input-group mb-3">
+                                                                                        <input type="password" name="password"
+                                                                                            class="form-control"
+                                                                                            placeholder="Enter Password"
+                                                                                            >
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                            </div>
+                                                                            <div class="row form-group">
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                                <div class="col-6">
+                                                                                    <div class="input-group mb-3">
+                                                                                        <input type="text" name="phone"
+                                                                                            class="form-control"
+                                                                                            value="{{ $data['phone'] }}"
+                                                                                            placeholder="Enter Phone"
+                                                                                            >
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                            </div>
+                                                                            <div class="row form-group">
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                                <div class="col-6">
+                                                                                    <div class="input-group mb-3">
+                                                                                        <input type="text" name="address"
+                                                                                            class="form-control"
+                                                                                            value="{{ $data['address'] }}"
+                                                                                            placeholder="Enter address"
+                                                                                            >
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                            </div>
+                                                                     
+                                                                            {{-- <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
                                                                                     <div class="input-group mb-3">
                                                                                         <select name="group_id"
                                                                                             class="form-control">
                                                                                             @php
-                                                                                                $userGroups = getGroups();
-                                                                                                foreach ($userGroups as $groupdata) {
-                                                                                                    $selected = '';
-                                                                                                    if ($groupdata['id'] == $data['getGroups']['id']) {
-                                                                                                        $selected = 'selected="selected"';
-                                                                                                    }
-                                                                                                    echo '<option ' . $selected . ' value="' . $groupdata['id'] . '">' . $groupdata['title'] . '</option>';
-                                                                                                }
+                                                                                                // $userGroups = getGroups();
+                                                                                                // foreach ($userGroups as $groupdata) {
+                                                                                                //     $selected = '';
+                                                                                                //     if ($groupdata['id'] == $data['getGroups']['id']) {
+                                                                                                //         $selected = 'selected="selected"';
+                                                                                                //     }
+                                                                                                //     echo '<option ' . $selected . ' value="' . $groupdata['id'] . '">' . $groupdata['title'] . '</option>';
+                                                                                                // }
                                                                                             @endphp
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-3">&nbsp;</div>
-                                                                            </div>
+                                                                            </div> --}}
                                                                             {{-- New Row Button --}}
                                                                             <div class="row form-group">
                                                                                 <div class="col-5">&nbsp;</div>

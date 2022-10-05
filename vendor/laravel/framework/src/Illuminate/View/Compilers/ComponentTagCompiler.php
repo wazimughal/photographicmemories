@@ -112,6 +112,10 @@ class ComponentTagCompiler
                         \s+
                         (?:
                             (?:
+                                @(?:class)(\( (?: (?>[^()]+) | (?-1) )* \))
+                            )
+                            |
+                            (?:
                                 \{\{\s*\\\$attributes(?:[^}]+?)?\s*\}\}
                             )
                             |
@@ -164,6 +168,10 @@ class ComponentTagCompiler
                     (?:
                         \s+
                         (?:
+                            (?:
+                                @(?:class)(\( (?: (?>[^()]+) | (?-1) )* \))
+                            )
+                            |
                             (?:
                                 \{\{\s*\\\$attributes(?:[^}]+?)?\s*\}\}
                             )
@@ -271,12 +279,29 @@ class ComponentTagCompiler
             return $class;
         }
 
-        if ($viewFactory->exists($view = $this->guessViewName($component))) {
-            return $view;
-        }
+        $guess = collect($this->blade->getAnonymousComponentNamespaces())
+            ->filter(function ($directory, $prefix) use ($component) {
+                return Str::startsWith($component, $prefix.'::');
+            })
+            ->prepend('components', $component)
+            ->reduce(function ($carry, $directory, $prefix) use ($component, $viewFactory) {
+                if (! is_null($carry)) {
+                    return $carry;
+                }
 
-        if ($viewFactory->exists($view = $this->guessViewName($component).'.index')) {
-            return $view;
+                $componentName = Str::after($component, $prefix.'::');
+
+                if ($viewFactory->exists($view = $this->guessViewName($componentName, $directory))) {
+                    return $view;
+                }
+
+                if ($viewFactory->exists($view = $this->guessViewName($componentName, $directory).'.index')) {
+                    return $view;
+                }
+            });
+
+        if (! is_null($guess)) {
+            return $guess;
         }
 
         throw new InvalidArgumentException(
@@ -341,11 +366,14 @@ class ComponentTagCompiler
      * Guess the view name for the given component.
      *
      * @param  string  $name
+     * @param  string  $prefix
      * @return string
      */
-    public function guessViewName($name)
+    public function guessViewName($name, $prefix = 'components.')
     {
-        $prefix = 'components.';
+        if (! Str::endsWith($prefix, '.')) {
+            $prefix .= '.';
+        }
 
         $delimiter = ViewFinderInterface::HINT_PATH_DELIMITER;
 
@@ -406,12 +434,16 @@ class ComponentTagCompiler
             <
                 \s*
                 x[\-\:]slot
-                (?:\:(?<inlineName>\w+))?
+                (?:\:(?<inlineName>\w+(?:-\w+)*))?
                 (?:\s+(:?)name=(?<name>(\"[^\"]+\"|\\\'[^\\\']+\\\'|[^\s>]+)))?
                 (?<attributes>
                     (?:
                         \s+
                         (?:
+                            (?:
+                                @(?:class)(\( (?: (?>[^()]+) | (?-1) )* \))
+                            )
+                            |
                             (?:
                                 \{\{\s*\\\$attributes(?:[^}]+?)?\s*\}\}
                             )
@@ -440,6 +472,10 @@ class ComponentTagCompiler
         $value = preg_replace_callback($pattern, function ($matches) {
             $name = $this->stripQuotes($matches['inlineName'] ?: $matches['name']);
 
+            if (Str::contains($name, '-') && ! empty($matches['inlineName'])) {
+                $name = Str::camel($name);
+            }
+
             if ($matches[2] !== ':') {
                 $name = "'{$name}'";
             }
@@ -463,7 +499,7 @@ class ComponentTagCompiler
     protected function getAttributesFromAttributeString(string $attributeString)
     {
         $attributeString = $this->parseAttributeBag($attributeString);
-
+        $attributeString = $this->parseComponentTagClassStatements($attributeString);
         $attributeString = $this->parseBindAttributes($attributeString);
 
         $pattern = '/
@@ -528,6 +564,27 @@ class ComponentTagCompiler
         /x";
 
         return preg_replace($pattern, ' :attributes="$1"', $attributeString);
+    }
+
+    /**
+     * Parse @class statements in a given attribute string into their fully-qualified syntax.
+     *
+     * @param  string  $attributeString
+     * @return string
+     */
+    protected function parseComponentTagClassStatements(string $attributeString)
+    {
+        return preg_replace_callback(
+             '/@(class)(\( ( (?>[^()]+) | (?2) )* \))/x', function ($match) {
+                 if ($match[1] === 'class') {
+                     $match[2] = str_replace('"', "'", $match[2]);
+
+                     return ":class=\"\Illuminate\Support\Arr::toCssClasses{$match[2]}\"";
+                 }
+
+                 return $match[0];
+             }, $attributeString
+        );
     }
 
     /**

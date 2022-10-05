@@ -129,6 +129,27 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
+                                                <input type="password" name="password"
+                                                    class="form-control @error('password') is-invalid @enderror"
+                                                    placeholder="password" required value="{{ old('password') }}">
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        <span class="fas fa-lock"></span>
+                                                    </div>
+                                                </div>
+                                                @error('password')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-3">&nbsp;</div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">&nbsp;</div>
+                                        <div class="col-6">
+                                            <div class="input-group mb-3">
                                                 <input type="text" required name="phone"
                                                     class="form-control @error('phone') is-invalid @enderror"
                                                     placeholder="Phone" value="{{ old('phone') }}">
@@ -352,7 +373,7 @@
                                             <label>Event Detail information</label>
                                             <div class="input-group date" id="reservationdate"
                                                 data-target-input="nearest">
-                                                <input name="date_of_event" placeholder="Event Date (09/22/2022)"
+                                                <input name="date_of_event" required placeholder="Event Date (09/22/2022)"
                                                     value="{{ old('date_of_event') }}" type="text"
                                                     class="form-control datetimepicker-input @error('date_of_event') is-invalid @enderror"
                                                     data-target="#reservationdate" />

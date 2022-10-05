@@ -24,9 +24,21 @@ class Bookings extends Model
     {
         return $this->hasMany(invoices::class, 'booking_id', 'id');
     }
+    public function customer_invoices()
+    {
+        return $this->hasMany(invoices::class, 'booking_id', 'id')->where('slug','customer');
+    }
+    public function venue_invoices()
+    {
+        return $this->hasMany(invoices::class, 'booking_id', 'id')->where('slug','venue_group');
+    }
     public function files()
     {
-        return $this->hasMany(files::class, 'booking_id', 'id');
+        return $this->hasMany(files::class, 'booking_id', 'id')->where('slug','booking_documents');
+    }
+    public function gallery()
+    {
+        return $this->hasMany(files::class, 'booking_id', 'id')->where('slug','booking_photos');
     }
     public function deposite_requests()
     {

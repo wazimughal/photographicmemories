@@ -56,11 +56,7 @@ class AdminController extends Controller
     
         return view('adminpanel/login', $data);
     }
-    public function calenderSchedule(){
-        $user=Auth::user();
-        
-        return view('adminpanel/calender_schedule',compact('user'));
-    }
+
     public function addUser(){
        $user=Auth::user(); 
         
@@ -232,7 +228,6 @@ class AdminController extends Controller
 
         $validated =  $request->validate([
             'name' => 'required',
-            'group_id' => 'required'
             ]);
             if(!$validated){
 
@@ -244,7 +239,11 @@ class AdminController extends Controller
             }
      
         $data['name']=$request['name'];
-        $data['group_id']=$request['group_id'];
+        $data['phone']=$request['phone'];
+        $data['address']=$request['address'];
+        if(!empty($request['name']))
+        $data['password']=Hash::make($request['password']);
+        //$data['group_id']=$request['group_id'];
 
         $groupData=Groups::find($request['group_id']);
        
@@ -252,6 +251,8 @@ class AdminController extends Controller
         // p($groupData);
         // die;
         $dataArray['name']=$data['name'];
+        $dataArray['phone']=$data['phone'];
+        $dataArray['address']=$data['address'];
         $dataArray['id']=$id;
         $dataArray['group_title']=$groupData['title'];
         $dataArray['group_role']=$groupData['role'];

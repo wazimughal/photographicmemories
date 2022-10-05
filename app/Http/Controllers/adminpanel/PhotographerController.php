@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
+// Used for Email Section
+use App\Mail\EmailTemplate;
+use Illuminate\Support\Facades\Mail;
+
 class PhotographerController extends Controller
 {
     
@@ -58,7 +62,14 @@ class PhotographerController extends Controller
 
         $request->session()->flash('alert-success', 'photographer Added! Please Check in photographers list Tab');
         $this->users->save();
-       
+       //
+       $mailData['body_message']='you have been assigned a new password to the Online portal. Please use your email and password <strong>'.$request['password'].'</strong> to sign in to your dashboard.';
+       $mailData['subject']='Welcome to kleins photography';
+       $toEmail=$request['email'];
+
+       if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
+        $request->session()->flash('alert-success', 'photographer Added');
+       }
         // Activity Log
                     $activityComment='Mr.'.get_session_value('name').' Added new photographer '.$this->users->name;
                     $activityData=array(
@@ -320,6 +331,8 @@ class PhotographerController extends Controller
             $dataArray['phone']=$req['phone'];
             $dataArray['address']=$req['address'];
             $dataArray['unitnumber']=$req['unitnumber'];
+            if(isset($req['password']) && !empty($req['password']))
+            $req['password']=Hash::make($req['password']);
             $dataArray['id']=$req['photographer_id'];
             
             $this->users->where('id', $req['photographer_id'])->update(
@@ -402,6 +415,19 @@ $formHtml='<form id="EditphotographerForm"
                                                                                             placeholder="Enter Email"
                                                                                             value="'. $data['email'].'"
                                                                                             required>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                            </div>
+                                                                            <div class="row form-group">
+                                                                                <div class="col-3">&nbsp;</div>
+                                                                                <div class="col-6">
+                                                                                    <div class="input-group mb-3">
+                                                                                        <input type="password"
+                                                                                            name="password"
+                                                                                            class="form-control"
+                                                                                            placeholder="Leave blank if you don\'t want to change"
+                                                                                            >
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-3">&nbsp;</div>

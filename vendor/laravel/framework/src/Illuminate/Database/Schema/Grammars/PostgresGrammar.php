@@ -152,11 +152,21 @@ class PostgresGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s add constraint %s unique (%s)',
+        $sql = sprintf('alter table %s add constraint %s unique (%s)',
             $this->wrapTable($blueprint),
             $this->wrap($command->index),
             $this->columnize($command->columns)
         );
+
+        if (! is_null($command->deferrable)) {
+            $sql .= $command->deferrable ? ' deferrable' : ' not deferrable';
+        }
+
+        if ($command->deferrable && ! is_null($command->initiallyImmediate)) {
+            $sql .= $command->initiallyImmediate ? ' initially immediate' : ' initially deferred';
+        }
+
+        return $sql;
     }
 
     /**
@@ -483,6 +493,21 @@ class PostgresGrammar extends Grammar
             $this->wrapTable($blueprint),
             $this->wrap($command->column->name),
             "'".str_replace("'", "''", $command->value)."'"
+        );
+    }
+
+    /**
+     * Compile a table comment command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileTableComment(Blueprint $blueprint, Fluent $command)
+    {
+        return sprintf('comment on table %s is %s',
+            $this->wrapTable($blueprint),
+            "'".str_replace("'", "''", $command->comment)."'"
         );
     }
 

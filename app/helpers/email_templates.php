@@ -3,10 +3,17 @@ if(!function_exists('send_email')){
     function send_email($data=array(),$template_name=NULL){ 
 
       // if We are at localhost then return true always
-
       if(config('app.url')=='http://localhost/')
         return true;
-      
+
+        
+      $cc="info@thephotographicmemories.com";
+
+      if(isset($data['to']) && !empty($data['to'])){
+        $to=$data['to']; 
+      }else{
+        $to='to.wazim@gmail.com'; 
+      }
       if(isset($data['subject']) && !empty($data['subject'])){
         $subject=$data['subject']; 
       }else{
@@ -14,9 +21,9 @@ if(!function_exists('send_email')){
       }
 
       if(isset($data['body_message']) && !empty($data['body_message'])){
-        $body_message=$data['message']; 
+        $body_message=$data['body_message']; 
       }else{
-        $body_message='Welcome To Klein\'s photography.'; 
+        $body_message='Welcome To Klein\'s photography.You have been assigned a new password to your online portal. Your password is: _______ please use your email as your username.'; 
       }
 
       if(isset($data['button_title']) && !empty($data['button_title'])){
@@ -33,9 +40,6 @@ if(!function_exists('send_email')){
 
 $img_path='https://office.thephotographicmemories.com/adminpanel/dist/img/';
 
-if(empty($email_body))
-$email_body='Welcome To Klein’s photography. You have been assigned a new password to your online portal. Your password is: _______ please use your email as your username.
-';
 
 $htmlTemp ='<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -191,7 +195,7 @@ a[x-apple-data-detectors=\'true\'] {
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 30px 15px;font-family:\'Open Sans\',sans-serif;" align="left">
         
   <div class="v-color v-line-height" style="line-height: 180%; text-align: center; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 180%;">'.$email_body.'</p>
+    <p style="font-size: 14px; line-height: 180%;">'.$body_message.'</p>
   </div>
 
       </td>
@@ -420,10 +424,6 @@ $htmlTemp .='<!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
 </html>';
 
 
-
-$to = "to.wazim@gmail.com";
-$cc="info@thephotographicmemories.com";
-$subject = "HTML email";
 
 
 // Always set content-type when sending HTML email

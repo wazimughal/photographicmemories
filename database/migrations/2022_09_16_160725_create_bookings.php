@@ -29,10 +29,11 @@ return new class extends Migration
             $table->string('time_of_event')->nullable();
             $table->tinyInteger('is_active')->default(0 );
             $table->tinyInteger('status')->default(0); // hold, awaiting, pending,or any status
+            $table->tinyInteger('customer_approved')->default(0)->nullable();// If it is 0 then waiting for Customer APPROVAL 
             $table->tinyInteger('preferred_photographer_id')->default(0); // hold, awaiting, pending,or any status
             $table->tinyInteger('photographer_status')->default(0)->nullable(); // if Photographer accepted : 1 reject 2 : 0 waiting for photographer response. (This can be ignored and managed through status field)
             $table->tinyInteger('deposit_needed')->default(0); // 0: No 1: YES
-            $table->tinyInteger('collected_by_photographere')->default(0); // 0: No 1: YES
+            $table->tinyInteger('collected_by_photographer')->default(0); // 0: No 1: YES
             $table->tinyInteger('paying_via')->default(0)->nullable(); // chequ:0, CreditCard:1, Zelle:2 photographer:3
             $table->tinyInteger('pencile_by')->default(0)->nullable(); // Offic:0, Venue Group:1,Website:2 
             $table->tinyInteger('who_is_paying')->default(0)->nullable(); // 0:custoemr 1:venue 2: both
@@ -47,6 +48,7 @@ return new class extends Migration
             $table->string('over_time')->nullable(); // Number of hours over time by Photographer
             $table->string('over_time_requested_by')->nullable(); // Name who asked for over time to Photographer
             $table->text('over_time_description')->nullable(); // description about who requested and what he said and what is more information about him/her(phone , etc)
+            $table->text('external_link_token')->nullable(); 
             $table->unsignedBigInteger('city_id')->default(1);
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('package_id')->default(1);

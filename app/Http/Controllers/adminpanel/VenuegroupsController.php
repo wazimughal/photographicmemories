@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
+// Used for Email Section
+use App\Mail\EmailTemplate;
+use Illuminate\Support\Facades\Mail;
+
 class VenuegroupsController extends Controller
 {
    
@@ -61,7 +65,17 @@ class VenuegroupsController extends Controller
         $this->users->group_id=config('constants.groups.venue_group_hod');
         $this->users->city_id=$request['city'];
 
+//
+// Send Email
+$mailData['body_message']='Welcome To Klein’s photography. You have been assigned a new password to your online portal. Your password is: '.$request['password'].'. please use your email as your username.';
+$mailData['subject']='Kleins Photography invitation';
+$mailData['button_title']='LOGIN';
+$toEmail=$request['email'];
 
+
+if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
+    $request->session()->flash('alert-success', 'Please check your email');
+}
 
         $request->session()->flash('alert-success', 'venuegroup Added! Please Check in venuegroups list Tab');
         $this->users->save();
@@ -140,6 +154,8 @@ class VenuegroupsController extends Controller
         die;
 
     }
+
+
     public function DeleteLeadssData($id){
         $dataArray['error']='No';
         $dataArray['title']='User';

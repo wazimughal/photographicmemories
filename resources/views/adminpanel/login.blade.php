@@ -4,40 +4,40 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{config('constants.app_name')}}<| Log in (v2)</title>
+    <title>{{ config('constants.app_name') }}<| Log in (v2)</title>
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="{{ url('adminpanel/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url('adminpanel/dist/css/adminlte.min.css') }}">
+            <!-- Google Font: Source Sans Pro -->
+            <link rel="stylesheet"
+                href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+            <!-- Font Awesome -->
+            <link rel="stylesheet" href="{{ url('adminpanel/plugins/fontawesome-free/css/all.min.css') }}">
+            <!-- icheck bootstrap -->
+            <link rel="stylesheet" href="{{ url('adminpanel/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+            <!-- Theme style -->
+            <link rel="stylesheet" href="{{ url('adminpanel/dist/css/adminlte.min.css') }}">
 </head>
-
 <body class="hold-transition login-page">
     <div class="login-box">
         <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="{{ url('admin/dashboard') }}" class="h1"><b>{{config('constants.app_name')}}</b></a>
+                <a href="{{ url('admin/dashboard') }}" class="h1"><b>{{ config('constants.app_name') }}</b></a>
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
                 <!-- flash-message -->
                 <div class="flash-message">
-                   
-                    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                      @if(Session::has('alert-' . $msg))
-                
-                      <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
-                      @endif
-                    @endforeach
-                  </div> <!-- end .flash-message -->
 
-                <form action="{{ url('admin/login') }}" method="post">
+                    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                        @if (Session::has('alert-' . $msg))
+                            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a
+                                    href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            </p>
+                        @endif
+                    @endforeach
+                </div> <!-- end .flash-message -->
+
+                <form action="{{ route('admin.login') }}?test=1" method="post">
                     @csrf
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
@@ -99,7 +99,7 @@
                     <a href="forgot-password.html">I forgot my password</a>
                 </p> --}}
                 <p class="mb-0">
-                    <a href="{{url('/admin/register')}}" class="text-center">Register a new membership</a>
+                    <a href="{{ url('/admin/register') }}" class="text-center">Register a new membership</a>
                 </p>
             </div>
             <!-- /.card-body -->
