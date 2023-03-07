@@ -37,9 +37,12 @@ return new class extends Migration
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('zipcode_id')->default(1);
             $table->foreign('zipcode_id')->references('id')->on('zipcode');
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zipcode')->nullable();
             $table->string('password')->nullable();
             $table->string('profile_pic')->nullable();
-            $table->tinyInteger('is_active')->default(0 );
+            $table->tinyInteger('is_active')->default(1)->nullable();
             $table->tinyInteger('status')->default(0 );
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('groups');
@@ -55,6 +58,7 @@ return new class extends Migration
                 'name' => 'Chaudhary Wasim',
                 'firstname' => 'Chaudhary ',
                 'lastname' => 'Wasim',
+                'vg_name' => NULL,
                 'email' => 'admin@gmail.com',
                 'cnic' => '3660327946615',
                 'phone' => '03007731712',
@@ -66,6 +70,7 @@ return new class extends Migration
                 'name' => 'Ali Uffan Chadhary',
                 'firstname' => 'Ali Uffan',
                 'lastname' => 'Chadhary',
+                'vg_name' => 'Adan Enterprises',
                 'email' => 'venue_group@gmail.com',
                 'cnic' => '789',
                 'phone' => '',
@@ -77,6 +82,7 @@ return new class extends Migration
                 'name' => 'Waqas Ali',
                 'firstname' => 'Waqas',
                 'lastname' =>'Ali',
+                'vg_name' => NULL,
                 'email' => 'customer@gmail.com',
                 'cnic' => '3660327946616',
                 'phone' => '03007731713',
@@ -88,6 +94,7 @@ return new class extends Migration
                 'name' => 'Haroon ahmad',
                 'firstname' => 'Haroon',
                 'lastname' => 'ahmad',
+                'vg_name' => NULL,
                 'email' => 'photographer@gmail.com',
                 'cnic' => '3660327946617',
                 'phone' => '03007731717',

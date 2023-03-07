@@ -340,7 +340,7 @@ $htmlTemp .='<!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
 
   <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
   
-    <a href="https://thephotographicmemories.com" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
+    <a href="https://thephotographicmemories.com//portfolio" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
       Portfolio
     </a>
   
@@ -355,7 +355,7 @@ $htmlTemp .='<!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
 
   <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
   
-    <a href="https://thephotographicmemories.com" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
+    <a href="https://thephotographicmemories.com/about-me/" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
       About Us
     </a>
   
@@ -370,7 +370,7 @@ $htmlTemp .='<!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
 
   <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
   
-    <a href="https://thephotographicmemories.com" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
+    <a href="https://thephotographicmemories.com/contacts" target="_self" style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"  class="v-padding v-font-size">
       Contact Us
     </a>
   

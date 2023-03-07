@@ -14,10 +14,14 @@
                         <h1>View Venue Groups </h1>
 
                     </div>
-                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/venuegroups/add') }}"
-                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
+                    <div class="col-sm-4">
+                        @if ($user->group_id==config('constants.groups.admin'))
+                        <a style="width:60%" href="{{ url('/admin/venuegroups/add') }}"
+                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a>
+                            @endif
+                        </div>
                     <div class="col-sm-1">&nbsp;</div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">View</li>
@@ -43,21 +47,20 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
+                                           
                                             <th>Email</th>
                                             <th>Venue Group Name</th>
                                             <th>Manager Name</th>
                                             <th>Mobile Number</th>
                                             <th>Address</th>
-                                            <th>Venue Description</th>
-                                            <th>City</th>
+                                          
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
                                             $counter = 1;
-                                            
+                                            if(count($venuegroupsData)>0)
                                             foreach ($venuegroupsData as $data){
                                                     // p($data['city']['name']);
                                                     // p($data['zipcode']['code']);
@@ -65,8 +68,8 @@
                                            
                                             ?>
                                         <tr id="row_{{ $data['id'] }}">
-                                            <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong>
-                                            </td>
+                                            {{-- <td><strong id="name_{{ $data['id'] }}">{{ $data['name'] }}</strong>
+                                            </td> --}}
                                             <td id="email_{{ $data['id'] }}">{{ $data['email'] }}</td>
                                             <td id="vg_name_{{ $data['id'] }}">
                                                 {{ $data['vg_name'] }}</td>
@@ -76,34 +79,39 @@
                                                 {{ $data['vg_manager_phone'] }}</td>
                                             <td id="address_{{ $data['id'] }}">
                                                 {{ $data['address'] }} </td>
-                                            <td id="vg_description_{{ $data['id'] }}">
-                                                {{ $data['vg_description'] }}</td>
-                                            <td id="city_{{ $data['id'] }}">
-                                                {{ $data['city']['name'] }}</td>
+                                            {{-- <td id="vg_description_{{ $data['id'] }}">
+                                                {{ $data['vg_description'] }}</td> --}}
+                                            {{-- <td id="city_{{ $data['id'] }}">
+                                                {{ $data['city'] }}</td> --}}
                                             
                                             <td>
-                                                <button onClick="do_action({{ $data['id'] }},'editvenuegroupForm',{{ $counter }})"
-                                                    class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
-                                                    Edit</button>
                                                 <button
                                                     onClick="do_action({{ $data['id'] }},'viewVenueGroupData',{{ $counter }})"
                                                     class="btn btn-primary btn-block btn-sm"><i class="fas fa-eye"></i>
                                                     View</button>
-                                                <button
-                                                    onClick="do_action({{ $data['id'] }},'delete',{{ $counter }})"
+                                                @if ($user->group_id==config('constants.groups.admin'))
+                                                <button onClick="do_action({{ $data['id'] }},'editvenuegroupForm',{{ $counter }})"
+                                                    class="btn btn-info btn-block btn-sm"><i class="fas fa-edit"></i>
+                                                    Edit</button>
+                                               
+                                                
+                                                
+                                                    @if ($data['is_active'] == 1)
+                                                    <button
+                                                    onClick="do_action({{ $data['id'] }},'trash',{{ $counter }})"
                                                     type="button" class="btn btn-danger btn-block btn-sm"><i
                                                         class="fas fa-trash"></i>
-                                                    Delete</button>
-                                                {{-- <div style="margin-top: 5px;" id="status_action_btn_{{ $data['id'] }}">
-                                                    @if ($data['is_active'] == 1)
+                                                    Trash </button>
+                                                    @elseif ($data['is_active'] == 2)
                                                         <button
-                                                            onClick="changeStatus({{ $data['id'] }},{{ $counter }},'trash')"
+                                                            onClick="do_action({{ $data['id'] }},'restore',{{ $counter }})"
                                                             type="button" class="btn btn-warning btn-block btn-sm"><i
-                                                                class="fas fa-chart-line"></i>
-                                                            Trash</button>
+                                                                class="fas fa-undo"></i>
+                                                            Restore</button>
                                                         
                                                     @endif
-                                                </div> --}}
+                                                
+                                                @endif
                                             </td>
 
                                           
@@ -112,6 +120,8 @@
                                         <?php 
                                             
                                               $counter ++;
+                                        }else{
+                                            echo '<tr><td class="text-center" colspan="6">No Record Found</td></tr>';
                                         }
                                         ?>
 
@@ -121,14 +131,11 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th>Name</th>
                                             <th>Email</th>
                                             <th>Venue Group Name</th>
                                             <th>Manager Name</th>
                                             <th>Mobile Number</th>
                                             <th>Address</th>
-                                            <th>Venue Description</th>
-                                            <th>City</th>
                                             <th>Action</th>
                                         </tr>
                                         <tr>
@@ -161,7 +168,7 @@
             <div class="modal-content">
                 <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title"> venuegroups Panel</h3>
+                        <h3 class="card-title"> Venue Group Panel</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -212,8 +219,13 @@
                 counter: counter_id,
                 id: id
             };
+            if(action_name=='restore' || action_name=='trash'){
+            if (!confirm('Are you sure, you want to perform this action?')){
+                    return false;
+            }
+        }
             $.ajax({
-                url: "{{ url('/admin/venuegroups/ajaxcall') }}/" + id,
+                url: "{{ route('venuegroups.ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -223,7 +235,7 @@
                 dataType: 'json',
                 success: function(data) {
                     if (data.error == 'No') {
-                        if(action_name=='delete'){
+                        if(action_name=='restore' || action_name=='trash'){
                             $('#row_'+data.id).html('');
                            
                         }
@@ -235,7 +247,7 @@
                     } else {
                         $('#responseData').html('There is some error, Please try again Later');
                     }
-                    if(action_name!='delete')
+                    if(action_name!='restore' || action_name=='trash')
                     $('#modal-xl-lead').modal('toggle')
                 }
             });

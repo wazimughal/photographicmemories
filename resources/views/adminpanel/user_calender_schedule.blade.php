@@ -13,12 +13,7 @@
                 <div class="col-sm-6">
                     <h1>Calender Schedule</h1>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Calender Schedule</li>
-                    </ol>
-                </div>
+              
             </div>
         </div><!-- /.container-fluid -->
     </section>
@@ -180,11 +175,19 @@
         themeSystem: 'bootstrap',
         //Random default events
         events: [ 
-          @foreach ($bookingData as $data )
-          @foreach ($data['bookings'] as $booking )
+          @php
+          foreach ($bookingData as $data )
+          foreach ($data['bookings'] as $booking ){
+            $vg_name='';
+            if($booking['other_venue_group']!='')
+            $vg_name=$booking['other_venue_group'];
+            else
+            $vg_name=$booking["venue_group"]["userinfo"][0]["vg_name"];
+
+          @endphp
           
           { 
-            title          : '{{$booking["groom_name"]}} WEDs {{$booking["bride_name"]}}  {{$booking["status"]}}',
+            title          : '{{$booking["customer"]["userinfo"][0]["name"]}} @ {{$vg_name}}',
             start          : '@php echo date("Y-m-d",$booking['date_of_event']);@endphp',
             url            : '@php echo route("bookings.view",$booking['id']);@endphp',
             backgroundColor: '##670D0D', //red
@@ -192,8 +195,10 @@
             classNames    : 'wasimclass', //red
             allDay         : true
           },
-          @endforeach
-          @endforeach
+          @php
+       
+       }
+         @endphp
           // {
           //   title          : 'Lunch',
           //   start          : new Date(y, m, d, 12, 0),

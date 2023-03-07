@@ -12,12 +12,7 @@
                     <div class="col-sm-6">
                         <h1>Add New booking</h1>
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Add New booking</li>
-                        </ol>
-                    </div>
+                    
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -36,7 +31,7 @@
 
                     <!-- /.row -->
                   
-                                @if ($bookingData['customer_approved']==0 && $bookingData['status']>0)
+                                {{-- @if ($bookingData['customer_approved']==0 && $bookingData['status']>0)
                                 <div class="row form-group">
                                     <div class="col-12">
                                         <div class="alert alert-warning alert-dismissible">
@@ -48,9 +43,9 @@
                                               <div class="booking_status_msg"> Wainting for customer Approval </div>
                                             </div>
                                     </div>
-                                </div>
-                                    
-                                @endif
+                                </div>  
+                                @endif--}}
+                                
                                 <div class="row form-group">
                                     <div class="col-12">
                                         <div class="alert alert-danger alert-dismissible">
@@ -68,7 +63,16 @@
                                     <div class="col-md-8">
                                         <div class="card">
                                             <div class="card-header p-2">
-                                                <strong> Event/Booking Information</strong>
+                                                
+                                                <div class="row">
+                                                    <div class="col-10"><strong> Event/Booking Information</strong></div>
+                                                    @if ($bookingData['status']>0) 
+                                                    <div class="col-2 pull-right">
+                                                        <a href="{{route('bookings.view',$bookingData['id'])}}" class="btn btn-primary pull-right btn-block btn-sm"><i class="fas fa-eye"></i>
+                                                            View Booking</a>  
+                                                    </div>
+                                                    @endif
+                                                </div>
                                             </div><!-- /.card-header -->
                                             <div class="card-body">
                                                 <div class="tab-content">
@@ -105,6 +109,7 @@
 
                                                             <input type="hidden" name="customer_id"
                                                                 value="{{ $bookingData['customer']['user_id'] }}">
+                                                            
                                                             <input type="hidden" name="customer_email"
                                                                 value="{{ $bookingData['customer']['userinfo'][0]['email'] }}">
                                                             @if (isset($bookingData['venue_group']['user_id']) && $bookingData['venue_group']['user_id'] > 0)
@@ -119,7 +124,7 @@
                                                                         data-target-input="nearest">
                                                                         <input name="date_of_event"
                                                                             placeholder="Event Date (09/22/2022)"
-                                                                            value="{{ date(config('constants.date_formate_us'),$bookingData['date_of_event']) }}"
+                                                                            value="{{ date(config('constants.date_formate'),$bookingData['date_of_event']) }}"
                                                                             type="text"
                                                                             class="form-control datetimepicker-input @error('date_of_event') is-invalid @enderror"
                                                                             data-target="#reservationdate" />
@@ -158,34 +163,8 @@
                                                                 </div>
                                                             </div>
                                                             <?php if($assigne_photographers){  $k=1;?>
-                                                            {{-- <div class="form-group row">
-                                                                <div class="col-sm-12">
-                                                                    <div class="table-responsive">
-                                                                        <table class="table">
-                                                                            <?php //foreach ($assigne_photographers as $key=>$photographer){
-                                                                            ?>
-
-                                                                            <tr>
-                                                                                <td style="width:20%">{{$k++}}</td>
-                                                                                <td>{{ $photographer['userinfo'][0]['firstname'] }}
-                                                                                    {{ $photographer['userinfo'][0]['lastname'] }}
-                                                                                </td>
-                                                                                <td style="width:200px">
-                                                                                    {!! ($photographer['status']==0)?'<span  class=" btn-primary btn-sm">Waiting Response</span>':'' !!}
-                                                                                    {!! ($photographer['status']==1)?'<span  class=" success btn-sm">Accpted</span>':'' !!}
-                                                                                    {!! ($photographer['status']==2)?'<span  class=" btn-danger btn-sm">Declined</span>':'' !!}
-                                                                                    
-                                                                                </td>
-                                                                                <div
-                                                                            </tr>
-
-                                                                            <?php //}
-                                                                            ?>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                            </div> --}}
-                                                            <div class="row form-group">
+                                                            
+                                                            {{-- <div class="row form-group">
                                                                 <div class="col-12">
                                                                     <div class="alert alert-warning alert-dismissible">
                                                                         <button type="button" class="close"
@@ -196,7 +175,7 @@
                                                                         Booking status will not move to next step, untill all the assigned photgrapher didn't accept the invitation.
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
                                                             <?php }?>
 
                                                             <div class="row form-group">
@@ -244,10 +223,25 @@
                                                                     </div>
                                                                 </div>
                                                             @endif
-                                                            <div id="other_venue_group"></div>
+                                                            <div id="other_venue_group">
+                                                                @php
+                                                                $venue_group_id=NULL;
+                                                               if (isset($bookingData['venue_group'])){
+                                                                $venue_group_id=$bookingData['venue_group']['userinfo'][0]['id'];
+                                                               }
+                                                                if (isset($bookingData['other_venue_group']) && $bookingData['other_venue_group']!=''){
+                                                                    echo '<div class="row form-group"><div class="col-1">&nbsp;</div><div class="col-10"><label class="col-form-label">Other Venue Group </label><div class="input-group mb-3"><textarea placeholder="Name and Address of Venue Group" name="other_venue_group" class=" form-control" required>'.$bookingData['other_venue_group'].'</textarea></div></div><div class="col-1">&nbsp;</div></div>';
+                                                                    $venue_group_id='other';
+                                                                }
+                                                                
+                                                                    
+                                                                @endphp
+                                                                
+                                                                
+                                                            </div>
                                                             <div class="form-group row">
                                                                 <div class="col-sm-6">
-                                                                    @if (isset($bookingData['venue_group']))
+                                                                    {{-- @if (isset($bookingData['venue_group'])) --}}
                                                                     <label class="col-form-label">Venue Group </label>
                                                                         <div class="input-group">
                                                                             <select class="form-control select2bs4"
@@ -255,11 +249,12 @@
                                                                                 name="venue_group_id" id="venue_group_id"
                                                                                 placeholder="Select Venue Group">
                                                                                 @php
-                                                                                    echo get_venue_group_options($bookingData['venue_group']['userinfo'][0]['id']);
+                                                                                    echo get_venue_group_options($venue_group_id);
                                                                                 @endphp
                                                                             </select>
                                                                         </div>
-                                                                    @else
+                                                                    {{-- @else
+                                                                    <label class="col-form-label">Venue Group </label>
                                                                         <div class="input-group">
 
                                                                             <input type="text" disabled readonly
@@ -268,7 +263,7 @@
                                                                              
 
                                                                         </div>
-                                                                    @endif
+                                                                    @endif --}}
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <label class="col-form-label">Packages </label>
@@ -286,6 +281,48 @@
                                                                                 echo get_packages_options($package_id);
                                                                             @endphp
                                                                         </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group mb-2">
+                                                                        <label class="col-form-label">Who is Paying?</label>
+                                                                        <select id="who_is_paying" name="who_is_paying"
+                                                                            onchange="select_who_is_paying()"
+                                                                            class="form-control select2bs4" required
+                                                                            style="width: 100%;">
+                                                                           
+                                                                            <option
+                                                                                {{ $bookingData['who_is_paying'] == 1 ? 'selected="selected"' : '' }}
+                                                                                value="1">Venue Group</option>
+                                                                            <option
+                                                                                {{ $bookingData['who_is_paying'] == 0 ? 'selected="selected"' : '' }}
+                                                                                value="0">Customer</option>
+                                                                            <option
+                                                                                {{ $bookingData['who_is_paying'] == 2 ? 'selected="selected"' : '' }}
+                                                                                value="2">Split in Both</option>
+                                                                        </select> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="both_paying" class="form-group row"
+                                                                style="{{ $bookingData['who_is_paying'] != 2 ? 'display: none' : '' }}">
+                                                                <div class="col-sm-6">
+                                                                    <label>Customer
+                                                                    </label>
+                                                                    <div class="input-group mb-2"><input type="number"
+                                                                            name="customer_to_pay"
+                                                                            value="{{ $bookingData['customer_to_pay'] }}"
+                                                                            placeholder="How much?" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <label>Venue Group</label>
+                                                                    <div class="input-group mb-2"><input type="number"
+                                                                            value="{{ $bookingData['venue_group_to_pay'] }}"
+                                                                            name="venue_group_to_pay"
+                                                                            placeholder="How much?" class="form-control">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -310,7 +347,7 @@
                                                             <div class="form-group row">
                                                                 <div class="col-sm-6">
                                                                     <label class="col-form-label">Over Time </label>
-                                                                    <div class="input-group mb-2"><input type="number"
+                                                                    <div class="input-group mb-2"><input type="text"
                                                                             value="{{ $bookingData['overtime_hours'] }}"
                                                                             name="overtime_hours"
                                                                             placeholder="Over Time: Number of Hours(08)"
@@ -333,68 +370,42 @@
 
                                                                         <div class="form-group clearfix">
                                                                             <div class="icheck-success d-inline">
-                                                                              <input type="radio" value="0" name="collected_by_photographer" {{ ($bookingData['collected_by_photographer']==0)?'checked':'' }} id="radioSuccess1">
+                                                                              <input onclick="$('#photographer_to_collect_amount').hide('slow');$('#photographer_payee_name_row').hide('slow');" type="radio" value="0" name="collected_by_photographer" {{ ($bookingData['collected_by_photographer']==0)?'checked':'' }} id="radioSuccess1">
                                                                               <label for="radioSuccess1"> No
                                                                               </label>
                                                                             </div>
                                                                             <div class="icheck-success d-inline">
-                                                                              <input type="radio" value="1" name="collected_by_photographer" {{ ($bookingData['collected_by_photographer']==1)?'checked':'' }} id="radioSuccess2">
+                                                                              <input onclick="$('#photographer_to_collect_amount').show('slow');$('#photographer_payee_name_row').show('slow');" type="radio" value="1" name="collected_by_photographer" {{ ($bookingData['collected_by_photographer']==1)?'checked':'' }} id="radioSuccess2">
                                                                               <label for="radioSuccess2"> YES
                                                                               </label>
                                                                             </div>
-                                                                            
+                                                                            <input  style="float: right; width:70%; {{ ($bookingData['collected_by_photographer']==0)?'display:none;':'' }}" type="number"
+                                                                            value="{{ $bookingData['photographer_to_collect_amount'] }}" name="photographer_to_collect_amount" id="photographer_to_collect_amount"                                                                       name="photographer_to_collect_amount                                                                       placeholder="How much?"
+                                                                            class="form-control">
+
                                                                           </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-6">
-                                                                    <label class="col-form-label">Who is Paying?     </label>
+                                                                <div class="col-sm-6" id="photographer_payee_name_row" style="{{ ($bookingData['collected_by_photographer']==0)?'display:none;':'' }}">
+                                                                    <label class="col-form-label">Payee Name    </label>
                                                                     <div class="form-group">
-
-                                                                        <select id="who_is_paying" name="who_is_paying"
-                                                                            onchange="select_who_is_paying()"
-                                                                            class="form-control select2bs4" required
-                                                                            style="width: 100%;">
-                                                                           
-                                                                            <option
-                                                                                {{ $bookingData['who_is_paying'] == 1 ? 'selected="selected"' : '' }}
-                                                                                value="1">Venue Group</option>
-                                                                            <option
-                                                                                {{ $bookingData['who_is_paying'] == 0 ? 'selected="selected"' : '' }}
-                                                                                value="0">Customer</option>
-                                                                            <option
-                                                                                {{ $bookingData['who_is_paying'] == 2 ? 'selected="selected"' : '' }}
-                                                                                value="2">Split in Both</option>
-                                                                        </select>
+                                                                        <div class="input-group mb-2"><input type="text"
+                                                                            name="photographer_payee_name"
+                                                                            value="{{ $bookingData['photographer_payee_name'] }}"
+                                                                            placeholder="Name?" class="form-control">
+                                                                    </div>
+                                                                        
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-6">&nbsp;</div>
+                                                                
                                                             </div>
-                                                            <div id="both_paying" class="form-group row"
-                                                                style="{{ $bookingData['who_is_paying'] != 2 ? 'display: none' : '' }}">
-                                                                <div class="col-sm-6">
-                                                                    <label>Customer
-                                                                    </label>
-                                                                    <div class="input-group mb-2"><input type="number"
-                                                                            name="customer_to_pay"
-                                                                            value="{{ $bookingData['customer_to_pay'] }}"
-                                                                            placeholder="How much?" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <label>Venue Group</label>
-                                                                    <div class="input-group mb-2"><input type="number"
-                                                                            value="{{ $bookingData['venue_group_to_pay'] }}"
-                                                                            name="venue_group_to_pay"
-                                                                            placeholder="How much?" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            
                                                             <div class="row form-group">
                                                                 <div class="col-5">&nbsp;</div>
                                                                 <div class="col-2">
                                                                     <button type="submit"
                                                                         class="btn btn-outline-success btn-block btn-lg"><i
-                                                                            class="fa fa-save"></i> Save</button>
+                                                                            class="fa fa-save"></i> Submit</button>
                                                                 </div>
                                                                 <div class="col-5">&nbsp;</div>
 
@@ -582,7 +593,37 @@
                                     <!-- /.col -->
 
                                     <div class="col-md-4">
-                                        @if ($bookingData['status']>config('constants.booking_status.awaiting_for_photographer'))
+
+                                        @if ($user->group_id==config('constants.groups.bbb'))
+                                        <div class="card-header alert-secondary">
+                                            <h3 class="card-title">Booking Active/In-Active</h3>
+                                        </div>
+                                        <div class="form-group row" style="margin-top: 20px;">
+                                            <div class="col-sm-2">&nbsp;</div>
+                                            <div class="col-sm-8">
+                                                <form id="change_event_status" action="" method="POST">
+                                                    <input type="hidden" name="action" value="change_event_status">
+                                                    <div class="form-group clearfix">
+                                                        <div class="icheck-success d-inline">
+                                                          <input type="radio" {{($bookingData['is_active']==1)?'checked':''}}  onclick="do_action({{$bookingData['id']}},'change_event_status')" value="{{base64_encode(1)}}" name="active_event"  id="active_event1">
+                                                          <label for="active_event1"> Activate
+                                                          </label>
+                                                        </div>
+                                                        <div class="icheck-success d-inline">
+                                                          <input type="radio" {{($bookingData['is_active']==3)?'checked':''}}  onclick="do_action({{$bookingData['id']}},'change_event_status')" value="{{base64_encode(3)}}" name="active_event" id="active_event2">
+                                                          <label for="active_event2"> De-activate
+                                                          </label>
+                                                        </div>
+                                                </div>
+                                                </form>
+                                            </div>
+                                        </div>    
+                                        @endif
+                                        
+                                        {{-- Data will display only if it is added to the Booking --}}
+                                        @if ($bookingData['status']>0) 
+
+                                        @if ($user->group_id==config('constants.groups.admin'))
                                         <div class="card-header alert-secondary">
                                             <h3 class="card-title">Agreement Status </h3>
                                         </div>
@@ -594,17 +635,19 @@
                                                            
                                                             <tr>
                                                                 <td>
-                                                                    <div class="text-center alert-danger booking_status_msg" >{{booking_status_for_msg($bookingData['status'])}}</div>
+                                                                    {!!customer_status_msg($bookingData['customer_approved'])!!}
+                                                                    {{-- <div class="text-center alert-danger booking_status_msg" >{{booking_status_for_msg($bookingData['status'])}}</div> --}}
                                                                 </td>
                                                             </tr>   
                                                             <tr>
                                                                 
                                                                 <td>
-                                                                    <select data_booking_id="{{$bookingData['id']}}"  class="select2bs4 form-control booking_status">
-                                                                    <option {{($bookingData['status']==config('constants.booking_status.pending_customer_agreement'))?'Selected':''}} value="{{config('constants.booking_status.pending_customer_agreement')}}">Pending Agreement</option>
+                                                                    <select data_booking_id="{{$bookingData['id']}}"  class="select2bs4 form-control customer_status">
+                                                                        {!!customer_status_options($bookingData['customer_approved'])!!}
+                                                                    {{-- <option {{($bookingData['status']==config('constants.booking_status.pending_customer_agreement'))?'Selected':''}} value="{{config('constants.booking_status.pending_customer_agreement')}}">Pending Agreement</option>
                                                                     <option {{($bookingData['status']==config('constants.booking_status.pending_customer_deposit'))?'Selected':''}} value="{{config('constants.booking_status.pending_customer_deposit')}}">Pending Customer Deposit</option>
                                                                     <option {{($bookingData['status']==config('constants.booking_status.on_hold'))?'Selected':''}} value="{{config('constants.booking_status.on_hold')}}">On Hold</option>
-                                                                    <option {{($bookingData['status']==config('constants.booking_status.confirmed'))?'Selected':''}} value="{{config('constants.booking_status.confirmed')}}">Confirmed </option>
+                                                                    <option {{($bookingData['status']==config('constants.booking_status.confirmed'))?'Selected':''}} value="{{config('constants.booking_status.confirmed')}}">Confirmed </option> --}}
                                                                     
                                                                 </select>
                                                                 </td>
@@ -615,13 +658,62 @@
                                                     </div>
                                                 </div>
                                             </div>
-    
+                                            <div class="form-group row">
+                                                <div class="table-responsive">
+                                                    <form id="sendcustomeragreement" action="" method="POST">
+                                                        <input type="hidden" name="action" value="sendcustomeragreement">
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td width="20%">&nbsp;</td>
+                                                                <td><button onclick="do_action({{$bookingData['id']}},'sendcustomeragreement')" type="button" class="btn btn-success"><i
+                                                                        class="far fa-credit-card"></i> Send Customer Agreement</button></td>
+                                                                        <td>&nbsp;</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    </form>
+                                                </div>
+                                            </div>
                                             
                                             @endif
+
+                                           
+                                            {{-- <div class="card-header alert-secondary">
+                                                <h3 class="card-title">Customer Status</h3>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12" style="text-align: center; margin-top:10px">
+                                                    @if ($bookingData['customer_approved']==0)
+                                                    <span class="badge badge-info"> Waiting for Customer Response to Accept/Reject the agreement</span>
+                                                    @elseif ($bookingData['customer_approved']==1)
+                                                    <span class="badge badge-success">Customer Accepted the Agreement</span>
+                                                    @elseif ($bookingData['customer_approved']==2)
+                                                    <span class="badge badge-danger"> Customer Rejected the Agreement</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            @if ($bookingData['customer_approved']!=1)
+                                            <div class="table-responsive">
+                                                <form id="sendcustomeragreement" action="" method="POST">
+                                                    <input type="hidden" name="action" value="sendcustomeragreement">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="20%">&nbsp;</td>
+                                                            <td><button onclick="do_action({{$bookingData['id']}},'sendcustomeragreement')" type="button" class="btn btn-success"><i
+                                                                    class="far fa-credit-card"></i> Send Customer Agreement</button></td>
+                                                                    <td>&nbsp;</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                </form>
+                                            </div>
+                                            @endif --}}
+
                                         
-                                        @if ($bookingData['status']>0)
                                         <div class="card-header alert-secondary">
-                                            <h3 class="card-title">Assigned Photographers</h3>
+                                            <h3 class="card-title">Assigned Photographers </h3>
                                         </div>
 
                                         <?php if($assigne_photographers){  $k=1;?>
@@ -633,9 +725,10 @@
                                                             foreach ($assigne_photographers as $key=>$photographer){ ?>
 
                                                         <tr id="photographer_row_{{$photographer['id']}}" >
-                                                            <td width="40%">{{ $photographer['userinfo'][0]['firstname'] }}
+                                                            <td colspan="2" width="70%">{{ $photographer['userinfo'][0]['firstname'] }}
                                                                 {{ $photographer['userinfo'][0]['lastname'] }}
                                                             </td>
+                                                            {{-- 
                                                             <td style="width:145px">
                                                                 {!! $photographer['status'] == config('constants.photographer_assigned.awaiting')
                                                                     ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'"  class=" btn-info btn-sm">Waiting Response</span>'
@@ -643,9 +736,10 @@
                                                                 {!! $photographer['status'] == config('constants.photographer_assigned.accepted') ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-success btn-sm">Accepted</span>' : '' !!}
                                                                 {!! $photographer['status'] == config('constants.photographer_assigned.declined') ? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-danger btn-sm">Declined</span>' : '' !!}
                                                                 {!! $photographer['status'] == config('constants.photographer_assigned.cancelled')? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-warning btn-sm">Cancelled</span>' : '' !!}
-                                                                {!! $photographer['status'] == config('constants.photographer_assigned.removed')? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-danger btn-sm">Removed</span>' : '' !!}
+                                                                {!! $photographer['status'] == config('constants.photographer_assigned.removed')? '<span style="width:145px" id="photographer_status_'.$photographer['id'].'" class=" btn-danger btn-sm">Removed</span>' : '' !!} 
 
                                                             </td>
+                                                            --}}
                                                             <td>
                                                                 <select data_booking_id="{{$bookingData['id']}}" datacounter="{{ $counter++ }}" dataid="{{ $photographer['id'] }}" class="select2bs4 form-control photographer_status">
                                                                     <option {{($photographer['status']==config('constants.photographer_assigned.awaiting'))?'Selected':''}} value="0">Awaiting</option>
@@ -655,8 +749,30 @@
                                                                     <option {{($photographer['status']==config('constants.photographer_assigned.removed'))?'Selected':''}} value="4">Remove</option>
                                                                 </select>
                                                             </td>
+                                                        </tr>
+                                                        <form id="photographer_expense{{$photographer['id']}}" action="" method="POST">
+                                                            <input type="hidden" name="action" value="photographer_expense">
+                                                        <tr>
+                                                            <td><label>Expensee:</label></td>
+                                                            <td>
+                                                                <div class="input-group mb-3">
+                                                                <input type="number" name="photographer_expense" value="{{$photographer['photographer_expense']}}" placeholder="Expenses?" class="form-control">
+                                                                <div class="input-group-append">
+                                                                    <div class="input-group-text">
+                                                                        $
+                                                                        {{-- <span class="fas fa-user"></span> --}}
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                            </td>
+                                                                <td><button onclick="do_action({{$photographer['id']}},'photographer_expense{{$photographer['id']}}')" type="button" class="btn btn-success float-right"><i
+                                                                        class="far fa-save"></i> Save </button>
+                                                                       
+                                                                        
+                                                                    </td>
                                                             </tr>
-
+                                                            <tr><td colspan="3"><hr class="rounded" style="color: #60686f; border:12px; border-top:12px solid #60686f"></td></tr>
+                                                        </form>
                                                                 <?php }?>
                                                     </table>
                                                 </div>
@@ -691,7 +807,7 @@
                                                                 
                                                                 <td>Deposit Needed</td>
                                                                 <td>{{ $ask_for_deposit['amount']}} USD</td>
-                                                                <td>{{ date('d/m/Y ',strtotime($ask_for_deposit['created_at'])) }}</td>
+                                                                <td>{{ date(config('constants.date_formate'),strtotime($ask_for_deposit['created_at'])) }}</td>
                                                                 <td style="width:100px">
                                                                     <span style="width:200px"  class=" btn-success btn-sm">Sent!</span>
                                                                 </td>
@@ -752,17 +868,41 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Over time:</th>
-                                                        <td>${{ $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
+                                                        <td>${{ $overtime_cost = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
                                                             (${{ $bookingData['overtime_rate_per_hour'] }}/Hour)
                                                             <br>
                                                             <p>Staff Worked {{ $bookingData['overtime_hours'] }} hours
                                                                 extra as over time .</p>
                                                         </td>
                                                     </tr>
+
                                                     <tr>
                                                         <th>Total Cost:</th>
-                                                        <td>$@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime;@endphp</td>
+                                                        <td>$@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime_cost;@endphp</td>
                                                     </tr>
+                                                    @php
+                                                    $customer_to_pay=$overtime_cost+$bookingData['extra_price'];
+                                                @endphp
+                                                @if ($bookingData['who_is_paying'] == 1)
+                                                <tr>
+                                                    <th>Venue to Pay:</th>
+                                                    <td>$@php echo $totalCost;@endphp</td>
+                                                </tr>
+                                                @elseif ($bookingData['who_is_paying'] == 0)
+                                                <tr>
+                                                    <th>Customer to Pay:</th>
+                                                    <td>$@php echo $totalCost;@endphp</td>
+                                                </tr>
+                                                @elseif ($bookingData['who_is_paying'] == 2)
+                                                <tr>
+                                                    <th>Customer to Pay :</th>
+                                                    <td>${{ $customer_to_pay=$customer_to_pay+$bookingData['customer_to_pay'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Venue to Pay:</th>
+                                                    <td>${{ $venue_to_pay=$bookingData['venue_group_to_pay'] }}</td>
+                                                </tr>
+                                                @endif
                                                     <tr>
                                                         <th>Total Received: </th>
                                                         <td>${{ (!isset($recievedAmount))?$recievedAmount=0:$recievedAmount;}}</td>
@@ -784,6 +924,7 @@
                                             <table class="table">
                                                 <form method="post" id="customer_update">
                                                     <input type="hidden" name="action" value="customer_update">
+                                                    <input type="hidden" name="email" value="{{ $bookingData['customer']['userinfo'][0]['email'] }}">
                                                     <input type="hidden" name="uid" value="{{$bookingData['customer']['userinfo'][0]['id']}}">
                                                 <tbody>
                                                     <tr>
@@ -844,19 +985,20 @@
                                             <tbody>
                                                 <tr>
                                                     <th style="width:50%">Name</th>
-                                                    <td><input name="groom_name" type="text" class="form-control" value="{{$bookingData['groom_name']}}"></td>
+                                                    <td><input name="groom_name" type="text" placeholder="Groom Name" class="form-control" value="{{$bookingData['groom_name']}}"></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Email</th>
-                                                    <td>{{ $bookingData['groom_email'] }}</td>
+                                                    <td><input name="groom_email" type="text" placeholder="Groom Email" class="form-control" value="{{$bookingData['groom_email']}}"></td>
+                                                    
                                                 </tr>
                                                 <tr>
                                                     <th>Home Phone</th>
-                                                    <td><input name="groom_home_phone" type="text" class="form-control" value="{{$bookingData['groom_home_phone']}}"></td>
+                                                    <td><input name="groom_home_phone" type="text" placeholder="Groom Home Phone" class="form-control" value="{{$bookingData['groom_home_phone']}}"></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Mobile No.</th>
-                                                    <td><input name="groom_mobile" type="text" class="form-control" value="{{$bookingData['groom_mobile']}}"></td>
+                                                    <td><input name="groom_mobile" type="text" placeholder="Groom Mobile No." class="form-control" value="{{$bookingData['groom_mobile']}}"></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Billing Address</th>
@@ -883,7 +1025,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Email</th>
-                                                    <td>{{ $bookingData['bride_email'] }}</td>
+                                                    <td><input name="bride_email" placeholder="Bride Email" type="text" class="form-control" value="{{$bookingData['bride_email']}}"></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Home Phone</th>
@@ -1064,7 +1206,7 @@ var myDropzone = new Dropzone('#image-upload', {
 
             if (selectOption == 'Other') {
                 otherVenueGroup =
-                    '<div class="row form-group"><div class="col-1">&nbsp;</div><div class="col-10"><div class="input-group mb-3"><textarea placeholder="Name and Address of Venue Group" name="other_venue_group" class=" form-control" required></textarea></div></div><div class="col-1">&nbsp;</div></div>';
+                    '<div class="row form-group"><div class="col-1">&nbsp;</div><div class="col-10"><label class="col-form-label">Other Venue Group </label><div class="input-group mb-3"><textarea placeholder="Name and Address of Venue Group" name="other_venue_group" class=" form-control" required>{{ $bookingData['other_venue_group'] }}</textarea></div></div><div class="col-1">&nbsp;</div></div>';
                 $('#other_venue_group').html(otherVenueGroup);
             } else {
                 $('#other_venue_group').html('');
@@ -1114,18 +1256,20 @@ if (confirm('Are you sure? you want to delete this file?')) {
 // This is to change Booking Status
 $(function() {
        
-       $('.booking_status').on('change', function() {
+       $('.customer_status').on('change', function() {
            var status = $(this).val();
            var id = $(this).attr('dataid');
            var booking_id = $(this).attr('data_booking_id');
            
-           
-
-           if (status == '3'){
+           if (status == '0'){
             alertmsg = 'move in Pending Agreement with Customer';
-           }else if (status == '4'){
+           }else if (status == '1'){
+            alertmsg = 'move in approved Agreement with Customer';
+           }else if (status == '2'){
+            alertmsg = 'move in Rejected Agreement with Customer';
+           }else if (status == '3'){
             alertmsg = 'move to Pending Customer Deposit';
-           }else if (status == '5'){
+           }else if (status == '4'){
             alertmsg = 'put this Booking on HOLD';
            }else if (status == '5'){
             alertmsg = ' Confirm';
@@ -1135,15 +1279,15 @@ $(function() {
            if (confirm("Are you sure you want to " + alertmsg + " this?")) {
 
                var sendInfo = {
-                   action: 'change_booking_status',
+                   action: 'update_customer_status_admin',
                    booking_id: booking_id,
-                   status: status,
+                   customer_approved: status,
                    alertmsg: alertmsg,
                    
                };
 
                $.ajax({
-                   url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                   url: "{{ route('bookings.ajaxcall') }}/" + id+'&time={{time()}}',
                    data: sendInfo,
                    contentType: 'application/json',
                    error: function() {
@@ -1154,7 +1298,7 @@ $(function() {
                    success: function(data) {
                        if (data.error == 'No') {
                            
-                            $('.booking_status_msg').html(data.booking_status_msg);
+                            $('.customer_booking_status_msg').html(data.customer_booking_status);
                            
                            $(document).Toasts('create', {
                                class: 'bg-success',
@@ -1221,9 +1365,9 @@ $(function() {
                    current_status: current_status,
                    id: id
                };
-
+               $('#_loader').show();
                $.ajax({
-                   url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                   url: "{{ route('bookings.ajaxcall') }}/" + id,
                    data: sendInfo,
                    contentType: 'application/json',
                    error: function() {
@@ -1264,6 +1408,7 @@ $(function() {
                            });
                        }
                        console.log(data);
+                       $('#_loader').hide();
                        //alert('i am here');
                    }
 
@@ -1285,7 +1430,7 @@ function do_action(id, action_name='') {
     };
 
     $.ajax({
-        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+        url: "{{ route('bookings.ajaxcall') }}/" + id,
         data: sendInfo,
         contentType: 'application/json',
         error: function() {

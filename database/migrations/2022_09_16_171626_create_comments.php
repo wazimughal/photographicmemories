@@ -23,6 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id');
             $table->foreign('group_id')->references('id')->on('groups');
             $table->string('slug')->nullable();
+            $table->string('for_section')->nullable();
             $table->tinyInteger('status')->default(1);// Comment can be hidden with status 0 or deletee status:3
             $table->timestamps();
         });

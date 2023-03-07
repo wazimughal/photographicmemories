@@ -40,9 +40,8 @@ class PhotographerController extends Controller
             'email'=>'required|email|distinct|unique:users|min:5',
             'password'=>'required',
             'phone'=>'required',
-            'unitnumber'=>'required|distinct|unique:users|min:5',
-            'city'=>'required',
-            'address'=>'required',
+            //'city'=>'required',
+            //'address'=>'required',
         ]);
         
         
@@ -51,14 +50,13 @@ class PhotographerController extends Controller
         $this->users->lastname=$request['lastname'];
         $this->users->email=$request['email'];
         $this->users->phone=$request['phone'];
-        $this->users->unitnumber=$request['unitnumber'];
         $this->users->is_active=1;
         $this->users->password=Hash::make($request['password']);
 
         $this->users->created_at=time();
         $this->users->group_id=config('constants.groups.photographer');
        
-        $this->users->city_id=$request['city'];
+        $this->users->city=$request['city'];
 
         $request->session()->flash('alert-success', 'photographer Added! Please Check in photographers list Tab');
         $this->users->save();
@@ -87,6 +85,7 @@ class PhotographerController extends Controller
     }
     // List All the photographers 
     public function photographers($type=NULL){
+        
         $user=Auth::user();
         if($user->group_id==config('constants.groups.admin')){
             $photographersData=$this->users->with('City')
@@ -382,6 +381,7 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
+                                                                                <label style="float:left">First Name</label>
                                                                                     <div class="input-group mb-3">
                                                                                         <input type="text" name="firstname"
                                                                                             class="form-control"
@@ -395,6 +395,7 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
+                                                                                <label style="float:left">Last Name</label>
                                                                                     <div class="input-group mb-3">
                                                                                         <input type="text" name="lastname"
                                                                                             class="form-control"
@@ -408,6 +409,7 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
+                                                                                <label style="float:left">Email</label>
                                                                                     <div class="input-group mb-3">
                                                                                         <input disabled readonly type="text"
                                                                                             name="email"
@@ -422,6 +424,7 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
+                                                                                <label style="float:left">Password</label>
                                                                                     <div class="input-group mb-3">
                                                                                         <input type="password"
                                                                                             name="password"
@@ -435,6 +438,7 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
+                                                                            <label style="float:left">Phone</label>
                                                                                 <div class="input-group mb-3">
                                                                                     <input  type="text" name="phone" class="form-control" placeholder="Phone No." value="'. $data['phone'].'" required>
                                                                                 </div>
@@ -444,17 +448,9 @@ $formHtml='<form id="EditphotographerForm"
                                                                             <div class="row form-group">
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
+                                                                            <label style="float:left">Address</label>
                                                                                 <div class="input-group mb-3">
-                                                                                    <input  type="text" name="unitnumber" class="form-control" placeholder="Unit Number" value="'. $data['unitnumber'].'" required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
-                                                                                    <input  type="text" name="address" class="form-control" placeholder="Home Address" value="'. $data['address'].'" required>
+                                                                                    <input  type="text" name="address" class="form-control" placeholder="Home Address" value="'. $data['address'].'" >
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-3">&nbsp;</div>
@@ -471,6 +467,92 @@ $formHtml='<form id="EditphotographerForm"
                                                                             </div>
                                                                         </form>';
             $dataArray['formdata']=$formHtml;
+        }elseif(isset($req['action']) && $req['action']=='qsearch_photographer'){ 
+
+            $search_val=$req['qsearch'];
+            
+        $usersData=$this->users
+            ->where(function($query) use($search_val){
+                $query->where('name', 'like', '%' . $search_val . '%')
+                        ->orwhere('name', 'like', '%' . $search_val . '%')
+                        ->orwhere('email', 'like', '%' . $search_val . '%');
+            })
+            ->where('group_id',config('constants.groups.photographer'))
+            //->with('userinfo')
+            //->with('bookings')
+            ->orderBy('created_at', 'desc')->get()->toArray();
+            $user_ids=[];
+     
+            $response='<thead>
+                            <tr>
+                            <th> Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Booking From</th>
+                            <th>Booking To</th>
+                            <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+                        $counter = 1;
+               
+                        $photographer_id_array=array();
+                            foreach($usersData as $data){
+                                $photographer_id_array[]=$data['id'];
+                                $response .=' <form
+                                 id="download_venuegroup_balance_'.$data['id'].'" 
+                                 method="GET" 
+                                 action="'.route('reports.vg.payments.export',$data['id']).'"
+                                 >
+                                <input type="hidden" id="token_'.$data['id'].'" name="_token" value="'.csrf_token().'">
+                                <input type="hidden" name="action" value="download_venuegroup_balance">
+                                <input type="hidden" name="venue_group_id" value="'.$data['id'].'"> ';
+
+                                $response .='<tr id="row_'.$data['id'].'">
+                                <td id="date_of_event_'.$data['id'].'">'.$data['name'].'</td>
+                                <td id="venue_group_'.$data['id'].'">'.$data['email'].'</td>
+                                <td id="address_'.$data['id'].'">'.$data['address'].'</td>
+                                <td id="row_from_date_'.$data['id'].'">
+                                                <div class="input-group date" id="from_date_'.$data['id'].'" data-target-input="nearest">
+                                                    <input id="input_from_date_'.$data['id'].'"  type="text"  name="from_date" placeholder="From date" class="form-control datetimepicker-input" data-target="#from_date_'.$data['id'].'"/>
+                                                    <div class="input-group-append" data-target="#from_date_'.$data['id'].'" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>  
+                                            </td>
+                                            <td id="row_to_date_'.$data['id'].'">
+                                                <div class="input-group date" id="to_date_'.$data['id'].'" data-target-input="nearest">
+                                                    <input id="input_to_date_'.$data['id'].'" type="text"  name="to_date" placeholder="To Date" class="form-control datetimepicker-input" data-target="#to_date_'.$data['id'].'"/>
+                                                    <div class="input-group-append" data-target="#to_date_'.$data['id'].'" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div> 
+                                            </td>
+                                             <td>
+                                             <button onclick="sumit_form('.$data['id'].')" type="button" class="btn btn-block btn-primary"><i class="fa fa-download"></i> Photographer Balance Excel</button>
+                                            </td>
+                            </tr>';
+                            //<button onclick="$(\'#download_venuegroup_balance_'.$data['id'].'\').submit()" type="button" class="btn btn-block btn-primary"><i class="fa fa-download"></i> Venue Balance Excel</button>
+                            $response .='</form>';
+
+                          
+                            $counter++;
+                        }
+                        $response .='  </tbody>
+                        <tfoot>
+                            <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Booking From</th>
+                            <th>Booking To</th>
+                            <th>Action</th>
+                            </tr>
+                            </tfoot>';
+                        
+                        $dataArray['photographer_ids']= implode(',',$photographer_id_array)  ;
+                        $dataArray['response']=$response;
+
         }
       
         echo json_encode($dataArray);

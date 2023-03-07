@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   @stack('title')
+  <link rel="icon" type="image/x-icon" href="{{ url('adminpanel/dist/img/favicon.png') }}">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -28,7 +29,10 @@
     <img style="top:30%; position: fixed;" src="{{url('/adminpanel/dist/img/loader.gif')}}">
   </div>
 <div class="wrapper">
-
+  @php
+  
+  //p(get_record_count()); die;
+@endphp
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
     <img class="animation__shake" src="{{url('adminpanel/dist/img/AdminLTELogo.png')}}" alt="AdminLTELogo" height="60" width="60">
@@ -41,16 +45,22 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
+      {{-- <li class="nav-item d-none d-sm-inline-block">
         <a href="index3.html" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
-      </li>
+      </li> --}}
     </ul>
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a href="{{route('admin.logout')}}" class="nav-link">
+           Logout
+          </p>
+        </a>
+        </li>
       <!-- Navbar Search -->
       <li class="nav-item">
         <a class="nav-link" data-widget="navbar-search" href="#" role="button">
@@ -85,6 +95,7 @@
           <i class="fas fa-th-large"></i>
         </a>
       </li>
+      
     </ul>
   </nav>
   <!-- /.navbar -->

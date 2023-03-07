@@ -47,47 +47,49 @@
                                 </div>
                                 <div class="col-3">&nbsp;</div>
                               </div>
-                                <form method="POST" action="{{ url('/admin/venuegroups/add') }}">
+                                <form method="POST" action="{{ route('venuegroups.addsave') }}">
                                     @csrf
+                                    
+                                    
+                                    
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
-                                          <div class="input-group mb-3">
-                                            <input type="text" name="firstname" class="form-control @error('firstname') is-invalid @enderror"
-                                                placeholder="First name" value="{{ old('firstname') }}">
-                                            <div class="input-group-append">
-                                                <div class="input-group-text">
-                                                    <span class="fas fa-user"></span>
-                                                </div>
-                                            </div>
-                                            @error('firstname')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                    
-                                        </div>
+                                        <div class="input-group mb-3">
+                                          <input type="text" name="vg_name" class="form-control @error('vg_name') is-invalid @enderror"
+                                              placeholder="Group Venue Name" value="{{ old('vg_name') }}">
+                                          <div class="input-group-append">
+                                              <div class="input-group-text">
+                                                  <span class="fas fa-building"></span>
+                                              </div>
+                                          </div>
+                                          @error('vg_name')
+                                              <div class="invalid-feedback">
+                                                  {{ $message }}
+                                              </div>
+                                          @enderror
+                                      </div>
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
+                                    
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
-                                          <div class="input-group mb-3">
-                                            <input type="text" name="lastname" class="form-control @error('lastname') is-invalid @enderror"
-                                                placeholder="Last name" value="{{ old('lastname') }}">
-                                            <div class="input-group-append">
-                                                <div class="input-group-text">
-                                                    <span class="fas fa-user"></span>
-                                                </div>
-                                            </div>
-                                            @error('lastname')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                    
-                                        </div>
+                                        <div class="input-group mb-3">
+                                          <input type="text" name="vg_manager_name" class="form-control @error('vg_manager_name') is-invalid @enderror"
+                                              placeholder="Group Venue Manager Name" value="{{ old('vg_manager_name') }}">
+                                          <div class="input-group-append">
+                                              <div class="input-group-text">
+                                                  <span class="fas fa-user"></span>
+                                              </div>
+                                          </div>
+                                          @error('vg_manager_name')
+                                              <div class="invalid-feedback">
+                                                  {{ $message }}
+                                              </div>
+                                          @enderror
+                                      </div>
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
@@ -135,67 +137,6 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
-                                              placeholder="Phone No." value="{{ old('phone') }}">
-                                          <div class="input-group-append">
-                                              <div class="input-group-text">
-                                                  <span class="fas fa-address-card"></span>
-                                              </div>
-                                          </div>
-                                          @error('phone')
-                                              <div class="invalid-feedback">
-                                                  {{ $message }}
-                                              </div>
-                                          @enderror
-                                      </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                        <div class="input-group mb-3">
-                                          <input type="text" name="vg_name" class="form-control @error('vg_name') is-invalid @enderror"
-                                              placeholder="Group Venue Name" value="{{ old('vg_name') }}">
-                                          <div class="input-group-append">
-                                              <div class="input-group-text">
-                                                  <span class="fas fa-building"></span>
-                                              </div>
-                                          </div>
-                                          @error('vg_name')
-                                              <div class="invalid-feedback">
-                                                  {{ $message }}
-                                              </div>
-                                          @enderror
-                                      </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
-                                    
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                        <div class="input-group mb-3">
-                                          <input type="text" name="vg_manager_name" class="form-control @error('vg_manager_name') is-invalid @enderror"
-                                              placeholder="Group Venue Manager Name" value="{{ old('vg_manager_name') }}">
-                                          <div class="input-group-append">
-                                              <div class="input-group-text">
-                                                  <span class="fas fa-user"></span>
-                                              </div>
-                                          </div>
-                                          @error('vg_manager_name')
-                                              <div class="invalid-feedback">
-                                                  {{ $message }}
-                                              </div>
-                                          @enderror
-                                      </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                        <div class="input-group mb-3">
                                           <input type="text" name="vg_manager_phone" class="form-control @error('vg_manager_phone') is-invalid @enderror"
                                               placeholder="Manager Phone" value="{{ old('vg_manager_phone') }}">
                                           <div class="input-group-append">
@@ -212,26 +153,7 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                        <div class="input-group mb-3">
-                                          <input type="text" name="vg_description" class="form-control @error('vg_description') is-invalid @enderror"
-                                              placeholder="vg_description about Venue Group" value="{{ old('vg_description') }}">
-                                          <div class="input-group-append">
-                                              <div class="input-group-text">
-                                                  <span class="fas fa-info"></span>
-                                              </div>
-                                          </div>
-                                          @error('vg_description')
-                                              <div class="invalid-feedback">
-                                                  {{ $message }}
-                                              </div>
-                                          @enderror
-                                      </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
+                                    
                                     
                                     
                                     <div class="row form-group">
@@ -243,22 +165,12 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    {{-- <div id="othercity"></div>
-                                    <div class="row form-group">
-                                        <div class="col-3">&nbsp;</div>
-                                        <div class="col-6">
-                                            <div class="input-group mb-3">
-                                            <select id="zipcode" onChange="changezipcode()" name="zipcode" class="form-control select2bs4" placeholder="Select Zip COde">@php echo getZipCodeOptions(); @endphp</select>
-                                            </div>
-                                        </div>
-                                        <div class="col-3">&nbsp;</div>
-                                    </div>
-                                    <div id="otherzipcode"></div> --}}
+                                    
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                         <div class="input-group mb-3">
-                                          <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
+                                          <input type="text" name="address" id="vg_address" class="form-control @error('address') is-invalid @enderror"
                                               placeholder="Venue Group Address" value="{{ old('address') }}">
                                           <div class="input-group-append">
                                               <div class="input-group-text">
@@ -310,7 +222,28 @@
 
  <!-- Select2 -->
  <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
+ {{-- For google Address --}}
+ <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key={{config('constants.google_api_key')}}"></script> 
+
  <script>
+    @php
+        $address=['vg_address']   
+        @endphp
+    $(document).ready(function () {
+        var autocomplete;
+        @foreach ($address as $key=>$addr )
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById('{{$addr}}')), {
+            types: ['geocode']
+           
+        });  
+        @endforeach
+      
+    
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+    });
+
     $(function() {
         $('.select2bs4').select2({
             theme: 'bootstrap4'

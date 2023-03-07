@@ -36,9 +36,9 @@
                                     <div class="col-3">&nbsp;</div>
                                     <div class="col-6">
                                         <!-- flash-message -->
-                                        @if ($errors->any())
+                                        {{-- @if ($errors->any())
                                             {{ implode('', $errors->all('<div>:message</div>')) }}
-                                        @endif
+                                        @endif --}}
                                         <div class="flash-message">
                                             @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                                                 @if (Session::has('alert-' . $msg))
@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="col-3">&nbsp;</div>
                                 </div>
-                                <form method="POST" action="{{ url('/admin/photographers/add') }}">
+                                <form method="POST" action="{{ route('photographers.addsave') }}">
                                     @csrf
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
@@ -161,7 +161,7 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div class="row form-group">
+                                    {{-- <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
@@ -181,7 +181,7 @@
                                             </div>
                                         </div>
                                         <div class="col-3">&nbsp;</div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
@@ -199,7 +199,7 @@
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
-                                                <input type="text" name="address"
+                                                <input type="text" id="home_address" name="address"
                                                     class="form-control @error('address') is-invalid @enderror"
                                                     placeholder="Home Address" value="{{ old('address') }}">
                                                 <div class="input-group-append">
@@ -246,11 +246,31 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    {{-- For google Address --}}
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key={{config('constants.google_api_key')}}"></script> 
 @endsection
 @section('footer-js-css')
     <!-- Select2 -->
     <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
+        @php
+        $address=['home_address']   
+        @endphp
+    $(document).ready(function () {
+        var autocomplete;
+        @foreach ($address as $key=>$addr )
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById('{{$addr}}')), {
+            types: ['geocode']
+           
+        });  
+        @endforeach
+      
+    
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+    });
+
         $(function() {
             $('.select2bs4').select2({
                 theme: 'bootstrap4'

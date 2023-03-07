@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('groom_name')->nullable();
             $table->string('groom_home_phone')->nullable();
             $table->string('groom_mobile')->nullable();
-            $table->string('groom_email')->unique()->nullable();
+            $table->string('groom_email')->nullable();
             $table->text('groom_billing_address')->nullable();
             $table->string('bride_name')->nullable();
             $table->string('bride_home_phone')->nullable();
             $table->string('bride_mobile')->nullable();
-            $table->string('bride_email')->unique()->nullable();
+            $table->string('bride_email')->nullable();
             $table->text('bride_billing_address')->nullable();
             $table->string('date_of_event')->nullable();
             $table->string('time_of_event')->nullable();
@@ -32,10 +32,13 @@ return new class extends Migration
             $table->tinyInteger('customer_approved')->default(0)->nullable();// If it is 0 then waiting for Customer APPROVAL 
             $table->tinyInteger('preferred_photographer_id')->default(0); // hold, awaiting, pending,or any status
             $table->tinyInteger('photographer_status')->default(0)->nullable(); // if Photographer accepted : 1 reject 2 : 0 waiting for photographer response. (This can be ignored and managed through status field)
+            $table->tinyInteger('gallery_status')->default(0)->nullable(); // if gallery active : 1 inactive  : 0 .
             $table->tinyInteger('deposit_needed')->default(0); // 0: No 1: YES
             $table->tinyInteger('collected_by_photographer')->default(0); // 0: No 1: YES
+            $table->string('photographer_to_collect_amount')->nullable();
+            $table->string('photographer_payee_name')->nullable();
             $table->tinyInteger('paying_via')->default(0)->nullable(); // chequ:0, CreditCard:1, Zelle:2 photographer:3
-            $table->tinyInteger('pencile_by')->default(0)->nullable(); // Offic:0, Venue Group:1,Website:2 
+            $table->tinyInteger('pencile_by')->default(0)->nullable(); // Offic:0, Venue Group:1,Website:2 , Customer:3
             $table->tinyInteger('who_is_paying')->default(0)->nullable(); // 0:custoemr 1:venue 2: both
             $table->string('venue_group_to_pay')->nullable(); // 0:custoemr 1:venue 2: both
             $table->string('customer_to_pay')->nullable(); // 0:custoemr 1:venue 2: both
@@ -53,6 +56,7 @@ return new class extends Migration
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('package_id')->default(1);
             $table->foreign('package_id')->references('id')->on('packages');
+            $table->unsignedBigInteger('venue_group_id')->default(2)->nullable();
             $table->unsignedBigInteger('customer_id')->default(1);
             $table->foreign('customer_id')->references('id')->on('users');
             $table->string('overtime_hours')->nullable();

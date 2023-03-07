@@ -1,6 +1,6 @@
 @extends('adminpanel.admintemplate')
 @push('title')
-    <title>Request Booking | {{ config('constants.app_name') }}</title>
+    <title>Edit Booking | {{ config('constants.app_name') }}</title>
 @endpush
 @section('main-section')
     <!-- Content Wrapper. Contains page content -->

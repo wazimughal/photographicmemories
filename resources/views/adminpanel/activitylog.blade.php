@@ -14,8 +14,10 @@
                         <h1>View Activity Log </h1>
 
                     </div>
-                    <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/activitylog/add') }}"
-                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
+                    <div class="col-sm-2">
+                        {{-- <a style="width:60%" href="{{ url('/admin/activitylog/add') }}"
+                            class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a> --}}
+                        </div>
                     <div class="col-sm-1">&nbsp;</div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">

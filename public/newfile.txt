@@ -1,0 +1,9 @@
+{"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}
+file path:public/upload/mediagallary/6/2023-01-04/
+booking_id:6
+finalPath:/Users/waximarshad/office.thephotographicmemories.com/public/uploads/bookings6
+{"attributes":{},"request":{},"query":{},"server":{},"files":{},"cookies":{},"headers":{}}
+file path:public/upload/mediagallary/6/2023-01-04/
+booking_id:6
+finalPath:/Users/waximarshad/office.thephotographicmemories.com/public/uploads/bookings6
+file name:1672836061.jpg

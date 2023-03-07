@@ -34,16 +34,16 @@ class VenuegroupsController extends Controller
      public function SavevenuegroupsData(Request $request){
        
         $validator=$request->validate([
-            'firstname'=>'required',
-            'lastname'=>'required',
+            //'firstname'=>'required',
+            //'lastname'=>'required',
             'email'=>'required|email|distinct|unique:users|min:5',
-            'phone'=>'required',
+            //'phone'=>'required',
             'vg_name'=>'required',
             'vg_manager_name'=>'required',
             'vg_manager_phone'=>'required',
-            'vg_description'=>'required',
+            //'vg_description'=>'required',
             'city'=>'required',
-            'address'=>'required',
+            //'address'=>'required',
             'password'=>'required',
         ]);
         
@@ -63,7 +63,7 @@ class VenuegroupsController extends Controller
         $this->users->password=Hash::make($request['password']);
         $this->users->created_at=date('Y-m-d H:I:s',time());
         $this->users->group_id=config('constants.groups.venue_group_hod');
-        $this->users->city_id=$request['city'];
+        $this->users->city=$request['city'];
 
 //
 // Send Email
@@ -97,13 +97,20 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
     // List All the venuegroups 
     public function venuegroups($type=NULL){
         $user=Auth::user();
-        
-            $venuegroupsData=$this->users->with('City')->with('ZipCode')
-            ->where('group_id', '=', config('constants.groups.venue_group_hod'))
-            ->where('is_active', '=', 1)
+        $where_clause=[
+            ['group_id', '=', config('constants.groups.venue_group_hod')],
+            ['is_active', '=', 1],
+        ];
+        if($user->group_id!=config('constants.groups.admin'))
+        $where_clause[]=['id', '=', $user->id];
+        if($type=='trash')
+        $where_clause[1]=['is_active', '=', 2];
+
+            $venuegroupsData=$this->users
+            ->where($where_clause)
             ->orderBy('created_at', 'desc')->paginate(config('constants.per_page'));
        
-        return view('adminpanel/venuegroups',get_defined_vars());
+        return view('adminpanel.venuegroups',get_defined_vars());
     }
     public function UpdateUsersData($id,Request $request)
     {
@@ -184,7 +191,7 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
         echo json_encode($dataArray);
         die;
     }
-    public function ajaxcall($id, Request $req){
+    public function ajaxcall($id=NULL, Request $req){
         $dataArray['error']='No';
         $dataArray['title']='Action Taken';
         
@@ -197,6 +204,7 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
         else if(isset($req['action']) && $req['action']=='trash')
         {
             $dataArray['title']='Record Trashed';
+            $dataArray['id']=$id;
             $result=$this->users->where('id','=',$id)->update(array('is_active'=>2));             
             if($result){
                 $dataArray['msg']='Mr.'.get_session_value('name').', Record Trashed successfully!';
@@ -206,6 +214,29 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
                 'action_taken_on_id'=>$id,
                 'action_slug'=>'venuegroup_trashed',
                 'comments'=>'Mr.'.get_session_value('name').' moved venuegroup to trash',
+                'others'=>'users',
+                'created_at'=>date('Y-m-d H:I:s',time()),
+            ));
+            }
+            
+            else{
+                $dataArray['error']='Yes';
+                $dataArray['msg']='There is some error ! Please fill all the required fields.';
+            }
+        }
+        else if(isset($req['action']) && $req['action']=='restore')
+        {
+            $dataArray['title']='Record Restored';
+            $dataArray['id']=$id;
+            $result=$this->users->where('id','=',$id)->update(array('is_active'=>1));             
+            if($result){
+                $dataArray['msg']='Mr.'.get_session_value('name').', Record Restored successfully!';
+                  // Activity Logged
+             $activityID=log_activity(array(
+                'user_id'=>get_session_value('id'),
+                'action_taken_on_id'=>$id,
+                'action_slug'=>'venuegroup_restored',
+                'comments'=>'Mr.'.get_session_value('name').' removed from Trash to Venue Group',
                 'others'=>'users',
                 'created_at'=>date('Y-m-d H:I:s',time()),
             ));
@@ -256,24 +287,6 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
             <div class="row">
                 <div class="col-1">&nbsp;</div>
                 <div class="col-5">
-                    <strong>Name</strong>
-                </div>
-                <div class="col-5">
-                    '.$venuegroupData['name'].'</div>
-                <div class="col-1">&nbsp;</div>
-            </div>
-            <div class="row">
-                <div class="col-1">&nbsp;</div>
-                <div class="col-5">
-                    <strong>Email</strong>
-                </div>
-                <div class="col-5">
-                    '.$venuegroupData['email'].'</div>
-                <div class="col-1">&nbsp;</div>
-            </div>
-            <div class="row">
-                <div class="col-1">&nbsp;</div>
-                <div class="col-5">
                     <strong>Venue Group Name</strong>
                 </div>
                 <div class="col-5">
@@ -289,6 +302,15 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
                 <div class="col-5">
                     '.$venuegroupData['vg_manager_name'].'
                 </div>
+                <div class="col-1">&nbsp;</div>
+            </div>
+            <div class="row">
+                <div class="col-1">&nbsp;</div>
+                <div class="col-5">
+                    <strong>Email</strong>
+                </div>
+                <div class="col-5">
+                    '.$venuegroupData['email'].'</div>
                 <div class="col-1">&nbsp;</div>
             </div>
             <div class="row">
@@ -364,7 +386,7 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
                     'vg_name'=>$req['vg_name'],
                     'address'=>$req['address'],
                     'vg_description'=>$req['vg_description'],
-                    'city_id'=>$cityId,
+                    'city'=>$req['city']
                     )
             );
            
@@ -388,7 +410,7 @@ if(Mail::to($toEmail)->send(new EmailTemplate($mailData))){
             $dataArray['error']='No';
            
             //$data=getLeadWithVenuebyID($req['id']);
-            $data=$this->users->with('City')
+            $data=$this->users
             ->where('group_id', '=', config('constants.groups.venue_group_hod'))
             ->where('id', '=', $req['id'])
             ->orderBy('created_at', 'desc')->get()->toArray();
@@ -402,33 +424,16 @@ $formHtml='<form id="EditvenuegroupForm"
                                                                             <input type="hidden" name="_token" value="'.$csrf_token.'" />
                                                                             <input type="hidden" name="action" value="SaveAddtovenuegroupForm" />
                                                                             <input type="hidden" name="uid" value="'.$data['id'].'" />
-                                                                            <input type="hidden" id="cityname" name="cityname" value="'.$data['city']['name'].'" />
+                                                                            <input type="hidden" id="cityname" name="cityname" value="'.$data['city'].'" />
                                                                             
                                                                             <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <input type="text" name="firstname"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Name"
-                                                                                            value="'. $data['firstname'].'"
-                                                                                            required>
-                                                                                    </div>
+                                                                            <div class="col-3">&nbsp;</div>
+                                                                            <div class="col-6">
+                                                                                <div class="input-group mb-3">
+                                                                                    <input  type="text" name="vg_name" class="form-control" placeholder="Group Venue Name" value="'. $data['vg_name'].'" required>
                                                                                 </div>
-                                                                                <div class="col-3">&nbsp;</div>
                                                                             </div>
-                                                                            <div class="row form-group">
-                                                                                <div class="col-3">&nbsp;</div>
-                                                                                <div class="col-6">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <input type="text" name="lastname"
-                                                                                            class="form-control"
-                                                                                            placeholder="Enter Name"
-                                                                                            value="'. $data['lastname'].'"
-                                                                                            required>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-3">&nbsp;</div>
+                                                                            <div class="col-3">&nbsp;</div>
                                                                             </div>
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
@@ -448,15 +453,6 @@ $formHtml='<form id="EditvenuegroupForm"
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
                                                                                 <div class="input-group mb-3">
-                                                                                    <input  type="text" name="vg_name" class="form-control" placeholder="Group Venue Name" value="'. $data['vg_name'].'" required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
                                                                                     <input  type="text" name="vg_manager_name" class="form-control" placeholder="Group Venue Manager Name" value="'. $data['vg_manager_name'].'" required>
                                                                                 </div>
                                                                             </div>
@@ -471,20 +467,12 @@ $formHtml='<form id="EditvenuegroupForm"
                                                                             </div>
                                                                             <div class="col-3">&nbsp;</div>
                                                                             </div>
-                                                                            <div class="row form-group">
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            <div class="col-6">
-                                                                                <div class="input-group mb-3">
-                                                                                    <input  type="text" name="vg_description" class="form-control" placeholder="Group Venue Description" value="'. $data['vg_description'].'" required>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-3">&nbsp;</div>
-                                                                            </div>
+                                                                            
                                                                             <div class="row form-group">
                                                                                 <div class="col-3">&nbsp;</div>
                                                                                 <div class="col-6">
                                                                                     <div class="input-group mb-3">
-                                                                                    <select id="city"  name="city" class="form-control select2bs4" placeholder="Select City">'.getCitiesOptions($data['city_id']).'</select>
+                                                                                    <select id="city"  name="city" class="form-control select2bs4" placeholder="Select City">'.getCitiesOptions($data['city']).'</select>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-3">&nbsp;</div>
@@ -495,7 +483,7 @@ $formHtml='<form id="EditvenuegroupForm"
                                                                             <div class="col-3">&nbsp;</div>
                                                                             <div class="col-6">
                                                                                 <div class="input-group mb-3">
-                                                                                    <input  type="text" name="address" class="form-control" placeholder="Venue Group Address" value="'. $data['address'].'" required>
+                                                                                    <input  type="text" name="address" id="vg_address" class="form-control" placeholder="Venue Group Address" value="'. $data['address'].'" >
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-3">&nbsp;</div>
@@ -512,6 +500,93 @@ $formHtml='<form id="EditvenuegroupForm"
                                                                             </div>
                                                                         </form>';
             $dataArray['formdata']=$formHtml;
+
+        }elseif(isset($req['action']) && $req['action']=='qsearch_venue'){ 
+
+            $search_val=$req['qsearch'];
+            
+        $usersData=$this->users
+            ->where(function($query) use($search_val){
+                $query->where('name', 'like', '%' . $search_val . '%')
+                        ->orwhere('vg_name', 'like', '%' . $search_val . '%')
+                        ->orwhere('email', 'like', '%' . $search_val . '%');
+            })
+            ->where('group_id',config('constants.groups.venue_group_hod'))
+            //->with('userinfo')
+            //->with('bookings')
+            ->orderBy('created_at', 'desc')->get()->toArray();
+            $user_ids=[];
+     
+            $response='<thead>
+                            <tr>
+                            <th>Venue Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Booking From</th>
+                            <th>Booking To</th>
+                            <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+                        $counter = 1;
+               
+                        $venuegroup_id_array=array();
+                            foreach($usersData as $data){
+                                $venuegroup_id_array[]=$data['id'];
+                                $response .=' <form
+                                 id="download_venuegroup_balance_'.$data['id'].'" 
+                                 method="GET" 
+                                 action="'.route('reports.vg.payments.export',$data['id']).'"
+                                 >
+                                <input type="hidden" id="token_'.$data['id'].'" name="_token" value="'.csrf_token().'">
+                                <input type="hidden" name="action" value="download_venuegroup_balance">
+                                <input type="hidden" name="venue_group_id" value="'.$data['id'].'"> ';
+
+                                $response .='<tr id="row_'.$data['id'].'">
+                                <td id="date_of_event_'.$data['id'].'">'.$data['vg_name'].'</td>
+                                <td id="venue_group_'.$data['id'].'">'.$data['email'].'</td>
+                                <td id="address_'.$data['id'].'">'.$data['address'].'</td>
+                                <td id="row_from_date_'.$data['id'].'">
+                                                <div class="input-group date" id="from_date_'.$data['id'].'" data-target-input="nearest">
+                                                    <input id="input_from_date_'.$data['id'].'"  type="text"  name="from_date" placeholder="From date" class="form-control datetimepicker-input" data-target="#from_date_'.$data['id'].'"/>
+                                                    <div class="input-group-append" data-target="#from_date_'.$data['id'].'" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>  
+                                            </td>
+                                            <td id="row_to_date_'.$data['id'].'">
+                                                <div class="input-group date" id="to_date_'.$data['id'].'" data-target-input="nearest">
+                                                    <input id="input_to_date_'.$data['id'].'" type="text"  name="to_date" placeholder="To Date" class="form-control datetimepicker-input" data-target="#to_date_'.$data['id'].'"/>
+                                                    <div class="input-group-append" data-target="#to_date_'.$data['id'].'" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div> 
+                                            </td>
+                                             <td>
+                                             <button onclick="sumit_form('.$data['id'].')" type="button" class="btn btn-block btn-primary"><i class="fa fa-download"></i> Venue Balance Excel</button>
+                                            </td>
+                            </tr>';
+                            //<button onclick="$(\'#download_venuegroup_balance_'.$data['id'].'\').submit()" type="button" class="btn btn-block btn-primary"><i class="fa fa-download"></i> Venue Balance Excel</button>
+                            $response .='</form>';
+
+                          
+                            $counter++;
+                        }
+                        $response .='  </tbody>
+                        <tfoot>
+                            <tr>
+                            <th>Venue Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Booking From</th>
+                            <th>Booking To</th>
+                            <th>Action</th>
+                            </tr>
+                            </tfoot>';
+                        
+                        $dataArray['venuegroup_ids']= implode(',',$venuegroup_id_array)  ;
+                        $dataArray['response']=$response;
+
         }
       
         echo json_encode($dataArray);

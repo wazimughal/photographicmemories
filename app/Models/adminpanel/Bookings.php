@@ -4,10 +4,12 @@ namespace App\Models\adminpanel;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kirschbaum\PowerJoins\PowerJoins;
 
 class Bookings extends Model
 {
     use HasFactory;
+    use PowerJoins;
     protected $table='bookings';
     protected $primaryKey='id';
 
@@ -24,6 +26,10 @@ class Bookings extends Model
     {
         return $this->hasMany(invoices::class, 'booking_id', 'id');
     }
+    public function package()
+    {
+        return $this->hasOne(packages::class, 'id', 'package_id');
+    }
     public function customer_invoices()
     {
         return $this->hasMany(invoices::class, 'booking_id', 'id')->where('slug','customer');
@@ -38,7 +44,7 @@ class Bookings extends Model
     }
     public function gallery()
     {
-        return $this->hasMany(files::class, 'booking_id', 'id')->where('slug','booking_photos');
+        return $this->hasMany(files::class, 'booking_id', 'id')->where(['slug'=>'booking_photos','status'=>1]);
     }
     public function deposite_requests()
     {
@@ -46,7 +52,19 @@ class Bookings extends Model
     }
     public function comments()
     {
-        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user');
+        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user')->where('for_section','admin_only_section');
+    }
+    public function vg_comments()
+    {
+        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user')->where('for_section','venue_group_section');;
+    }
+    public function photographer_comments()
+    {
+        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user')->where('for_section','photographer_section');;
+    }
+    public function pencil_comments()
+    {
+        return $this->hasMany(comments::class, 'booking_id', 'id')->with('user')->where('for_section','pencil_comments');;
     }
     public function venue_group()
     {

@@ -12,12 +12,7 @@
                     <div class="col-sm-6">
                         <h1>Upload Photos to this Booking</h1>
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Upload Photos to this Booking</li>
-                        </ol>
-                    </div>
+                    
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -40,90 +35,171 @@
                                     $packageDetails = get_package_by_id($bookingData['package_id']);
                                     $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'];
                                 @endphp
-                                   <div class="row form-group">
+                                <div class="row form-group">
                                     <div class="col-12">
                                         <div class="alert alert-info alert-dismissible">
-                                            <button type="button" class="close"
-                                                data-dismiss="alert"
+                                            <button type="button" class="close" data-dismiss="alert"
                                                 aria-hidden="true">&times;</button>
                                             <h5><i class="icon fa fa-user"></i>
                                                 Booking Status!</h5>
-                                                {{booking_status_for_msg($bookingData['status'])}}
-                                            </div>
+                                            {{ booking_status_for_msg($bookingData['status']) }}
+                                        </div>
                                     </div>
                                 </div>
                                 @if ($bookingData['status'] > 0)
-                                
-                                <div class="card">
-                                    <div class="card-header p-2">
-                                        <strong> Upload the Photos </strong>
-                                    </div><!-- /.card-header -->
-                                    <div class="card-body">
-                                        <div class="tab-content">
-                                            <div class="row form-group">
-                                                <div class="col-1">&nbsp;</div>
-                                                <div class="col-10">
-                                                  <div class="row form-group">
-                                                   <?php
-                                                   $imagesTypes=array('jpg','jpeg','png','gif');
+
+                                    <div class="card">
+                                        <div class="card-header p-2">
+                                            <strong> Upload the Photos </strong>
+                                            @if ($user->group_id == config('constants.groups.admin'))
+                                                <div class="row">
+                                                    <div class="col-9">&nbsp;</div>
+                                                    <div class="col-3">
+                                                        <form id="photo_gallery_status" action="" method="POST">
+                                                            <input type="hidden" name="action"
+                                                                value="photo_gallery_status">
+                                                            <div class="form-group clearfix">
+                                                                <div class="icheck-success d-inline">
+                                                                    <input type="radio"
+                                                                        {{ $bookingData['gallery_status'] == 1 ? 'checked' : '' }}
+                                                                        onclick="do_action({{ $bookingData['id'] }},'photo_gallery_status','active_event2')"
+                                                                        value="{{ base64_encode(1) }}" name="active_event"
+                                                                        id="active_event1">
+                                                                    <label for="active_event1"> Activate
+                                                                    </label>
+                                                                </div>
+                                                                <div class="icheck-success d-inline">
+                                                                    <input type="radio"
+                                                                        {{ $bookingData['gallery_status'] == 0 ? 'checked' : '' }}
+                                                                        onclick="do_action({{ $bookingData['id'] }},'photo_gallery_status','active_event1')"
+                                                                        value="{{ base64_encode(0) }}" name="active_event"
+                                                                        id="active_event2">
+                                                                    <label for="active_event2"> De-activate
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div><!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                <div class="row form-group">
+                                                    <div class="col-1">&nbsp;</div>
+                                                    <div class="col-10">
+                                                        <div class="row form-group">
+                                                            @if ($bookingData['gallery_status'] == 1 ||
+                                                                $user->group_id == config('constants.groups.admin') ||
+                                                                $user->group_id == config('constants.groups.photographer'))
+                                                                <?php
+                                                   $imagesTypes=array('jpg','JPG','jpeg','JPEG','png','PNG','gif','GIF');
                                                    $excelTypes=array('xls','xlsx');
                                                    $docTypes=array('doc','docx');
-                                                   //p($bookingData['files']); die;
+                                                   $pdfTypes=array('doc','PDF');
+                                                   
+                                                   //p($bookingData['gallery']); die;
+                                                   if(count($bookingData['gallery'])>0)
                                                       foreach($bookingData['gallery'] as $data){
+
                                                         if(in_array($data['otherinfo'],$imagesTypes))
                                                           $thumb_img=$data['path'];
                                                         else if(in_array($data['otherinfo'],$excelTypes))
                                                           $thumb_img=url('adminpanel/dist/img/xls.jpeg');
                                                         else if(in_array($data['otherinfo'],$docTypes))
                                                           $thumb_img=url('adminpanel/dist/img/doxx.png');
-                                                        else if($data['otherinfo']=='pdf')
+                                                        else if(in_array($data['otherinfo'],$pdfTypes))
                                                         $thumb_img=url('adminpanel/dist/img/pdf.png');
+                                                        else 
+                                                            $thumb_img='';
+                                                        
                                                           ?>
-                                                        <div id="file_{{$data['id']}}" class="col-3 text-center" style="position: relative;">
-                                                          <label class="">{{$data['name']}}</label>
-                                                          <i onclick="removeFile({{$data['id']}},'booking_photos')" style="position: absolute; top:15px; right:0px; cursor:pointer" class="fas fa-times"></i>
-                                                          <a href="{{$data['path']}}" target="_blank"><img class="w-100 shadow-1-strong rounded mb-4 img-thumbnail" src="{{$thumb_img}}" width="200" alt="Uploaded Image"></a>
-                                                        </div>
-              
-              
-                                                        <?php 
+                                                                <div id="file_{{ $data['id'] }}" class="col-3 text-center"
+                                                                    style="position: relative;">
+                                                                    <label class="">{{ $data['name'] }}</label>
+                                                                    @if ($user->group_id == config('constants.groups.photographer') ||
+                                                                        $user->group_id == config('constants.groups.admin'))
+                                                                        <i onclick="removeFile({{ $data['id'] }},'booking_photos')"
+                                                                            style="position: absolute; top:15px; right:0px; cursor:pointer"
+                                                                            class="fas fa-times"></i>
+                                                                    @endif
+                                                                    <a download="myimage" href="{{ $data['path'] }}" target="_blank"><img
+                                                                            class="w-100 shadow-1-strong rounded mb-4 img-thumbnail"
+                                                                            src="{{ $thumb_img }}" width="200"
+                                                                            alt="Uploaded Image"></a><br>
+                                                                    <div class="btn btn-flat btn-info align-center"
+                                                                        onclick="open_template_editor('{{ $data['path'] }}')">
+                                                                        Edit</div>
+                                                                    <a  href="{{ $data['path'] }}" download="{{ $data['name'] }}" class="btn btn-flat btn-info align-center"
+                                                                        >
+                                                                        Download</a>
+                                                                </div>
+
+
+                                                                <?php 
+                                                        }else{
+                                                            echo '<div class="col-12 text-center alert-danger">Waiting for Photographer to upload photos. No Photo uploaded Yet!</div>';
                                                         }
                                                     ?>
-                                               
-                                              </div>
-                                                <div class="col-1">&nbsp;</div>
-                                              </div>
-                                              </div>
-                                            <div class="row form-group">
-                                                <div class="col-1">&nbsp;</div>
-                                                <div class="col-10 card card-default">
-                                                    <div class="card-header">
-                                                        <h3 class="card-title">Upload Event Photos: <small>  <strong>Click!</strong> in
-                                                                    box and upload photos.</small></h3>
-                                                    </div>
-                                                    <form action="{{route('booking.add_photos',array('id'=>$id))}}"
-                                                        method="post" enctype="multipart/form-data" id="image-upload"
-                                                        class="dropzone ">
-                                                        @csrf
-                                                        <div>
-                                                            <h4 class="form-label">Upload Multiple photos By Click On Box</h4>
+                                                            @else
+                                                                <div class="col-12 text-center alert-danger">In-active by
+                                                                    the Office admin,Please contact the office. Thanks</div>
+                                                            @endif
                                                         </div>
-            
-            
-                                                    </form>
-                                                    <div class="card-footer">
-                                                        You can select multiple files (e.g images, .jpg , .png ,.gif ) and upload
-                                                        
+                                                        <div class="col-1">&nbsp;</div>
                                                     </div>
                                                 </div>
-                                                <div class="col-1">&nbsp;</div>
-            
-                                            </div>
 
+                                                @if ($user->group_id == config('constants.groups.photographer') ||
+                                                    $user->group_id == config('constants.groups.admin'))
+                                                    <div class="row form-group">
+                                                        <div class="col-1">&nbsp;</div>
+                                                        <div class="col-10 card card-default">
+                                                            <div class="card-header">
+                                                                <h3 class="card-title">Upload Event Photos: <small>
+                                                                        <strong>Click!</strong> in
+                                                                        box and upload photos.</small></h3>
+                                                            </div>
+                                                            <?php
+                                                            $ts = time();
+                                                            $user_id = Auth::user()->id;
+                                                            $date = date('Y-m-d');
+                                                            $booking_id = $id;
+                                                            ?>
+                                                            <form action="{{ route('booking.add_photos', ['id' => $id]) }}"
+                                                                method="post" enctype="multipart/form-data"
+                                                                id="datanodeupload" class="dropzone ">
+                                                                <input type="file" name="file" style="display: none;">
+                                                                <input type="hidden" name="dataTS" id="dataTS"
+                                                                    value="{{ $ts }}">
+                                                                <input type="hidden" name="dataDATE" id="dataDATE"
+                                                                    value="{{ $date }}">
+                                                                <input type="hidden" name="booking_id" id="booking_id"
+                                                                    value="{{ $booking_id }}">
+                                                                @csrf
+                                                                <div>
+                                                                    <h4 class="form-label">Upload Multiple photos By Click
+                                                                        On Box</h4>
+                                                                </div>
+
+
+                                                            </form>
+                                                            <div class="card-footer">
+                                                                You can select multiple files (e.g images, .jpg , .png ,.gif
+                                                                ) and upload
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-1">&nbsp;</div>
+
+                                                    </div>
+                                                @endif
+
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endif
+                                @endif
                                 <div class="row">
 
                                     <div class="col-md-8">
@@ -166,9 +242,11 @@
                                                                     Venue Group: {{ $bookingData['other_venue_group'] }}
                                                                     <br>
                                                                 @endif
-                                                                Package : {{ $packageDetails['name'] }} <br>
-                                                                Price : ${{ $packageDetails['price'] }} <br>
-                                                                Total Cost: $@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime;@endphp
+                                                                @if ($user->group_id != config('constants.groups.photographer'))
+                                                                    Package : {{ $packageDetails['name'] }} <br>
+                                                                    Price : ${{ $packageDetails['price'] }} <br>
+                                                                    Total Cost: $@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime;@endphp
+                                                                @endif
                                                             </div>
 
                                                         </div>
@@ -182,11 +260,11 @@
                                             </div><!-- /.card-body -->
                                         </div>
                                         <!-- /.card -->
-                                       
+
                                         {{-- This section is for Upload Documents --}}
                                         <div class="card">
                                             <div class="card-header p-2">
-                                                <strong> Upload Documents </strong>
+                                                <strong> Upload Documents  </strong>
                                             </div><!-- /.card-header -->
                                             <div class="card-body">
                                                 <div class="tab-content">
@@ -213,7 +291,7 @@
                                                                 <div id="file_{{ $data['id'] }}"
                                                                     class="col-3 text-center" style="position: relative;">
                                                                     <label class="">{{ $data['name'] }}</label>
-                                                                    <a href="{{ $data['path'] }}" target="_blank"><img
+                                                                    <a download href="{{ $data['path'] }}"><img download
                                                                             class="w-100 shadow-1-strong rounded mb-4 img-thumbnail"
                                                                             src="{{ $thumb_img }}" width="200"
                                                                             alt="Uploaded Image"></a>
@@ -237,47 +315,58 @@
                                             </div>
                                         </div>
 
-                                        {{-- This section is for Comments --}}
+                                        @if ($user->group_id==config('constants.groups.photographer') || $user->group_id==config('constants.groups.admin'))
+                                        {{-- This section is for photographer Comments --}}
                                         <div class="card">
                                             <div class="card-header p-2">
-                                                <strong> Notes Section </strong>
+                                                <strong> Notes Section (for Photographer) </strong>
                                             </div><!-- /.card-header -->
                                             <div class="card-body">
-                                                <div id="submit_comment_replace">
+                                                <div id="submit_photographer_comment_replace">
                                                     @php
-                                                       // p($bookingData['comments']);
+                                                        // p($bookingData['comments']);
                                                     @endphp
-                                                    @foreach ($bookingData['comments'] as $key=>$comment )
-                                                    <div class="row border">
-                                                    <div class="col-12">
-                                                        <strong>{{$comment['user']['name']}} ({{$comment['slug']}})  </strong> {{date('d/m/Y H:i:s',strtotime($comment['created_at']))}}<br>
-                                                        {{$comment['comment']}}
-                                                    </div>
-                                                    </div>
+                                                    @foreach ($bookingData['photographer_comments'] as $key => $comment)
+                                                        <div class="row border">
+                                                            <div class="col-12">
+                                                                <strong>{{ $comment['user']['name'] }}
+                                                                    ({{ $comment['slug'] }})
+                                                                </strong>
+                                                                {{ date('d/m/Y H:i:s', strtotime($comment['created_at'])) }}<br>
+                                                                {{ $comment['comment'] }}
+                                                            </div>
+                                                        </div>
                                                     @endforeach
-                                                  
+
                                                 </div>
                                                 @php
-                                                    $userData=get_session_value();
+                                                    $userData = get_session_value();
                                                     //p($userData);
                                                 @endphp
                                                 <div class="tab-content">
-                                                    <form method="post" id="submit_comment" >
-                                                        <input type="hidden" name="group_id" value="{{$user->group_id}}">
-                                                        <input type="hidden" name="action" value="submit_comment">
-                                                        <input type="hidden" name="slug" value="{{$userData['get_groups']['slug']}}">
-                                                            <div class="form-group">
-                                                                <label for="inputDescription">Comment</label>
-                                                                <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control" rows="4"></textarea></br>
-                                                                <button
-                                                                    onclick="do_action({{ $bookingData['id'] }},'submit_comment')"
-                                                                    type="button" class="btn btn-success float-right"><i
-                                                                        class="far fa-credit-card"></i> Send</button>
-                                                            </div>
-                                                        </form>
+                                                    <form method="post" id="submit_photographer_comment">
+                                                        <input type="hidden" name="group_id"
+                                                            value="{{ $user->group_id }}">
+                                                        <input type="hidden" name="action"
+                                                            value="submit_photographer_comment">
+                                                        <input type="hidden" name="slug"
+                                                            value="{{ $userData['get_groups']['slug'] }}">
+                                                        <input type="hidden" name="for_section"
+                                                            value="photographer_section">
+                                                        <div class="form-group">
+                                                            <label for="inputDescription">Comment</label>
+                                                            <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control"
+                                                                rows="4"></textarea></br>
+                                                            <button
+                                                                onclick="do_action({{ $bookingData['id'] }},'submit_photographer_comment')"
+                                                                type="button" class="btn btn-success float-right"><i
+                                                                    class="far fa-credit-card"></i> Send</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
 
                                     </div>
 
@@ -285,8 +374,7 @@
 
                                     <div class="col-md-4">
                                         @if ($bookingData['status'] > 0)
-                                            
-                                            <?php $recievedAmount=0; ?>
+                                            <?php $recievedAmount = 0; ?>
                                             <div class="card-header alert-secondary">
                                                 <h3 class="card-title">Package Detail</h3>
                                             </div>
@@ -302,26 +390,29 @@
                                                             <th>Description:</th>
                                                             <td>{{ $packageDetails['description'] }}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <th style="width:50%">Price:</th>
-                                                            <td>${{ $packageDetails['price'] }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Extra Charge</th>
-                                                            <td>{{ $bookingData['extra_price'] > 0 ? '$' . $bookingData['extra_price'] : 0 }}
-                                                                <br>
-                                                                <p>({{ $bookingData['extra_charge_desc'] }})</p>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Over time:</th>
-                                                            <td>${{ $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
-                                                                (${{ $bookingData['overtime_rate_per_hour'] }}/Hour)
-                                                                <br>
-                                                                <p>Staff Worked {{ $bookingData['overtime_hours'] }} hours
-                                                                    extra as over time .</p>
-                                                            </td>
-                                                        </tr>
+                                                        @if ($user->group_id != config('constants.groups.photographer'))
+                                                            <tr>
+                                                                <th style="width:50%">Price:</th>
+                                                                <td>${{ $packageDetails['price'] }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Extra Charge</th>
+                                                                <td>{{ $bookingData['extra_price'] > 0 ? '$' . $bookingData['extra_price'] : 0 }}
+                                                                    <br>
+                                                                    <p>({{ $bookingData['extra_charge_desc'] }})</p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Over time:</th>
+                                                                <td>${{ $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
+                                                                    (${{ $bookingData['overtime_rate_per_hour'] }}/Hour)
+                                                                    <br>
+                                                                    <p>Staff Worked {{ $bookingData['overtime_hours'] }}
+                                                                        hours
+                                                                        extra as over time .</p>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
                                                     </tbody>
                                                 </table>
 
@@ -520,6 +611,12 @@
     <link rel="stylesheet" href="{{ url('adminpanel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <!-- dropzonecss -->
     <link rel="stylesheet" href="{{ url('adminpanel/plugins/dropzone/min/dropzone.min.css') }}">
+    <script src="https://pixoeditor.com/editor/scripts/bridge.m.js"></script>
+    <style>
+        .pixo-modal {
+            z-index: 99999 !important;
+        }
+    </style>
 @endsection
 @section('footer-js-css')
     <!-- Select2 -->
@@ -528,72 +625,109 @@
     <script src="{{ url('adminpanel/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- dropzonejs -->
     <script src="{{ url('adminpanel/plugins/dropzone/min/dropzone.min.js') }}"></script>
+    <script src="{{ asset('js/file_upload.js') }}" defer></script>
+
     <script>
+        var home_url = "{{ env('APP_URL') }}";
+        var deleteAction = '{{ route('file-delete') }}';
+        var generalTS = document.getElementById('dataTS').value;
+        var generalDATE = document.getElementById('dataDATE').value;
+        var token = '{!! csrf_token() !!}';
 
-Dropzone.autoDiscover = false;
 
-var myDropzone = new Dropzone('#image-upload', {
-    thumbnailWidth: 200,
-    maxFilesize: 1,
-    acceptedFiles: ".jpeg,.jpg,.png,.gif"
-});
 
-function removeFile(id,slug='booking_photos') {
-if (confirm('Are you sure? you want to delete this file?')) {
+        function open_template_editor(img_url) {
 
-    var sendInfo = {
-        action: 'delteFile',
-        id: id,
-        booking_id: {{$id}},
-        slug: slug
-    };
+            new window.Pixo.Bridge({
+                apikey: "20s311f70o0w",
+                type: "modal",
+                onSave: (data) => {
+                    //alert(data.toImage());
+                    data.download();
+                    //alert(JSON.stringify({ template: data.toJSON() }));
+                    // we will use the localStorage to store
+                    // the template, however you should save the
+                    // JSON somewhere to your back-end
+                    localStorage.setItem(
+                        "template",
+                        JSON.stringify({
+                            template: data.toJSON()
+                        })
+                    );
+                    document.body.appendChild(
+                        document.createTextNode("Template saved to localStorage")
+                    );
+                }
+            }).edit(img_url);
 
-    $.ajax({
-        url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
-        data: sendInfo,
-        contentType: 'application/json',
-        error: function() {
-            alert('There is Some Error, Please try again !');
-        },
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            if (data.error == 'No') {
-                $('#file_' + id).remove();
-                $(document).Toasts('create', {
-                    class: 'bg-success',
-                    title: data.title,
-                    subtitle: 'record',
-                    body: data.msg
-                });
-            } else {
-                $(document).Toasts('create', {
-                    class: 'bg-danger',
-                    title: data.title,
-                    subtitle: 'record',
-                    body: data.msg
-                });
-            }   
+
         }
-    });
-}
-}
-        function do_action(id, action_name = '') {
+
+        function removeFile(id, slug = 'booking_photos') {
+            if (confirm('Are you sure? you want to delete this file?')) {
+
+                var sendInfo = {
+                    action: 'delteFile',
+                    id: id,
+                    booking_id: {{ $id }},
+                    slug: slug
+                };
+
+                $.ajax({
+                    url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                    data: sendInfo,
+                    contentType: 'application/json',
+                    error: function() {
+                        alert('There is Some Error, Please try again !');
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.error == 'No') {
+                            $('#file_' + id).remove();
+                            $(document).Toasts('create', {
+                                class: 'bg-success',
+                                title: data.title,
+                                subtitle: 'record',
+                                body: data.msg
+                            });
+                        } else {
+                            $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: data.title,
+                                subtitle: 'record',
+                                body: data.msg
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        function do_action(id, action_name = '', element_id = '') {
             var formData = ($('#' + action_name).formToJson());
-            
+
             var sendInfo = {
                 data: formData,
                 action: action_name,
                 id: id
             };
+            if (action_name == 'photo_gallery_status') {
+                if (!confirm('Are you sure? you want to active/inactive the Booking Gallary?')) {
+                    $("#" + element_id).prop('checked', true);
+                    return false;
+                }
 
-            if(action_name=='submit_comment'){
-                if($('#comments').val()=='')
-                return false;
+
+
+            }
+            if (action_name == 'submit_comment') {
+                if ($('#comments').val() == '')
+                    return false;
             }
             $('#_loader').show();
             $.ajax({
-                url: "{{ url('/admin/bookings/ajaxcall/') }}/" + id,
+                url: "{{ route('bookings.ajaxcall') }}/" + id,
                 data: sendInfo,
                 contentType: 'application/json',
                 error: function() {
@@ -602,8 +736,8 @@ if (confirm('Are you sure? you want to delete this file?')) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                   
-                    $('#'+action_name+'_replace').append(data.response);
+
+                    $('#' + action_name + '_replace').append(data.response);
                     $('#comments').val('');
                     $('#_loader').hide();
                     //console.log('result :'+action_name);

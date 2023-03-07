@@ -25,20 +25,15 @@ class DashboardController extends Controller
     public function index($id=NULL){
         $user=Auth::user();
         
+        if(isset($_GET['resetpassword']) && $_GET['resetpassword']==1) 
+        return redirect()->route('admin.logout');
+
         if($user->group_id== config('constants.groups.admin')){
-            $leads_info = DB::table('users')
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->where('group_id',config('constants.groups.subscriber'))
-            ->orderBy('status', 'asc')
-            ->get()->toArray();
-            $user_info = DB::table('users')
-            ->select('group_id', DB::raw('count(*) as total'))
-            ->groupBy('group_id')
-            ->where('is_active',1)
-            ->orderBy('group_id', 'asc')
-            ->get();
-            return view('adminpanel/home',compact('user','leads_info','user_info'));
+            $record_count=get_record_count();
+            // p($record_count);
+            // die;
+         
+            return view('adminpanel/home',get_defined_vars());
         }
         else{
             return view('adminpanel/user_dashboard',get_defined_vars());

@@ -167,7 +167,7 @@ class AdminController extends Controller
         ]);
         
       
-        $groupsData = $this->groups->where('id', '=', config('constants.groups.staff'))->get()->toArray();
+        //$groupsData = $this->groups->where('id', '=', config('constants.groups.staff'))->get()->toArray();
        
         
         $this->users->name=$request['fullname'];
@@ -175,9 +175,9 @@ class AdminController extends Controller
         $this->users->cnic=$request['cnic'];
         $this->users->phone=$request['phone'];
         $this->users->password=Hash::make($request['password']);
-        $this->users->is_active=0;
+        $this->users->is_active=1;
         $this->users->created_at=time();
-        $this->users->group_id=$groupsData[0]['id'];
+        $this->users->group_id=config('constants.groups.admin');
         $request->session()->flash('alert-success', 'Successfully Registered! Please login');
         $this->users->save();
 

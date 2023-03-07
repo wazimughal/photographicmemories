@@ -3,10 +3,13 @@
 
 return [
     'app_name'=>'Thephotographic Memories',
-    'admin_email'=>'to.wazim@gmail.com',
-    'date_formate'=>'d/m/Y',
-    'date_formate_us'=>'m/d/Y',
-    'per_page'=>2,
+    'phone'=>'845-501-1888',
+    'address'=>'Monsey, NY, US',
+    'admin_email'=>'Joel@thephotographicmemories.com',
+    'google_api_key'=>'AIzaSyA1JM99SFagfbshQ0xgQQmUXlgfvi-MUDw', // Google Api Key for Google map and place suggestion
+    'date_formate'=>'m/d/Y',
+    'date_and_time'=>'m/d/Y h:i:s',
+    'per_page'=>10,
     // Costant Value ID set for the groups table for User ROLEs
     'groups' => [
         'admin' => 1,
@@ -34,6 +37,7 @@ return [
         'office' => 0,
         'venue_group' => 1,
         'website' => 2,
+        'customer' => 3,
     ]
 ];
 

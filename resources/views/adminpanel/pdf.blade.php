@@ -166,13 +166,13 @@
         <h1>INVOICE: Booking-{{ date('dmY') }}{{ $bookingData['id'] }}</h1>
         <div id="company" class="clearfix">
 
-            <div><span>Event Date:</span> {{ date('d/m/Y', $bookingData['date_of_event']) }}</div>
+            <div><span>Event Date:</span> {{ date(config('constants.date_formate'), $bookingData['date_of_event']) }}</div>
             @if ($bookingData['time_of_event'] != '')
                 <div><span> Event Time: </span>{{ $bookingData['time_of_event'] }}
             @endif
 
             @if (isset($bookingData['venue_group']))
-                <div><span>Venue:</span> {{ $bookingData['venue_group']['userinfo'][0]['name'] }}</div>
+                <div><span>Venue:</span> {{ $bookingData['venue_group']['userinfo'][0]['vg_name'] }}</div>
             @else
                 <div><span>Venue:</span> {{ $bookingData['other_venue_group'] }}</div>
             @endif
@@ -233,11 +233,11 @@
         </div>
     </header>
     <?php
-    if ($bookingData['who_is_paying'] == 2 && $invoice_of == 'customer_invoices') {
-        $total_amount_to_pay = $bookingData['customer_to_pay'];
-    } elseif ($bookingData['who_is_paying'] == 2 && $invoice_of == 'venue_invoices') {
-        $total_amount_to_pay = $bookingData['venue_group_to_pay'];
-    }
+    // if ($bookingData['who_is_paying'] == 2 && $invoice_of == 'customer_invoices') {
+    //     $total_amount_to_pay = $bookingData['customer_to_pay'];
+    // } elseif ($bookingData['who_is_paying'] == 2 && $invoice_of == 'venue_invoices') {
+    //     $total_amount_to_pay = $bookingData['venue_group_to_pay'];
+    // }
     ?>
     <main>
         <table>

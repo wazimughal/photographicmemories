@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('constants.app_name') }}<| Log in (v2)</title>
+    <link rel="icon" type="image/x-icon" href="{{ url('adminpanel/dist/img/logo_photographic.jpg') }}">
 
             <!-- Google Font: Source Sans Pro -->
             <link rel="stylesheet"
@@ -19,9 +20,12 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="{{ url('admin/dashboard') }}" class="h1"><b>{{ config('constants.app_name') }}</b></a>
+        <div class="card  card-primary">
+            <div class="card-header text-center" style="background: #343a40">
+                <a href="{{ url('admin/dashboard') }}" class="h1">
+                    <img src="{{ url('adminpanel/dist/img/logo_photographic.png') }}" alt="Thephotographic Memories" width="100%">
+                    {{-- <b>{{ config('constants.app_name') }}</b> --}}
+                </a>
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
@@ -98,9 +102,16 @@
                 {{-- <p class="mb-1">
                     <a href="forgot-password.html">I forgot my password</a>
                 </p> --}}
-                <p class="mb-0">
+                {{-- <p class="mb-0">
                     <a href="{{ url('/admin/register') }}" class="text-center">Register a new membership</a>
-                </p>
+                </p> --}}
+                @if (Route::has('password.request'))
+                <span class="mb-0">
+                <a class="btn btn-link" href="{{ route('password.request') }}">
+                    {{ __('Forgot Your Password?') }}
+                </a>
+                </span>
+                @endif
             </div>
             <!-- /.card-body -->
         </div>

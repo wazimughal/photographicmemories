@@ -17,12 +17,7 @@
                     <div class="col-sm-2"><a style="width:60%" href="{{ url('/admin/photographers/add') }}"
                             class="btn btn-block btn-success btn-lg">Add New <i class="fa fa-plus"></i></a></div>
                     <div class="col-sm-1">&nbsp;</div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">View</li>
-                        </ol>
-                    </div>
+                    
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -46,7 +41,6 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile Number</th>
-                                            <th>Unit Number</th>
                                             <th>Address</th>
                                             <th>City</th>
                                             <th>Action</th>
@@ -66,10 +60,8 @@
                                             <td id="email_{{ $data['id'] }}">{{ $data['email'] }}</td>
                                             <td id="phone_{{ $data['id'] }}">
                                                 {{ $data['phone'] }}</td>
-                                            <td id="unitnumber_{{ $data['id'] }}">
-                                                {{ $data['unitnumber'] }} </td>
-                                                 <td id="homeaddress_{{ $data['id'] }}">
-                                                    {{ $data['homeaddress'] }}</td>
+                                                 <td id="address_{{ $data['id'] }}">
+                                                    {{ $data['address'] }}</td>
                                                     <td id="city_{{ $data['id'] }}">
                                                         {{ $data['City']['name'] }}</td>
                                            
@@ -117,7 +109,6 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile Number</th>
-                                            <th>Unit Number</th>
                                             <th>Address</th>
                                            <th>City</th>
                                             <th>Action</th>

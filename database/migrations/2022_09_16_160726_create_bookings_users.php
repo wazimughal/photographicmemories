@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('slug'); // any shortcode to detect the action e.g admin_added_new_booking
             $table->string('description')->nullable(); // any shortcode to detect the action e.g admin_added_new_booking
             $table->tinyInteger('status')->nullable()->default(0); // 0: new Booking and waiting for Photographer Accept or Declined , 1:accepted, 2: rejeecteed by Photographer
+            $table->tinyInteger('active')->default(1)->nullable(); // 0: inactive, 1=active, 2 trashed
             $table->string('photographer_expense')->nullable();
             $table->timestamps();
         });

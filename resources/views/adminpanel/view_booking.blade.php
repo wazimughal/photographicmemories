@@ -10,14 +10,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>View booking</h1>
+                        <h1>View booking </h1>
                     </div>
-                    <div class="col-sm-6">
+                    {{-- <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">View booking</li>
                         </ol>
-                    </div>
+                    </div> --}}
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -38,18 +38,17 @@
                                 <!-- /.row -->
                                 @php
                                     $packageDetails = get_package_by_id($bookingData['package_id']);
-                                    $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'];
+                                    $overtime_cost = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'];
                                 @endphp
-                                   <div class="row form-group">
+                                <div class="row form-group">
                                     <div class="col-12">
                                         <div class="alert alert-info alert-dismissible">
-                                            <button type="button" class="close"
-                                                data-dismiss="alert"
+                                            <button type="button" class="close" data-dismiss="alert"
                                                 aria-hidden="true">&times;</button>
                                             <h5><i class="icon fa fa-user"></i>
                                                 Booking Status!</h5>
-                                                {{booking_status_for_msg($bookingData['status'])}}
-                                            </div>
+                                            {{ booking_status_for_msg($bookingData['status']) }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -58,6 +57,39 @@
                                         <div class="card">
                                             <div class="card-header p-2">
                                                 <strong> Event/Booking Information</strong>
+
+                                                <div class="row">
+                                                    <div class="offset-md-4">&nbsp;</div>
+                                                    @if ($user->group_id == config('constants.groups.admin'))
+                                                        <div class="col-md-2 mb-2">
+                                                            <a href="{{ route('booking_pdf_download', $bookingData['id']) }}"
+                                                                class="btn btn-primary pull-right btn-block btn-sm"><i
+                                                                    class="fas fa-download"></i>
+                                                                Download</a>
+                                                        </div>
+                                                        <div class="col-md-2 mb-2">
+                                                            <a href="{{ route('bookings.bookings_edit_form', $bookingData['id']) }}"
+                                                                class="btn btn-danger pull-right btn-block btn-sm"><i
+                                                                    class="fas fa-edit"></i>
+                                                                Edit</a>
+                                                        </div>
+                                                        <div class="col-md-3 mb-2">
+                                                            <a href="{{ route('booking.photos', $bookingData['id']) }}"
+                                                                class="btn btn-success btn-block btn-sm"><i
+                                                                    class="fas fa-upload"></i>
+                                                                Photo Gallary</a>
+                                                        </div>
+                                                        {{-- @else --}}
+                                                    @elseif ($user->group_id != config('constants.groups.venue_group_hod'))
+                                                        <div class="col-2">&nbsp;</div>
+                                                        <div class="col-2">
+                                                            <a href="{{ route('booking.photos', $bookingData['id']) }}"
+                                                                class="btn btn-success btn-block btn-sm"><i
+                                                                    class="fas fa-upload"></i>
+                                                                Photo Gallary</a>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div><!-- /.card-header -->
                                             <div class="card-body">
                                                 <div class="tab-content">
@@ -84,19 +116,23 @@
                                                                 </address>
                                                             </div>
                                                             <div class="col-sm-4 invoice-col">
-                                                                Event Details <br>
-                                                                <b>Event Date</b> : {{ $bookingData['date_of_event'] }}<br>
-                                                                {{ $bookingData['time_of_event'] != '' ? 'Event Date :' . $bookingData['time_of_event'] : '' }}
+                                                                Event Details 2 <br>
+                                                                <b>Event Date</b> :
+                                                                {{ date(config('constants.date_formate'), $bookingData['date_of_event']) }}<br>
+                                                                {!! $bookingData['time_of_event'] != '' ? 'Event Time :' . $bookingData['time_of_event'] . '<br>' : '' !!}
                                                                 @if (isset($bookingData['venue_group']))
-                                                                    <br>Venue Group:
-                                                                    {{ $bookingData['venue_group']['userinfo'][0]['name'] }}
+                                                                    Venue Group:
+                                                                    {{ $bookingData['venue_group']['userinfo'][0]['vg_name'] }}<br>
                                                                 @else
-                                                                    Venue Group: {{ $bookingData['other_venue_group'] }}
-                                                                    <br>
+                                                                    Venue Group:
+                                                                    {{ $bookingData['other_venue_group'] }}<br>
                                                                 @endif
-                                                                Package : {{ $packageDetails['name'] }} <br>
-                                                                Price : ${{ $packageDetails['price'] }} <br>
-                                                                Total Cost: $@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime;@endphp
+                                                                @if ($user->group_id != config('constants.groups.photographer'))
+                                                                    Package : {{ $packageDetails['name'] }} <br>
+                                                                    Price : ${{ $packageDetails['price'] }} <br>
+                                                                    Total Cost: $@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime_cost;@endphp
+                                                                @endif
+
                                                             </div>
 
                                                         </div>
@@ -110,7 +146,7 @@
                                             </div><!-- /.card-body -->
                                         </div>
                                         <!-- /.card -->
-                                        @if ($bookingData['status'] > 0)
+                                        @if ($bookingData['status'] > 0 && $user->group_id != config('constants.groups.photographer'))
                                             <div class="card">
                                                 <div class="card-header p-2">
                                                     <strong> Payment Received </strong>
@@ -118,11 +154,27 @@
                                                 <div class="card-body">
                                                     <div class="tab-content">
                                                         <?php $recievedAmount=0; if($bookingData['invoices']){  $k=1;?>
-                                                        <div class="form-group row">
-                                                            <div class="col-sm-4"><a href="{{route('download.customer.invoice',$id)}}"  class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download Customer invoice</a></div>
-                                                            <div class="col-sm-4"><a href="{{route('download.venue.invoice',$id)}}"  class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download Venue invoice</a></div>
-                                                            <div class="col-sm-3"><a href="{{route('download.invoice',$id)}}" class="btn btn-info btn-block btn-flat"><i class="fa fa-download"></i> Download invoice</a></div>
-                                                        </div>
+
+                                                        @if ($user->group_id == config('constants.groups.admin'))
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-4 mb-1"><a
+                                                                        href="{{ route('download.customer.invoice', $id) }}"
+                                                                        class="btn btn-info btn-block btn-flat"><i
+                                                                            class="fa fa-download"></i> Download Customer
+                                                                        invoice</a></div>
+                                                                <div class="col-sm-4 mb-1"><a
+                                                                        href="{{ route('download.venue.invoice', $id) }}"
+                                                                        class="btn btn-info btn-block btn-flat"><i
+                                                                            class="fa fa-download"></i> Download Venue
+                                                                        invoice</a></div>
+                                                                <div class="col-sm-3 mb-1"><a
+                                                                        href="{{ route('download.invoice', $id) }}"
+                                                                        class="btn btn-info btn-block btn-flat"><i
+                                                                            class="fa fa-download"></i> Download invoice</a>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+
                                                         <div class="form-group row">
                                                             <div class="col-sm-12">
                                                                 <div class="table-responsive">
@@ -161,18 +213,20 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        {{-- This section is for Upload Documents --}}
-                                        <div class="card">
-                                            <div class="card-header p-2">
-                                                <strong> Upload Documents </strong>
-                                            </div><!-- /.card-header -->
-                                            <div class="card-body">
-                                                <div class="tab-content">
-                                                    <div class="row form-group">
-                                                        <div class="col-1">&nbsp;</div>
-                                                        <div class="col-10">
-                                                            <div class="row form-group">
-                                                                <?php
+
+                                        @if ($user->group_id == config('constants.groups.admin'))
+                                            {{-- This section is for Upload Documents --}}
+                                            <div class="card">
+                                                <div class="card-header p-2">
+                                                    <strong> Upload Documents </strong>
+                                                </div><!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div class="tab-content">
+                                                        <div class="row form-group">
+                                                            <div class="offset-md-1">&nbsp;</div>
+                                                            <div class="col-md-10">
+                                                                <div class="row form-group">
+                                                                    <?php
                                                            $imagesTypes=array('jpg','jpeg','png','gif');
                                                            $excelTypes=array('xls','xlsx');
                                                            $docTypes=array('doc','docx');
@@ -188,17 +242,18 @@
                                                                 else if($data['otherinfo']=='pdf')
                                                                 $thumb_img=url('adminpanel/dist/img/pdf.png');
                                                                   ?>
-                                                                <div id="file_{{ $data['id'] }}"
-                                                                    class="col-3 text-center" style="position: relative;">
-                                                                    <label class="">{{ $data['name'] }}</label>
-                                                                    <a href="{{ $data['path'] }}" target="_blank"><img
-                                                                            class="w-100 shadow-1-strong rounded mb-4 img-thumbnail"
-                                                                            src="{{ $thumb_img }}" width="200"
-                                                                            alt="Uploaded Image"></a>
-                                                                </div>
+                                                                    <div id="file_{{ $data['id'] }}"
+                                                                        class="col-sm-4 text-center"
+                                                                        style="position: relative;">
+                                                                        <label class="">{{ $data['name'] }}</label><br>
+                                                                        <a href="{{ $data['path'] }}" target="_blank"><img
+                                                                                class="shadow-1-strong rounded mb-4 img-thumbnail"
+                                                                                src="{{ $thumb_img }}" width="200"
+                                                                                alt="Uploaded Image"></a>
+                                                                    </div>
 
 
-                                                                <?php 
+                                                                    <?php 
                                                                 }
                                                             }
                                                             else{
@@ -206,100 +261,260 @@
                                                                 }
                                                             ?>
 
+                                                                </div>
+                                                                <div class="col-1">&nbsp;</div>
                                                             </div>
-                                                            <div class="col-1">&nbsp;</div>
                                                         </div>
-                                                    </div>
 
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {{-- This section is for Comments --}}
-                                        <div class="card">
-                                            <div class="card-header p-2">
-                                                <strong> Notes Section </strong>
-                                            </div><!-- /.card-header -->
-                                            <div class="card-body">
-                                                <div id="submit_comment_replace">
+
+                                            {{-- This section is for Comments for admin --}}
+                                            <div class="card">
+                                                <div class="card-header p-2">
+                                                    <strong> Notes Section (For Admin only) </strong>
+                                                </div><!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div id="submit_comment_replace">
+                                                        @php
+                                                            // p($bookingData['comments']);
+                                                        @endphp
+                                                        @foreach ($bookingData['comments'] as $key => $comment)
+                                                            <div class="row border">
+                                                                <div class="col-12">
+                                                                    <strong>{{ $comment['user']['name'] }}
+                                                                        ({{ $comment['slug'] }}) </strong>
+                                                                    {{ date(config('constants.date_and_time'), strtotime($comment['created_at'])) }}<br>
+                                                                    {{ $comment['comment'] }}
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+
+                                                    </div>
                                                     @php
-                                                       // p($bookingData['comments']);
+                                                        $userData = get_session_value();
+                                                        //p($userData);
                                                     @endphp
-                                                    @foreach ($bookingData['comments'] as $key=>$comment )
-                                                    <div class="row border">
-                                                    <div class="col-12">
-                                                        <strong>{{$comment['user']['name']}} ({{$comment['slug']}})  </strong> {{date('d/m/Y H:i:s',strtotime($comment['created_at']))}}<br>
-                                                        {{$comment['comment']}}
-                                                    </div>
-                                                    </div>
-                                                    @endforeach
-                                                  
-                                                </div>
-                                                @php
-                                                    $userData=get_session_value();
-                                                    //p($userData);
-                                                @endphp
-                                                <div class="tab-content">
-                                                    <form method="post" id="submit_comment" >
-                                                        <input type="hidden" name="group_id" value="{{$user->group_id}}">
-                                                        <input type="hidden" name="action" value="submit_comment">
-                                                        <input type="hidden" name="slug" value="{{$userData['get_groups']['slug']}}">
+                                                    <div class="tab-content">
+                                                        <form method="post" id="submit_comment">
+                                                            <input type="hidden" name="group_id"
+                                                                value="{{ $user->group_id }}">
+                                                            <input type="hidden" name="action" value="submit_comment">
+                                                            <input type="hidden" name="slug"
+                                                                value="{{ $userData['get_groups']['slug'] }}">
+                                                            <input type="hidden" name="for_section"
+                                                                value="admin_only_section">
                                                             <div class="form-group">
                                                                 <label for="inputDescription">Comment</label>
-                                                                <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control" rows="4"></textarea></br>
+                                                                <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control"
+                                                                    rows="4"></textarea></br>
                                                                 <button
                                                                     onclick="do_action({{ $bookingData['id'] }},'submit_comment')"
                                                                     type="button" class="btn btn-success float-right"><i
                                                                         class="far fa-credit-card"></i> Send</button>
                                                             </div>
                                                         </form>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
+
+                                        @if (
+                                            $user->group_id == config('constants.groups.admin') ||
+                                                $user->group_id == config('constants.groups.venue_group_hod'))
+                                            {{-- This Comment Section is for Venue Group --}}
+                                            <div class="card">
+                                                <div class="card-header p-2">
+                                                    <strong> Notes Section (For Venue Group) </strong>
+                                                </div><!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div id="submit_vg_comment_replace">
+                                                        @php
+                                                            // p($bookingData['comments']);
+                                                        @endphp
+                                                        @foreach ($bookingData['vg_comments'] as $key => $comment)
+                                                            <div class="row border">
+                                                                <div class="col-12">
+                                                                    <strong>{{ $comment['user']['name'] }}
+                                                                        ({{ $comment['slug'] }}) </strong>
+                                                                    {{ date(config('constants.date_and_time'), strtotime($comment['created_at'])) }}<br>
+                                                                    {{ $comment['comment'] }}
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+
+                                                    </div>
+                                                    @php
+                                                        $userData = get_session_value();
+                                                        //p($userData);
+                                                    @endphp
+                                                    <div class="tab-content">
+                                                        <form method="post" id="submit_vg_comment">
+                                                            <input type="hidden" name="group_id"
+                                                                value="{{ $user->group_id }}">
+                                                            <input type="hidden" name="action"
+                                                                value="submit_vg_comment">
+                                                            <input type="hidden" name="slug"
+                                                                value="{{ $userData['get_groups']['slug'] }}">
+                                                            <input type="hidden" name="for_section"
+                                                                value="venue_group_section">
+                                                            <div class="form-group">
+                                                                <label for="inputDescription">Comment</label>
+                                                                <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control"
+                                                                    rows="4"></textarea></br>
+                                                                <button
+                                                                    onclick="do_action({{ $bookingData['id'] }},'submit_vg_comment')"
+                                                                    type="button" class="btn btn-success float-right"><i
+                                                                        class="far fa-credit-card"></i> Send</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+                                        @if ($user->group_id == config('constants.groups.admin') || $user->group_id == config('constants.groups.photographer'))
+                                            {{-- This Comment Section is for Photographer --}}
+                                            <div class="card">
+                                                <div class="card-header p-2">
+                                                    <strong> Notes Section (For Photographer) </strong>
+                                                </div><!-- /.card-header -->
+                                                <div class="card-body">
+                                                    <div id="submit_photographer_comment_replace">
+                                                        @php
+                                                            // p($bookingData['comments']);
+                                                        @endphp
+                                                        @foreach ($bookingData['photographer_comments'] as $key => $comment)
+                                                            <div class="row border">
+                                                                <div class="col-12">
+                                                                    <strong>{{ $comment['user']['name'] }}
+                                                                        ({{ $comment['slug'] }}) </strong>
+                                                                    {{ date(config('constants.date_and_time'), strtotime($comment['created_at'])) }}<br>
+                                                                    {{ $comment['comment'] }}
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+
+                                                    </div>
+                                                    @php
+                                                        $userData = get_session_value();
+                                                        //p($userData);
+                                                    @endphp
+                                                    <div class="tab-content">
+                                                        <form method="post" id="submit_photographer_comment">
+                                                            <input type="hidden" name="group_id"
+                                                                value="{{ $user->group_id }}">
+                                                            <input type="hidden" name="action"
+                                                                value="submit_photographer_comment">
+                                                            <input type="hidden" name="slug"
+                                                                value="{{ $userData['get_groups']['slug'] }}">
+                                                            <input type="hidden" name="for_section"
+                                                                value="photographer_section">
+                                                            <div class="form-group">
+                                                                <label for="inputDescription">Comment</label>
+                                                                <textarea id="comments" name="comment" placeholder="Write comment about the Booking" class="form-control"
+                                                                    rows="4"></textarea></br>
+                                                                <button
+                                                                    onclick="do_action({{ $bookingData['id'] }},'submit_photographer_comment')"
+                                                                    type="button" class="btn btn-success float-right"><i
+                                                                        class="far fa-credit-card"></i> Send</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
 
                                     </div>
 
                                     <!-- /.col -->
 
                                     <div class="col-md-4">
-                                        @if ($bookingData['status'] > 0)
-                                            <div class="card-header alert-secondary">
-                                                <h3 class="card-title">Deposit Requests</h3>
+                                        {{-- @if ($user->group_id == config('constants.groups.deb'))
+                                        <div class="card-header alert-secondary">
+                                            <h3 class="card-title">Booking Active/In-Active</h3>
+                                        </div>
+                                        <div class="form-group row" style="margin-top: 20px;">
+                                            <div class="col-sm-2">&nbsp;</div>
+                                            <div class="col-sm-8">
+                                                <form id="change_event_status" action="" method="POST">
+                                                    <input type="hidden" name="action" value="change_event_status">
+                                                    <div class="form-group clearfix">
+                                                        <div class="icheck-success d-inline">
+                                                          <input type="radio" {{($bookingData['is_active']==1)?'checked':''}}  onclick="do_action({{$bookingData['id']}},'change_event_status')" value="{{base64_encode(1)}}" name="active_event"  id="active_event1">
+                                                          <label for="active_event1"> Activate
+                                                          </label>
+                                                        </div>
+                                                        <div class="icheck-success d-inline">
+                                                          <input type="radio" {{($bookingData['is_active']==3)?'checked':''}}  onclick="do_action({{$bookingData['id']}},'change_event_status')" value="{{base64_encode(3)}}" name="active_event" id="active_event2">
+                                                          <label for="active_event2"> De-activate
+                                                          </label>
+                                                        </div>
+                                                </div>
+                                                </form>
                                             </div>
-                                            <?php $recievedAmount=0; if($bookingData['deposite_requests']){  ?>
+                                        </div>    
+                                        @endif --}}
+
+                                        @if ($user->group_id == config('constants.groups.admin'))
+                                            <div class="card-header alert-secondary">
+                                                <h3 class="card-title">Customer Status</h3>
+                                            </div>
                                             <div class="form-group row">
-                                                <div class="col-sm-12">
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <?php foreach ($bookingData['deposite_requests'] as $key=>$ask_for_deposit){ ?>
+                                                <div class="col-2">&nbsp;</div>
+                                                <div class="col-sm-8" style="text-align: center; margin-top:10px">
+                                                    {!! customer_status_msg($bookingData['customer_approved']) !!}
+                                                </div>
+                                            </div>
+                                        @endif
 
-                                                            <tr>
+                                        @if ($bookingData['status'] > 0)
 
-                                                                <td>Deposit Needed</td>
-                                                                <td>{{ $ask_for_deposit['amount'] }} USD</td>
-                                                                <td>{{ date('d/m/Y ', strtotime($ask_for_deposit['created_at'])) }}
-                                                                </td>
-                                                                <td style="width:100px">
-                                                                    <span style="width:200px"
-                                                                        class=" btn-success btn-sm">Sent!</span>
-                                                                </td>
-                                                                <div </tr>
+                                            @if ($user->group_id == config('constants.groups.admin'))
+                                                <div class="card-header alert-secondary">
+                                                    <h3 class="card-title">Deposit Requests</h3>
+                                                </div>
+                                                <?php 
+                                            //$recievedAmount=0; 
+                                            if($bookingData['deposite_requests']){  ?>
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table">
+                                                                <?php foreach ($bookingData['deposite_requests'] as $key=>$ask_for_deposit){ ?>
 
-                                                                    <?php }?>
-                                                        </table>
+                                                                <tr>
+
+                                                                    <td>Deposit Needed</td>
+                                                                    <td>{{ $ask_for_deposit['amount'] }} USD</td>
+                                                                    <td>{{ date('d/m/Y ', strtotime($ask_for_deposit['created_at'])) }}
+                                                                    </td>
+                                                                    <td style="width:100px">
+                                                                        <span style="width:200px"
+                                                                            class=" btn-success btn-sm">Sent!</span>
+                                                                    </td>
+                                                                    <div </tr>
+
+                                                                        <?php }?>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <?php }else{?>
-                                            <div class="form-group row">
-                                                <div class="col-sm-12 text-center">
-                                                    No Payment Request!
+                                                <?php }else{?>
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12 text-center">
+                                                        No Payment Request!
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <?php }?>
+                                                <?php }?>
+                                            @endif
+
                                             <div class="card-header alert-secondary">
-                                                <h3 class="card-title">Amount Due</h3>
+                                                <h3 class="card-title">Package Details</h3>
                                             </div>
 
                                             <div class="table-responsive">
@@ -313,43 +528,73 @@
                                                             <th>Description:</th>
                                                             <td>{{ $packageDetails['description'] }}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <th style="width:50%">Price:</th>
-                                                            <td>${{ $packageDetails['price'] }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Extra Charge</th>
-                                                            <td>{{ $bookingData['extra_price'] > 0 ? '$' . $bookingData['extra_price'] : 0 }}
-                                                                <br>
-                                                                <p>({{ $bookingData['extra_charge_desc'] }})</p>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Over time:</th>
-                                                            <td>${{ $overtime = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
-                                                                (${{ $bookingData['overtime_rate_per_hour'] }}/Hour)
-                                                                <br>
-                                                                <p>Staff Worked {{ $bookingData['overtime_hours'] }} hours
-                                                                    extra as over time .</p>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total Cost:</th>
-                                                            <td>$@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime;@endphp</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total Received:</th>
-                                                            <td>${{ isset($recievedAmount) ? $recievedAmount : ($recievedAmount = 0) }}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Due Amount:</th>
-                                                            <td>${{ $due_amount = $totalCost - $recievedAmount }}</td>
-                                                        </tr>
+                                                        @if ($user->group_id != config('constants.groups.photographer'))
+                                                            <tr>
+                                                                <th style="width:50%">Price:</th>
+                                                                <td>${{ $packageDetails['price'] }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Extra Charge </th>
+                                                                <td>{{ $bookingData['extra_price'] > 0 ? '$' . $bookingData['extra_price'] : 0 }}
+                                                                    <br>
+                                                                    <p>({{ $bookingData['extra_charge_desc'] }})</p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Over time:</th>
+                                                                <td>${{ $overtime_cost = $bookingData['overtime_hours'] * $bookingData['overtime_rate_per_hour'] }}
+                                                                    (${{ $bookingData['overtime_rate_per_hour'] }}/Hour)
+                                                                    <br>
+                                                                    <p>Staff Worked {{ $bookingData['overtime_hours'] }}
+                                                                        hours
+                                                                        extra as over time .</p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Total Cost:</th>
+                                                                <td>$@php echo $totalCost=$packageDetails['price']+ $bookingData['extra_price']+$overtime_cost;@endphp</td>
+                                                            </tr>
+                                                            @php
+                                                                $customer_to_pay = $overtime_cost + $bookingData['extra_price'];
+                                                            @endphp
+                                                            @if ($bookingData['who_is_paying'] == 1)
+                                                                <tr>
+                                                                    <th>Venue to Pay:</th>
+                                                                    <td>$@php echo $totalCost;@endphp</td>
+                                                                </tr>
+                                                            @elseif ($bookingData['who_is_paying'] == 0)
+                                                                <tr>
+                                                                    <th>Customer to Pay:</th>
+                                                                    <td>$@php echo $totalCost;@endphp</td>
+                                                                </tr>
+                                                            @elseif ($bookingData['who_is_paying'] == 2)
+                                                                <tr>
+                                                                    <th>Customer to Pay :</th>
+                                                                    <td>${{ $customer_to_pay = $customer_to_pay + $bookingData['customer_to_pay'] }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Venue to Pay:</th>
+                                                                    <td>${{ $venue_to_pay = $bookingData['venue_group_to_pay'] }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            <tr>
+                                                                <th>Total Received:</th>
+                                                                <td>${{ isset($recievedAmount) ? $recievedAmount : ($recievedAmount = 0) }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Due Amount:</th>
+                                                                <td>${{ $due_amount = $totalCost - $recievedAmount }}</td>
+                                                            </tr>
+                                                        @endif
                                                     </tbody>
                                                 </table>
 
                                             </div>
+
+
                                             <div class="card-header alert-secondary">
                                                 <h3 class="card-title">Assigned Photographers</h3>
                                             </div>
@@ -361,21 +606,56 @@
                                                         <table class="table">
                                                             <?php foreach ($assigne_photographers as $key=>$photographer){ ?>
 
-                                                            <tr>
-                                                                <td>{{ $photographer['userinfo'][0]['firstname'] }}
-                                                                    {{ $photographer['userinfo'][0]['lastname'] }}
-                                                                </td>
-                                                                <td style="width:200px">
-                                                                    {!! $photographer['status'] == 0
-                                                                        ? '<span style="width:200px"  class=" btn-primary btn-sm">Waiting Response</span>'
-                                                                        : '' !!}
-                                                                    {!! $photographer['status'] == 1 ? '<span style="width:200px" class=" btn-success btn-sm">Accpted</span>' : '' !!}
-                                                                    {!! $photographer['status'] == 2 ? '<span style="width:200px" class=" btn-danger btn-sm">Declined</span>' : '' !!}
+                                                            @if (
+                                                                $user->group_id == config('constants.groups.customer') ||
+                                                                    $user->group_id == config('constants.groups.venue_group_hod'))
+                                                                <tr>
+                                                                    <td>{{ $photographer['userinfo'][0]['name'] }}</td>
+                                                                    <td style="width:200px">
+                                                                        {!! $photographer['status'] == 0
+                                                                            ? '<span style="width:200px"  class=" btn-primary btn-sm">Waiting Response</span>'
+                                                                            : '' !!}
+                                                                        {!! $photographer['status'] == 1 ? '<span style="width:200px" class=" btn-success btn-sm">Accepted</span>' : '' !!}
+                                                                        {!! $photographer['status'] == 2 ? '<span style="width:200px" class=" btn-danger btn-sm">Declined</span>' : '' !!}
 
-                                                                </td>
-                                                                <div </tr>
+                                                                    </td>
 
-                                                                    <?php }?>
+                                                                </tr>
+                                                            @else
+                                                                <tr>
+                                                                    <td>{{ $photographer['userinfo'][0]['name'] }}</td>
+                                                                    <td>${{ $photographer['photographer_expense'] == '' ? 0 : $photographer['photographer_expense'] }}
+                                                                        Expense</td>
+                                                                    <td>
+                                                                        {!! $photographer['status'] == 0
+                                                                            ? '<span style="width:200px"  class=" btn-primary btn-sm">Waiting Response</span>'
+                                                                            : '' !!}
+                                                                        {!! $photographer['status'] == 1 ? '<span style="width:200px" class=" btn-success btn-sm">Accepted</span>' : '' !!}
+                                                                        {!! $photographer['status'] == 2 ? '<span style="width:200px" class=" btn-danger btn-sm">Declined</span>' : '' !!}
+
+                                                                    </td>
+
+                                                                </tr>
+                                                            @endif
+                                                            <?php }?>
+                                                            @if (
+                                                                $bookingData['collected_by_photographer'] == 1 &&
+                                                                    ($user->group_id == config('constants.groups.admin') ||
+                                                                        $user->group_id == config('constants.groups.photographer')))
+                                                                <tr>
+                                                                    <td colspan="3" align="center"><strong>Message for
+                                                                            Photographer</strong></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="3" align="center"><span
+                                                                            class=" btn-info btn-sm d-block">Collect
+                                                                            {{ $bookingData['photographer_to_collect_amount'] > 0 ? '$' . $bookingData['photographer_to_collect_amount'] : '' }}
+                                                                            Payment
+                                                                            {{ $bookingData['photographer_payee_name'] != '' ? 'from' . $bookingData['photographer_payee_name'] : '' }}</span>
+                                                                    </td>
+
+                                                                </tr>
+                                                            @endif
                                                         </table>
                                                     </div>
                                                 </div>
@@ -555,16 +835,16 @@
     <script>
         function do_action(id, action_name = '') {
             var formData = ($('#' + action_name).formToJson());
-            
+
             var sendInfo = {
                 data: formData,
                 action: action_name,
                 id: id
             };
 
-            if(action_name=='submit_comment'){
-                if($('#comments').val()=='')
-                return false;
+            if (action_name == 'submit_comment') {
+                if ($('#comments').val() == '')
+                    return false;
             }
             $('#_loader').show();
             $.ajax({
@@ -577,8 +857,8 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                   
-                    $('#'+action_name+'_replace').append(data.response);
+
+                    $('#' + action_name + '_replace').append(data.response);
                     $('#comments').val('');
                     $('#_loader').hide();
                     //console.log('result :'+action_name);

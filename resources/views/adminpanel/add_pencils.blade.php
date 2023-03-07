@@ -12,12 +12,7 @@
                     <div class="col-sm-6">
                         <h1>Add New Pencil</h1>
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Add New Pencil</li>
-                        </ol>
-                    </div>
+                    
                 </div>
             </div><!-- /.container-fluid -->
         </section>
@@ -35,15 +30,11 @@
                                 <div class="row">
                                     <div class="col-3">&nbsp;</div>
                                     <div class="col-6">
-
-                                        @if ($errors->any())
-                                            {{ implode('', $errors->all('<div>:message</div>')) }}
-                                        @endif
-                                        <!-- flash-message -->
+                             <!-- flash-message -->
                                         <div class="flash-message">
-                                            @if ($errors->any())
-                                                {{ implode('', $errors->all('<div>:message</div>')) }}
-                                            @endif
+                                            {{-- @if ($errors->any())
+                                            {!! implode('', $errors->all('<div class="alert-danger">:message</div>')) !!}
+                                            @endif --}}
 
                                             @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                                                 @if (Session::has('alert-' . $msg))
@@ -56,8 +47,11 @@
                                     </div>
                                     <div class="col-3">&nbsp;</div>
                                 </div>
-                                <form method="POST" action="{{ url('/admin/pencils/add') }}">
+                                <form method="POST" action="{{ route('pencils.save_pencils_data') }}">
                                     @csrf
+                                    @if ($user->group_id==config('constants.groups.venue_group_hod'))
+                                    <input type="hidden" name="venue_group_id" value="{{get_session_value('id')}}">         
+                                    @endif
                                
                                 
                                     <div class="row form-group">
@@ -125,7 +119,7 @@
                                         </div>
                                         <div class="col-3">&nbsp;</div>
                                     </div>
-                                    <div class="row form-group">
+                                    {{-- <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
                                             <div class="input-group mb-3">
@@ -145,7 +139,7 @@
                                             </div>
                                         </div>
                                         <div class="col-3">&nbsp;</div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
@@ -172,6 +166,7 @@
                                     <div class="row form-group">
                                         <div class="col-3">&nbsp;</div>
                                         <div class="col-6">
+                                            <label>Relationship with Event</label>
                                             <div class="input-group mb-3">
                                                 <select name="relation_with_event" required class="form-control select2bs4"
                                                     placeholder="Relationship with Event">
@@ -221,7 +216,7 @@
                                         <div class="col-5">
                                             <label>Groom information</label>
                                             <div class="input-group mb-3">
-                                                <input placeholder="Groom Name" type="text" name="groom_name" required
+                                                <input placeholder="Groom Name" type="text" name="groom_name"
                                                     value="{{ old('groom_name') }}"
                                                     class=" form-control @error('groom_name') is-invalid @enderror">
                                                 @error('groom_name')
@@ -235,7 +230,7 @@
                                         <div class="col-5">
 
                                             <div class="input-group mb-3" style="margin-top:2rem;">
-                                                <input required value="{{ old('groom_home_phone') }}"
+                                                <input value="{{ old('groom_home_phone') }}"
                                                     placeholder="Groom Home Phone No." type="text"
                                                     name="groom_home_phone"
                                                     class=" form-control @error('groom_home_phone') is-invalid @enderror">
@@ -253,7 +248,7 @@
                                         <div class="col-5">
                                             <div class="input-group mb-3">
                                                 <input placeholder="Groom Contact No." type="text" name="groom_mobile"
-                                                    required value="{{ old('groom_mobile') }}"
+                                                     value="{{ old('groom_mobile') }}"
                                                     class=" form-control @error('groom_mobile') is-invalid @enderror">
                                                 @error('groom_mobile')
                                                     <div class="invalid-feedback">
@@ -265,7 +260,7 @@
                                         <div class="col-5">
                                             <div class="input-group mb-3">
                                                 <input placeholder="Email Address" type="email" name="groom_email"
-                                                    required value="{{ old('groom_email') }}"
+                                                     value="{{ old('groom_email') }}"
                                                     class=" form-control @error('groom_email') is-invalid @enderror">
                                                 @error('groom_email')
                                                     <div class="invalid-feedback">
@@ -281,7 +276,7 @@
                                         <div class="col-10">
                                             <div class="input-group mb-3">
                                                 <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
-                                                    name="groom_billing_address" class=" form-control @error('groom_billing_address') is-invalid @enderror">{{ old('groom_billing_address') }}</textarea>
+                                                    id="groom_billing_address" name="groom_billing_address" class=" form-control @error('groom_billing_address') is-invalid @enderror">{{ old('groom_billing_address') }}</textarea>
                                                 @error('groom_billing_address')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
@@ -296,7 +291,7 @@
                                         <div class="col-5">
                                             <label>Bride information</label>
                                             <div class="input-group mb-3">
-                                                <input placeholder="Bride Name" type="text" name="bride_name" required
+                                                <input placeholder="Bride Name" type="text" name="bride_name" 
                                                     value="{{ old('bride_name') }}"
                                                     class=" form-control @error('bride_name') is-invalid @enderror">
                                                 @error('bride_name')
@@ -310,7 +305,7 @@
                                         <div class="col-5">
 
                                             <div class="input-group mb-3" style="margin-top:2rem;">
-                                                <input required value="{{ old('bride_home_phone') }}"
+                                                <input  value="{{ old('bride_home_phone') }}"
                                                     placeholder="Bride Home Phone No." type="text"
                                                     name="bride_home_phone"
                                                     class=" form-control @error('bride_home_phone') is-invalid @enderror">
@@ -328,7 +323,7 @@
                                         <div class="col-5">
                                             <div class="input-group mb-3">
                                                 <input placeholder="Bride Contact No." type="text" name="bride_mobile"
-                                                    required value="{{ old('bride_mobile') }}"
+                                                     value="{{ old('bride_mobile') }}"
                                                     class=" form-control @error('bride_mobile') is-invalid @enderror">
                                                 @error('bride_mobile')
                                                     <div class="invalid-feedback">
@@ -340,7 +335,7 @@
                                         <div class="col-5">
                                             <div class="input-group mb-3">
                                                 <input placeholder="Email Address" type="email" name="bride_email"
-                                                    required value="{{ old('bride_email') }}"
+                                                     value="{{ old('bride_email') }}"
                                                     class=" form-control @error('bride_email') is-invalid @enderror">
                                                 @error('bride_email')
                                                     <div class="invalid-feedback">
@@ -357,7 +352,7 @@
                                         <div class="col-10">
                                             <div class="input-group mb-3">
                                                 <textarea placeholder="Billing Address (e.g street address, apt., city, state, and zip code) "
-                                                    name="bride_billing_address" class=" form-control @error('bride_billing_address') is-invalid @enderror">{{ old('bride_billing_address') }}</textarea>
+                                                    name="bride_billing_address" id="bride_billing_address" class=" form-control @error('bride_billing_address') is-invalid @enderror">{{ old('bride_billing_address') }}</textarea>
                                                 @error('bride_billing_address')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
@@ -391,15 +386,23 @@
                                         </div>
                                         <div class="col-5">
                                             <label>Venue Group/Hall</label>
+                                            @if ($user->group_id==config('constants.groups.venue_group_hod'))
+                                            <div class="input-group mb-3">
+                                                <input  type="text" readonly disabled name="venue_group"
+                                                     value="{{ get_session_value('vg_name') }}"
+                                                    class=" form-control ">
+                                            </div>
+                                            @else
                                             <div class="input-group mb-3">
                                                 <select onchange="changeVenueGroup()" name="venue_group_id"
                                                     id="venue_group_id" class="form-control select2bs4"
                                                     placeholder="Select Venue Group">
-                                                    @php
-                                                        echo get_venue_group_options();
-                                                    @endphp
+                                                    {!! get_venue_group_options();!!}
+                                                    
                                                 </select>
                                             </div>
+                                            @endif
+                                            
                                         </div>
                                         <div class="col-1">&nbsp;</div>
                                     </div>
@@ -447,8 +450,27 @@
     <script src="{{ url('adminpanel/plugins/select2/js/select2.full.min.js') }}"></script>
     <!-- date-range-picker -->
     <script src="{{ url('adminpanel/plugins/daterangepicker/daterangepicker.js') }}"></script>
+     {{-- For google Address --}}
+     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key={{config('constants.google_api_key')}}"></script> 
     <script>
+       @php
+        $address=['groom_billing_address','bride_billing_address']   
+        @endphp
+    $(document).ready(function () {
+        var autocomplete;
+        @foreach ($address as $key=>$addr )
+        autocomplete = new google.maps.places.Autocomplete((document.getElementById('{{$addr}}')), {
+            types: ['geocode']
+           
+        });  
+        @endforeach
       
+    
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var near_place = autocomplete.getPlace();
+        });
+    });
+
         $(function() {
             $('.select2bs4').select2({
                 theme: 'bootstrap4'

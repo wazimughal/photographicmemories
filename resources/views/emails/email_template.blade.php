@@ -231,8 +231,8 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                             <img align="center" border="0"
                                                                                 src="{{ url('adminpanel/dist/img/logo_photographic.png') }}"
                                                                                 alt="image" title="image"
-                                                                                style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 20%;max-width: 116px;"
-                                                                                width="116"
+                                                                                style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 80%;max-width: 320px;"
+                                                                                width="320"
                                                                                 class="v-src-width v-src-max-width" />
                                                                         </a>
                                                                     </td>
@@ -244,32 +244,15 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                 </tbody>
                                             </table>
 
-                                            <table id="u_content_heading_1" style="font-family:Open Sans,sans-serif;"
-                                                role="presentation" cellpadding="0" cellspacing="0" width="100%"
-                                                border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="v-container-padding-padding"
-                                                            style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px;font-family:Open Sans,sans-serif;"
-                                                            align="left">
-
-                                                            <h1 class="v-color v-line-height v-font-size"
-                                                                style="margin: 0px; color: #ffffff; line-height: 140%; text-align:center; word-wrap: break-word; font-weight: normal; font-family: 'Cabin',sans-serif; font-size: 40px;">
-                                                                Photographic Memories
-                                                            </h1>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            
 
                                             <table id="u_content_text_1"
-                                                style=" color:#fff !important;font-family:Open Sans,sans-serif;"
+                                                style=" color:#fff !important;font-family:Open Sans,sans-serif; text-align:center"
                                                 role="presentation" cellpadding="0" cellspacing="0" width="100%"
                                                 border="0">
                                                 <tbody>
                                                     <tr>
-                                                        <td class="v-container-padding-padding"
+                                                        <td colspan="2" class="v-container-padding-padding"
                                                             style="overflow-wrap:break-word;word-break:break-word;padding:60px 30px 15px;font-family:Open Sans,sans-serif;"
                                                             align="left">
 
@@ -285,8 +268,8 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                             </table>
                                             @if ($button_title != '')
                                                 <table id="u_content_button_1"
-                                                    style="font-family:Open Sans,sans-serif;" role="presentation"
-                                                    cellpadding="0" cellspacing="0" width="100%" border="0">
+                                                    style="font-family:Open Sans,sans-serif; margin:auto 0; text-align:center; width:100%;" role="presentation"
+                                                    cellpadding="0" cellspacing="0" width="65%" border="0">
                                                     <tbody>
                                                         <tr>
                                                             <td class="v-container-padding-padding"
@@ -299,7 +282,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                     <a href="{{ $button_link }}" target="_blank"
                                                                         class="v-button v-size-width" style="">
                                                                         <span class="v-line-height v-padding"
-                                                                            style="box-sizing: border-box;display: inline-block;font-family:Open Sans,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #cf0818; border-radius: 5px;-webkit-border-radius: 5px; -moz-border-radius: 5px; width:35%;padding:10px; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;"><strong><span
+                                                                            style="box-sizing: border-box;display: inline-block;font-family:Open Sans,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #cf0818; border-radius: 5px;-webkit-border-radius: 5px; -moz-border-radius: 5px; width:20%;padding:10px; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;"><strong><span
                                                                                     style="font-size: 14px; line-height: 16.8px;">{{ $button_title }}</span></strong></span>
                                                                     </a>
 
@@ -309,7 +292,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                             class="v-button v-size-width"
                                                                             style="">
                                                                             <span class="v-line-height v-padding"
-                                                                                style="ox-sizing: border-box;display: inline-block;font-family:Open Sans,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #cf0818; border-radius: 5px;-webkit-border-radius: 5px; -moz-border-radius: 5px; width:35%;padding:10px; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;"><strong><span
+                                                                                style="ox-sizing: border-box;display: inline-block;font-family:Open Sans,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #cf0818; border-radius: 5px;-webkit-border-radius: 5px; -moz-border-radius: 5px; width:20%;padding:10px; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;"><strong><span
                                                                                         style="font-size: 14px; line-height: 16.8px;">{{ $mailData['button_title2'] }}</span></strong></span>
                                                                         </a>
                                                                     @endif
@@ -361,7 +344,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                 style="color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
                                                                 <p style="font-size: 14px; line-height: 140%;">if you
                                                                     have any questions, please email us at
-                                                                    joel@thephotographicmemories.com or visit our FAQS,
+                                                                    <a href="mailto:joel@thephotographicmemories.com">joel@thephotographicmemories.com</a> or visit our FAQS,
                                                                     you can also chat with a reel live human during our
                                                                     operating hours. They can answer questions about
                                                                     your account</p>
@@ -386,7 +369,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
 
 
                                                                     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
-                                                                    <table align="left" border="0"
+                                                                    {{-- <table align="left" border="0"
                                                                         cellspacing="0" cellpadding="0"
                                                                         width="32" height="32"
                                                                         style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
@@ -406,11 +389,11 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
-                                                                    </table>
+                                                                    </table> --}}
                                                                     <!--[if (mso)|(IE)]></td><![endif]-->
 
                                                                     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
-                                                                    <table align="left" border="0"
+                                                                    {{-- <table align="left" border="0"
                                                                         cellspacing="0" cellpadding="0"
                                                                         width="32" height="32"
                                                                         style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
@@ -430,11 +413,11 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
-                                                                    </table>
+                                                                    </table> --}}
                                                                     <!--[if (mso)|(IE)]></td><![endif]-->
 
                                                                     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 15px;" valign="top"><![endif]-->
-                                                                    <table align="left" border="0"
+                                                                    {{-- <table align="left" border="0"
                                                                         cellspacing="0" cellpadding="0"
                                                                         width="32" height="32"
                                                                         style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 15px">
@@ -454,11 +437,11 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
-                                                                    </table>
+                                                                    </table> --}}
                                                                     <!--[if (mso)|(IE)]></td><![endif]-->
 
                                                                     <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 0px;" valign="top"><![endif]-->
-                                                                    <table align="left" border="0"
+                                                                    {{-- <table align="left" border="0"
                                                                         cellspacing="0" cellpadding="0"
                                                                         width="32" height="32"
                                                                         style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: 0px">
@@ -478,7 +461,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
-                                                                    </table>
+                                                                    </table> --}}
                                                                     <!--[if (mso)|(IE)]></td><![endif]-->
 
 
@@ -525,7 +508,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
 
                                                                 <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
 
-                                                                <a href="https://thephotographicmemories.com"
+                                                                <a href="https://thephotographicmemories.com/portfolio"
                                                                     target="_self"
                                                                     style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"
                                                                     class="v-padding v-font-size">
@@ -545,7 +528,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
 
                                                                 <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
 
-                                                                <a href="https://thephotographicmemories.com"
+                                                                <a href="https://thephotographicmemories.com/about-me"
                                                                     target="_self"
                                                                     style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"
                                                                     class="v-padding v-font-size">
@@ -565,7 +548,7 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
 
                                                                 <!--[if (mso)|(IE)]><td style="padding:5px 15px"><![endif]-->
 
-                                                                <a href="https://thephotographicmemories.com"
+                                                                <a href="https://thephotographicmemories.com/contacts"
                                                                     target="_self"
                                                                     style="padding:5px 15px;display:inline-block;color:#000000;font-family:arial,helvetica,sans-serif;font-size:14px;text-decoration:none"
                                                                     class="v-padding v-font-size">
@@ -599,14 +582,10 @@ if (isset($mailData['button_link']) && !empty($mailData['button_link'])) {
                                                                         href="https://thephotographicmemories.com"
                                                                         target="_blank">Thephotographichmemories.com</a>
                                                                 </p>
-                                                                <p style="font-size: 14px; line-height: 140%;">can <a
-                                                                        rel="noopener"
-                                                                        href="https://thephotographicmemories.com"
-                                                                        target="_blank">unsubscribe</a> from these
-                                                                    emails here.</p>
-                                                                <p style="font-size: 14px; line-height: 140%;"> </p>
-                                                                <p style="font-size: 14px; line-height: 140%;">2261
-                                                                    Market Street #4667 San Francisco, CA 94114 All
+                                                                <br>
+                                                                <p style="font-size: 14px; line-height: 140%;">Ph: 845-501-1888 </p>
+                                                                <p style="font-size: 14px; line-height: 140%;">Email us: <a href="mailto:Joel@thephotographicmemories.com">Joel@thephotographicmemories.com</a></p>
+                                                                <p style="font-size: 14px; line-height: 140%; margin-top:20px; font-weight:600"> Klein's Photography &copy; 2023. All
                                                                     rights reserved</p>
                                                             </div>
 
